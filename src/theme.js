@@ -30,6 +30,12 @@ const theme = createTheme({
       styleOverrides: {},
     },
 
+    MuiButton: {
+      defaultProps: {
+        size: "small",
+      },
+    },
+
     MuiAlert: {
       styleOverrides: {
         root: ({ ownerState }) => ({

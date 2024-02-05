@@ -18,7 +18,7 @@ export default function DashboardLayout(props) {
       />
       <Box>
         <Grid container sx={{ height: "100vh" }}>
-          <Grid
+          {/* <Grid
             sm={0}
             md={4}
             lg={2}
@@ -27,8 +27,8 @@ export default function DashboardLayout(props) {
               px: 2,
             }}
           >
-            <Aside />
-          </Grid>
+          </Grid> */}
+          <Aside />
 
           <Grid sm={12} md={8} lg={10}>
             <DashboardHeader />
