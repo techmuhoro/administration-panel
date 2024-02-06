@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import { useDispatch, useSelector } from "react-redux";
 import { decrement, increment } from "../lib/redux/feutures/counterSlice";
 
-import ProTip from "@/components/ProTip";
+import ProTip from "@/components/pro-tip";
 
 export default function Home() {
   const count = useSelector((state) => state.counter.value); // Access the counter state
