@@ -6,19 +6,19 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import SpeedIcon from "@mui/icons-material/Speed";
 import Link from "next/link";
 
-export default function DashboardContentWrapper(props) {
+export default function DashboardContentWrapper({ children, breadcrumbItems }) {
   return (
     <Box sx={{ p: 2 }}>
-      <BreadcrumbsComponent />
+      <BreadcrumbsComponent items={breadcrumbItems} />
       <Box sx={{ mb: 1.5 }} />
-      {props.children}
+      {children}
     </Box>
   );
 }
 
-function BreadcrumbsComponent() {
+function BreadcrumbsComponent({ items }) {
   return (
-    <Breadcrumbs>
+    <Breadcrumbs separator=">">
       <Link href={"/dashboard"}>
         <Stack
           component="p"
@@ -26,11 +26,19 @@ function BreadcrumbsComponent() {
           alignItems="center"
           columnGap={0.5}
         >
-          <DashboardIcon fontSize="small" sx={{ mt: -0.5 }} />
+          <DashboardIcon fontSize="small" sx={{}} />
           Dashboard
         </Stack>
       </Link>
-      <Typography>Transactions</Typography>
+      {items?.map(({ label, to }) =>
+        to ? (
+          <Link key={label} href={to}>
+            {label}
+          </Link>
+        ) : (
+          <Typography key={to}>{label}</Typography>
+        )
+      )}
     </Breadcrumbs>
   );
 }

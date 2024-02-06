@@ -27,3 +27,15 @@ export function filterObject(obj, whitelist) {
 
   return cleanObj;
 }
+
+export function convertStringSearchParamsToObj(str) {
+  const params = new URLSearchParams(str);
+
+  const obj = {};
+
+  for (let [key, value] of params.entries()) {
+    obj[key] = value;
+  }
+
+  return obj;
+}

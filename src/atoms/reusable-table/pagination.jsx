@@ -1,5 +1,10 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import {
+  useSearchParams,
+  usePathname,
+  redirect,
+  useRouter,
+} from "next/navigation";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -12,6 +17,7 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import Link from "next/link";
+import { convertStringSearchParamsToObj, convertToNumber } from "@/lib/utils";
 
 export default function TablePagination({
   currentPage,
@@ -21,6 +27,26 @@ export default function TablePagination({
 }) {
   console.log("currentPage", currentPage);
   const params = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  function handleRowsPerPageChange(value) {
+    // maintain the existing query params
+    const existingParams = convertStringSearchParamsToObj(params.toString());
+    const newParams = {
+      rows: value,
+      page: 1, // reset page back to one
+    };
+
+    const queryParams = new URLSearchParams({
+      ...existingParams,
+      ...newParams,
+    }).toString();
+
+    const url = `${pathname}/?${queryParams}`;
+
+    router.push(url);
+  }
 
   function getPaginationLabel() {
     const start = (currentPage - 1) * rowsPerPage + 1;
@@ -28,9 +54,25 @@ export default function TablePagination({
     return `${start} - ${end} of ${count}`;
   }
 
-  function getPaginationLink() {
-    return "";
+  function getPaginationLink(page) {
+    page = convertToNumber(page) || 1;
+
+    // maintain the query params that may exist on the url
+    const existingParams = convertStringSearchParamsToObj(params.toString());
+    const newParams = {
+      page,
+    };
+
+    const queryParams = new URLSearchParams({
+      ...existingParams,
+      ...newParams,
+    }).toString();
+
+    return `${pathname}/?${queryParams}`;
   }
+  const disabledLink = {
+    pointerEvents: "none",
+  };
   return (
     <Stack
       direction="row"
@@ -42,7 +84,10 @@ export default function TablePagination({
       <Stack direction={"row"} columnGap={1}>
         <Typography>Rows:</Typography>
 
-        <select defaultValue={DEFAULT_ROWS_PER_PAGE}>
+        <select
+          defaultValue={DEFAULT_ROWS_PER_PAGE}
+          onChange={(event) => handleRowsPerPageChange(event.target.value)}
+        >
           <option value="5">5</option>
           <option value="10">10</option>
           <option value="15">15</option>
@@ -53,13 +98,19 @@ export default function TablePagination({
 
       <Stack direction="row" alignItems="center" columnGap={1.5}>
         <Stack direction="row">
-          <Link href={getPaginationLink()}>
-            <IconButton>
+          <Link
+            style={currentPage <= 1 ? { ...disabledLink } : {}}
+            href={getPaginationLink(1)}
+          >
+            <IconButton disabled={currentPage <= 1}>
               <FirstPageIcon />
             </IconButton>
           </Link>
-          <Link href={getPaginationLink()}>
-            <IconButton>
+          <Link
+            href={getPaginationLink(currentPage - 1)}
+            style={currentPage <= 1 ? { ...disabledLink } : {}}
+          >
+            <IconButton disabled={currentPage <= 1}>
               <ChevronLeftIcon />
             </IconButton>
           </Link>
@@ -68,14 +119,20 @@ export default function TablePagination({
           <Typography> {getPaginationLabel()}</Typography>
         </Box>
         <Stack direction="row">
-          <Link href={getPaginationLink()}>
+          <Link
+            href={getPaginationLink(currentPage + 1)}
+            style={currentPage >= totalPages ? { ...disabledLink } : {}}
+          >
             <IconButton>
               <ChevronRightIcon />
             </IconButton>
           </Link>
 
-          <Link href={getPaginationLink()}>
-            <IconButton>
+          <Link
+            href={getPaginationLink(totalPages)}
+            style={currentPage >= totalPages ? { ...disabledLink } : {}}
+          >
+            <IconButton disabled={currentPage >= totalPages}>
               <LastPageIcon />
             </IconButton>
           </Link>

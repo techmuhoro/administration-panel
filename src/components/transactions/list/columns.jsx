@@ -1,3 +1,7 @@
+"use client";
+
+import TransactionDetails from "./details";
+
 export const columns = [
   {
     assessor: "id",
@@ -34,30 +38,6 @@ export const columns = [
   {
     assessor: "details",
     label: "Details",
-  },
-];
-
-export const data = [
-  {
-    id: "1",
-    date: "2024-02-05 11:40",
-    customer: "John Doe",
-    channel: "Mpesa",
-    transaction_id: "RTGS-JSDLSDK",
-    category: "PRIMARY",
-    amount: "100",
-    status: "SUCCESS",
-    details: "D",
-  },
-  {
-    id: "2",
-    date: "2024-02-05 11:40",
-    customer: "John Doe",
-    channel: "Mpesa",
-    transaction_id: "RTGS-JSDLSDK",
-    category: "PRIMARY",
-    amount: "100",
-    status: "SUCCESS",
-    details: "D",
+    cell: ({ row }) => <TransactionDetails row={row} />,
   },
 ];

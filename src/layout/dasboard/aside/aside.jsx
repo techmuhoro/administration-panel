@@ -12,6 +12,8 @@ export default function LargeAside() {
       md={3}
       lg={2}
       sx={{
+        overflowY: "auto",
+        height: "100%",
         borderRight: (theme) => `1px solid ${theme.palette.border.main}`,
         px: 2,
         [theme.breakpoints.down("md")]: {

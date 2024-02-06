@@ -6,7 +6,7 @@ import DashboardHeader from "@/layout/dasboard/header";
 
 export default function DashboardLayout(props) {
   return (
-    <div id="dasboard-layout">
+    <>
       <GlobalStyles
         styles={{
           "*": {
@@ -16,16 +16,15 @@ export default function DashboardLayout(props) {
           },
         }}
       />
-      <Box>
-        <Grid container sx={{ height: "100vh" }}>
-          <Aside />
 
-          <Grid xs={12} sm={12} md={9} lg={10}>
-            <DashboardHeader />
-            {props.children}
-          </Grid>
+      <Grid container sx={{ height: "100vh" }}>
+        <Aside />
+
+        <Grid xs={12} sm={12} md={9} lg={10} sx={{ overflowY: "auto" }}>
+          <DashboardHeader />
+          {props.children}
         </Grid>
-      </Box>
-    </div>
+      </Grid>
+    </>
   );
 }

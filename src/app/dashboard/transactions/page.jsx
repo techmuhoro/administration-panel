@@ -5,6 +5,10 @@ import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 import { getTransactions, getTransactionsCount } from "@/demo-db/transactions";
 
 const filtersWhiteList = ["customer", "transaction_id", "amount", "category"];
+const breadcrumbItems = [
+  { label: "Transactions", to: "/dashbaord/transactions" },
+  { label: "Listing" },
+];
 
 export default async function Page({ searchParams }) {
   const { page, rows, ...filters } = searchParams;
@@ -32,7 +36,7 @@ export default async function Page({ searchParams }) {
   const totalPages = Number(count) / rowsPerPage;
 
   return (
-    <DashboardContentWrapper>
+    <DashboardContentWrapper breadcrumbItems={breadcrumbItems}>
       <TransactionsList
         data={transactions}
         currentPage={currentPage}
