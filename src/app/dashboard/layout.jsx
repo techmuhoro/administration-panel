@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import Aside from "@/layout/dasboard/aside";
+import Aside from "@/layout/dasboard/aside/aside";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import DashboardHeader from "@/layout/dasboard/header";
 
@@ -18,19 +18,9 @@ export default function DashboardLayout(props) {
       />
       <Box>
         <Grid container sx={{ height: "100vh" }}>
-          {/* <Grid
-            sm={0}
-            md={4}
-            lg={2}
-            sx={{
-              borderRight: `1px solid gray`,
-              px: 2,
-            }}
-          >
-          </Grid> */}
           <Aside />
 
-          <Grid sm={12} md={8} lg={10}>
+          <Grid xs={12} sm={12} md={9} lg={10}>
             <DashboardHeader />
             {props.children}
           </Grid>

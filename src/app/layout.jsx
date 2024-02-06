@@ -5,11 +5,12 @@ import { Providers } from "@/lib/provider";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "@/theme";
 import { StyledEngineProvider } from "@mui/material/styles";
+import { Inter } from "next/font/google";
 
 export default function RootLayout(props) {
   return (
     <html lang="en">
-      <body>
+      <body style={{ color: "#18181B" }}>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>
             <CssBaseline />

@@ -11,54 +11,54 @@ export const asideMenuItems = [
   {
     key: "dashboard",
     label: "Dashboard",
-    icon: <DashboardIcon />,
+    icon: <DashboardIcon fontSize="small" />,
     to: "/dashboard",
   },
 
   {
     key: "transactions",
     label: "Transactions",
-    icon: <CompareArrowsIcon />,
+    icon: <CompareArrowsIcon fontSize="small" />,
     to: "/dashboard/transactions",
   },
   {
     key: "merchants",
     label: "Merchants",
-    icon: <LocalMallIcon />,
+    icon: <LocalMallIcon fontSize="small" />,
     to: "/dashboard/merchants",
   },
   {
     key: "settlements",
     label: "Settlements",
-    icon: <PaymentsIcon />,
+    icon: <PaymentsIcon fontSize="small" />,
     to: "/dashboard/settlements",
   },
 
   {
     key: "card-review",
     label: "Card Review",
-    icon: <CreditCardIcon />,
+    icon: <CreditCardIcon fontSize="small" />,
     to: "/dashboard/card-review",
   },
 
   {
     key: "pdqs",
     label: "PDQs",
-    icon: <PhonelinkRingIcon />,
+    icon: <PhonelinkRingIcon fontSize="small" />,
     to: "/dashboard/pdqs",
   },
 
   {
     key: "reports",
     label: "Reports",
-    icon: <AutoGraphIcon />,
+    icon: <AutoGraphIcon fontSize="small" />,
     to: "/dashboard/reports",
   },
 
   {
     key: "access-control",
     label: "Access control",
-    icon: <GroupIcon size={16} />,
+    icon: <GroupIcon fontSize="small" />,
 
     links: [
       {
