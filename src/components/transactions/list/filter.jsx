@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -10,6 +11,8 @@ import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import Stack from "@mui/material/Stack";
+import { convertStringSearchParamsToObj, filterObject } from "@/lib/utils";
+import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 
 export default function TransactionsFilter() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -50,6 +53,67 @@ export default function TransactionsFilter() {
 }
 
 function FilterPopover({ open, anchorEl, handleClose }) {
+  const [filters, setFilters] = useState({
+    customer: "",
+    channel: "",
+    transactionId: "",
+    amount: "",
+  });
+  const pathname = usePathname();
+  const querySearchParams = useSearchParams();
+  const router = useRouter();
+
+  // put any filters in the url into the input values
+  useEffect(() => {
+    console.log("render");
+    setFilters((prev) => ({
+      ...prev,
+      ...convertStringSearchParamsToObj(querySearchParams.toString()),
+    }));
+  }, [querySearchParams]);
+
+  // reusable function to handle change in all filter inputs
+  const handleFilterChange = (name) => (event) =>
+    setFilters((prev) => ({
+      ...prev,
+      [name]: event.target.value,
+    }));
+
+  const applyFilters = () => {
+    const existingParams = convertStringSearchParamsToObj(
+      querySearchParams.toString()
+    );
+
+    const { page, rows, ...existingFilters } = existingParams;
+
+    // override the existing filters with the new filters
+    const newFilters = {
+      ...existingFilters,
+      ...filters,
+    };
+
+    // remove empty values
+    const cleanFilters = {};
+
+    for (let [key, value] of Object.entries(newFilters)) {
+      if (value) {
+        cleanFilters[key] = value;
+      }
+    }
+
+    const queryParams = new URLSearchParams({
+      ...cleanFilters,
+      rows: rows ? rows : DEFAULT_ROWS_PER_PAGE,
+      page: 1, // reset page to one for every new search
+    }).toString();
+
+    const url = `${pathname}/?${queryParams}`;
+
+    router.push(url);
+
+    handleClose();
+  };
+
   const popoverId = open ? "transaction-filter-popover" : undefined;
   return (
     <Popover
@@ -73,17 +137,37 @@ function FilterPopover({ open, anchorEl, handleClose }) {
 
         <Grid container rowGap={1} columnGap={2} sx={{ mb: 2 }}>
           <Grid sm={12} md={5.5}>
-            <TextField label="Customer" size="small" />
+            <TextField
+              label="Customer"
+              size="small"
+              value={filters.customer}
+              onChange={handleFilterChange("customer")}
+            />
           </Grid>
           <Grid sm={12} md={5.5}>
-            <TextField label="Channel" size="small" />
+            <TextField
+              label="Channel"
+              size="small"
+              value={filters.channel}
+              onChange={handleFilterChange("channel")}
+            />
           </Grid>
 
           <Grid sm={12} md={5.5}>
-            <TextField label="Transaction Id" size="small" />
+            <TextField
+              label="Transaction Id"
+              size="small"
+              value={filters.transactionId}
+              onChange={handleFilterChange("transactionId")}
+            />
           </Grid>
           <Grid sm={12} md={5.5}>
-            <TextField label="Amount" size="small" />
+            <TextField
+              label="Amount"
+              size="small"
+              value={filters.amount}
+              onChange={handleFilterChange("amount")}
+            />
           </Grid>
         </Grid>
 
@@ -93,7 +177,7 @@ function FilterPopover({ open, anchorEl, handleClose }) {
             <Button variant="outlined" color="primary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="contained" color="primary">
+            <Button variant="contained" color="primary" onClick={applyFilters}>
               Apply
             </Button>
           </Stack>
