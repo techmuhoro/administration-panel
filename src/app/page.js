@@ -8,12 +8,32 @@ import { useDispatch, useSelector } from "react-redux";
 import { decrement, increment } from "../lib/redux/feutures/counterSlice";
 
 import ProTip from "@/components/ProTip";
+import { handleFetchData, handlePostData } from "@/apis";
 
 export default function Home() {
   const count = useSelector((state) => state.counter.value); // Access the counter state
-
   //useDispatch updates the store with the state from a component, as defined by your logic inside the counterslice.js
   const dispatch = useDispatch();
+
+  handleFetchData("/users", true)
+    .then((responseData) => {
+      console.log("Response Data:", responseData);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+
+  let payload = {
+    email: "string",
+    password: "string",
+  };
+  // handlePostData("login", payload, true)
+  //   .then((responseData) => {
+  //     console.log("Response Data:", responseData);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error:", error);
+  //   });
 
   return (
     <Container maxWidth="lg">
@@ -26,6 +46,7 @@ export default function Home() {
           alignItems: "center",
         }}
       >
+        <Typography></Typography>
         <Typography variant="h4" component="h1">
           Admin dashboard
         </Typography>
