@@ -1,8 +1,15 @@
 "use client"; //does not work on the server
-import { Roboto } from "next/font/google";
+import { Roboto, Inter } from "next/font/google";
 import { createTheme } from "@mui/material/styles";
+import { grey } from "@mui/material/colors";
 
 const roboto = Roboto({
+  weight: ["300", "400", "500", "700"],
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const inter = Inter({
   weight: ["300", "400", "500", "700"],
   subsets: ["latin"],
   display: "swap",
@@ -11,11 +18,33 @@ const roboto = Roboto({
 const theme = createTheme({
   palette: {
     mode: "light",
+    primary: {
+      main: "#124c9d", // bluish
+    },
+    secondary: {
+      main: "#f68c1e",
+    },
+    border: {
+      main: grey[300],
+    },
+    textAccent: {
+      main: "#18181B",
+    },
   },
   typography: {
-    fontFamily: roboto.style.fontFamily,
+    fontFamily: inter.style.fontFamily,
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {},
+    },
+
+    MuiButton: {
+      defaultProps: {
+        size: "small",
+      },
+    },
+
     MuiAlert: {
       styleOverrides: {
         root: ({ ownerState }) => ({
