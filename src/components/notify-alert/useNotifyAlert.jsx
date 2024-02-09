@@ -58,7 +58,7 @@ function useNotifyAlert(closeFnProp, message) {
         clickAwayClose.current = false;
       }
     },
-    [setAlertMsg, setAlertType]
+    [setAlertMsg, setAlertType, setOpenDuration]
   );
 
   React.useEffect(() => {

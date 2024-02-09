@@ -67,7 +67,7 @@ export default function Home() {
             <button
               onClick={() =>
                 setAlertMessage("An Alert message for youz! :)", {
-                  closeOnClickAway: false,
+                  closeOnClickAway: true,
                   type: "info",
                 })
               }
