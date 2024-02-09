@@ -43,6 +43,14 @@ const theme = createTheme({
       defaultProps: {
         size: "small",
       },
+      styleOverrides: {
+        root: {
+          boxShadow: "none",
+          borderRadius: "3px",
+          textTransform: "capitalize",
+          fontSize: "14px",
+        },
+      },
     },
 
     MuiAlert: {
