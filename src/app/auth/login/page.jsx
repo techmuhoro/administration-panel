@@ -29,7 +29,6 @@ function Login() {
 
     let config = {
       method: "post",
-      maxBodyLength: Infinity,
       url: `${process.env.NEXT_PUBLIC_API_BASE_URL}auth/sign-in`,
       headers: {
         "Content-Type": "application/json",
@@ -50,25 +49,28 @@ function Login() {
         }
       })
       .catch((error) => {
-        if (error.response.status === 406) {
+        if (error.response === undefined) {
+          setAlert({
+            type: "error",
+            message: "Something went wrong.Kindly contact support",
+          });
+        } else if (error.response.status === 406) {
           setAlert({
             message: Object.values(error.response.data.error)[0],
             type: "error",
           });
-          setLoading(false);
         } else if (error.response.status === 403) {
           setAlert({
             message: error.response.data.error,
             type: "error",
           });
-          setLoading(false);
         } else {
           setAlert({
             message: "Something went wrong. Kindly contact support",
             type: "error",
           });
-          setLoading(false);
         }
+        setLoading(false);
       });
   };
 
