@@ -76,6 +76,11 @@ export const asideMenuItems = [
         label: "Permission",
         to: "/dashboard/permissions",
       },
+      {
+        key: "access-control-audit-trail",
+        label: "Audit Trail",
+        to: "/dashboard/settings/audit-trail",
+      },
     ],
   },
 ];
