@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext } from "react";
+import { createContext, memo, useContext, useMemo } from "react";
 
 import NotifyAlert from "../index.jsx";
 import { useNotifyAlert } from "../useNotifyAlert.jsx";
@@ -43,11 +43,11 @@ const alertConfig = {
 const NotifyAlertContext = createContext(alertConfig);
 
 export default function NotifyAlertProvider({ children }) {
-  const { setAlertMessage, alertProps } = useNotifyAlert();
+  const { setAlertMessage, alertProps, key } = useNotifyAlert();
 
   return (
     <NotifyAlertContext.Provider value={{ setAlertMessage }}>
-      <NotifyAlert {...alertProps} />
+      <NotifyAlert {...alertProps} key={key} />
       {children}
     </NotifyAlertContext.Provider>
   );

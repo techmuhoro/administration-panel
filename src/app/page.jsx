@@ -10,6 +10,7 @@ import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-contex
 
 import ProTip from "@/components/pro-tip";
 import { handleFetchData, handlePostData } from "@/apis";
+import { useEffect } from "react";
 
 export default function Home() {
   const count = useSelector((state) => state.counter.value); // Access the counter state
@@ -17,13 +18,18 @@ export default function Home() {
   const dispatch = useDispatch();
   const setAlertMessage = useNotifyAlertCtx();
 
-  handleFetchData("/users", true)
-    .then((responseData) => {
-      console.log("Response Data:", responseData);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
+  useEffect(() => {
+    handleFetchData("/users", true)
+      .then((responseData) => {
+        console.log("Response Data:", responseData);
+        setAlertMessage("Data from `/users` has been fetched :)", {
+          type: "success",
+        });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
 
   let payload = {
     email: "string",
