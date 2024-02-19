@@ -38,8 +38,9 @@ function Login() {
 
     axios(config)
       .then((response) => {
+        console.log(response);
         if (response.data.status === "SUCCESS") {
-          Cookies.set("iPayAdmin", response.data.data.token);
+          Cookies.set("token", response.data.data.token);
           router.replace("/auth/otp?otp=true");
         } else {
           setAlert({
