@@ -21,8 +21,6 @@
     "axios": "^1.6.7",
     "eslint-config-next": "eslint-config-next",
     "formik": "^2.4.5",
-    "js-cookie": "^3.0.5",
-    "mui-one-time-password-input": "^2.0.1",
     "next": "14.1.0",
     "prop-types": "^15.8.1",
     "react": "18.2.0",

@@ -53,6 +53,12 @@ const theme = createTheme({
       },
     },
 
+    MuiTextField: {
+      defaultProps: {
+        size: "small",
+      },
+    },
+
     MuiAlert: {
       styleOverrides: {
         root: ({ ownerState }) => ({
