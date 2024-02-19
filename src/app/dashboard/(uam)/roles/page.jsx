@@ -1,13 +1,20 @@
+import RolesList from "@/components/uam/roles/list";
+import { getRoles, getRolesCount } from "@/demo-db/role";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
-import TransactionsList from "@/components/transactions/list";
-import { convertToNumber, filterObject } from "@/lib/utils";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
-import { getTransactions, getTransactionsCount } from "@/demo-db/transactions";
+import { convertToNumber, filterObject } from "@/lib/utils";
+import { redirect } from "next/navigation";
+import { cache } from "react";
 
-const filtersWhiteList = ["customer", "transaction_id", "amount", "category"];
+async function getUser() {
+  // refresh
+}
+
+const filtersWhiteList = ["role", "department", "description", "createdBy"];
 const breadcrumbItems = [
-  { label: "Transactions", to: "/dashbaord/transactions" },
-  { label: "Listing" },
+  {
+    label: "Roles",
+  },
 ];
 
 export default async function Page({ searchParams }) {
@@ -19,26 +26,22 @@ export default async function Page({ searchParams }) {
 
   const where = filterObject(filters, filtersWhiteList);
 
-  /** Similar to make a network request */
-  const transactionsPromise = getTransactions({
+  const rolesPromise = getRoles({
     take: rowsPerPage,
     skip: (currentPage - 1) * rowsPerPage,
     where,
   });
 
-  const countPromise = getTransactionsCount(where);
+  const countPromise = getRolesCount(where);
 
-  const [count, transactions] = await Promise.all([
-    countPromise,
-    transactionsPromise,
-  ]);
+  const [count, roles] = await Promise.all([countPromise, rolesPromise]);
 
   const totalPages = Number(count) / rowsPerPage;
 
   return (
-    <DashboardContentWrapper breadcrumbItems={breadcrumbItems}>
-      <TransactionsList
-        data={transactions}
+    <DashboardContentWrapper breadcrumbOmit={["uam"]}>
+      <RolesList
+        data={roles}
         currentPage={currentPage}
         rowsPerPage={rowsPerPage}
         totalPages={totalPages}

@@ -1,27 +1,33 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import Box from "@mui/material/Box";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import Box from "@mui/material/Box";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import Stack from "@mui/material/Stack";
-import { convertStringSearchParamsToObj, filterObject } from "@/lib/utils";
+import TextField from "@mui/material/TextField";
+
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import { convertStringSearchParamsToObj } from "@/lib/utils";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 
-export default function TransactionsFilter() {
+export default function RolesFilter() {
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const router = useRouter();
+
+  const pathname = usePathname();
 
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
-  const open = Boolean(anchorEl);
+  const handleClearFilters = () => router.push(pathname);
 
+  const open = Boolean(anchorEl);
   return (
     <>
       <Stack direction="row" alignItems="center" columnGap={1}>
@@ -38,6 +44,7 @@ export default function TransactionsFilter() {
           startIcon={<FilterAltOffIcon />}
           variant="outlined"
           size="small"
+          onClick={handleClearFilters}
         >
           Clear
         </Button>
@@ -47,31 +54,42 @@ export default function TransactionsFilter() {
         open={open}
         anchorEl={anchorEl}
         handleClose={handleClose}
+        handleClearFilters={handleClearFilters}
       />
     </>
   );
 }
 
-function FilterPopover({ open, anchorEl, handleClose }) {
+function FilterPopover({ open, anchorEl, handleClose, handleClearFilters }) {
   const [filters, setFilters] = useState({
-    customer: "",
-    channel: "",
-    transactionId: "",
-    amount: "",
+    role: "",
+    department: "",
+    description: "",
+    createdBy: "",
   });
+
   const pathname = usePathname();
   const querySearchParams = useSearchParams();
   const router = useRouter();
 
-  // put any filters in the url into the input values
   useEffect(() => {
-    setFilters((prev) => ({
-      ...prev,
-      ...convertStringSearchParamsToObj(querySearchParams.toString()),
-    }));
+    console.log(convertStringSearchParamsToObj(querySearchParams.toString()));
+    setFilters((prev) => {
+      console.log("prev", prev);
+      console.log(
+        "url",
+        convertStringSearchParamsToObj(querySearchParams.toString())
+      );
+
+      const newFilters = {
+        ...prev,
+        ...convertStringSearchParamsToObj(querySearchParams.toString()),
+      };
+      console.log("new", newFilters);
+      return newFilters;
+    });
   }, [querySearchParams]);
 
-  // reusable function to handle change in all filter inputs
   const handleFilterChange = (name) => (event) =>
     setFilters((prev) => ({
       ...prev,
@@ -113,7 +131,8 @@ function FilterPopover({ open, anchorEl, handleClose }) {
     handleClose();
   };
 
-  const popoverId = open ? "transaction-filter-popover" : undefined;
+  const popoverId = open ? "role-filter-popover" : undefined;
+
   return (
     <Popover
       id={popoverId}
@@ -137,41 +156,49 @@ function FilterPopover({ open, anchorEl, handleClose }) {
         <Grid container rowGap={1} columnGap={2} sx={{ mb: 2 }}>
           <Grid sm={12} md={5.5}>
             <TextField
-              label="Customer"
+              label="Role"
               size="small"
-              value={filters.customer}
-              onChange={handleFilterChange("customer")}
+              value={filters.role}
+              onChange={handleFilterChange("role")}
             />
           </Grid>
           <Grid sm={12} md={5.5}>
             <TextField
-              label="Channel"
+              label="Department"
               size="small"
-              value={filters.channel}
-              onChange={handleFilterChange("channel")}
+              value={filters.department}
+              onChange={handleFilterChange("department")}
             />
           </Grid>
 
           <Grid sm={12} md={5.5}>
             <TextField
-              label="Transaction Id"
+              label="Description"
               size="small"
-              value={filters.transactionId}
-              onChange={handleFilterChange("transactionId")}
+              value={filters.description}
+              onChange={handleFilterChange("description")}
             />
           </Grid>
           <Grid sm={12} md={5.5}>
             <TextField
-              label="Amount"
+              label="Created By"
               size="small"
-              value={filters.amount}
-              onChange={handleFilterChange("amount")}
+              value={filters.createdBy}
+              onChange={handleFilterChange("createdBy")}
             />
           </Grid>
         </Grid>
 
         <Stack direction={"row"}>
-          <Button color="secondary">Clear Filters</Button>
+          <Button
+            color="secondary"
+            onClick={() => {
+              handleClearFilters();
+              handleClose();
+            }}
+          >
+            Clear Filters
+          </Button>
           <Stack direction={"row"} spacing={1} sx={{ ml: "auto" }}>
             <Button variant="outlined" color="primary" onClick={handleClose}>
               Cancel

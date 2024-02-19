@@ -64,17 +64,17 @@ export const asideMenuItems = [
       {
         key: "access-control-users",
         label: "User",
-        to: "/dashboard/uam/users",
+        to: "/dashboard/users",
       },
       {
         key: "access-control-roles",
         label: "Roles",
-        to: "/dashboard/uam/roles",
+        to: "/dashboard/roles",
       },
       {
         key: "access-control-permissions",
         label: "Permission",
-        to: "/setting/uam/permissions",
+        to: "/dashboard/permissions",
       },
     ],
   },
