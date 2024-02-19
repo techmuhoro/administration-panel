@@ -4,12 +4,14 @@ import { BASE_URL } from "@/lib/constants";
 import RoleForm from "../form";
 import { useRouter } from "next/navigation";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
-
-const token = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJ7XCJpZFwiOlwidHl1aW9vamhnNjc4OVwifSIsImlhdCI6MTcwODA3NzcxNiwiZXhwIjoxNzA4MTA2NTE2fQ.9Py3LLg7HerSqSNe5biv8ehK7fkCWINJA0MHIYLbW9E`;
+import Cookie from "js-cookie";
 
 export default function RolesAdd({ departments, permissions }) {
   const router = useRouter();
   const setAlertMessage = useNotifyAlertCtx();
+  const token = Cookie.get("token");
+
+  console.log(permissions);
 
   async function handleSubmit(values, { setSubmitting }) {
     const truthyPermissions =
@@ -32,7 +34,8 @@ export default function RolesAdd({ departments, permissions }) {
       },
     });
 
-    const data = await response.json({});
+    const data = await response.json();
+
     if (data.statusCode == 200) {
       setAlertMessage("Role has been created successfully", {
         type: "success",

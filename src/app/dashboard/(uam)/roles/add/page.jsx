@@ -1,43 +1,53 @@
 import RolesAdd from "@/components/uam/roles/add";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
 import { BASE_URL } from "@/lib/constants";
+import { cookies } from "next/headers";
 
-async function getDepartments(authToken) {
-  const url = `${BASE_URL}departments/system/`;
-  console.log(url);
+async function getDepartments(url, token) {
   const response = await fetch(url, {
     headers: {
-      Authorization: `Bearer ${authToken}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
   const data = await response.json();
 
-  return data;
+  return {
+    data,
+    error: !response.status.toString().startsWith("2"), // boolean of whether the was an error or not
+  };
 }
 
-async function getPermissions(authToken) {
-  const url = `${BASE_URL}permissions/system/`;
-  console.log(url);
+async function getPermissions(url, token) {
   const response = await fetch(url, {
     headers: {
-      Authorization: `Bearer ${authToken}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
   const data = await response.json();
 
-  return data;
+  return {
+    data,
+    error: !response.status.toString().startsWith("2"), // bool. whether there was an error or not
+  };
 }
-
-const token = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJ7XCJpZFwiOlwidHl1aW9vamhnNjc4OVwifSIsImlhdCI6MTcwODA3NzcxNiwiZXhwIjoxNzA4MTA2NTE2fQ.9Py3LLg7HerSqSNe5biv8ehK7fkCWINJA0MHIYLbW9E`;
 
 export default async function Page() {
-  const departmentsData = await getDepartments(token);
-  const permissionsData = await getPermissions(token);
+  const authToken = cookies().get("token").value;
+  const permissionsUrl = `${BASE_URL}permissions/system/`;
+  const departmentsUrl = `${BASE_URL}departments/system/`;
 
-  const departments = departmentsData.data;
-  const permissions = permissionsData.data;
+  const departmentsPromise = getDepartments(departmentsUrl, authToken);
+  const permissionsPromise = getPermissions(permissionsUrl, authToken);
+
+  const [departmentsData, permissionsData] = await Promise.all([
+    departmentsPromise,
+    permissionsPromise,
+  ]);
+
+  const departments = departmentsData?.data?.data || [];
+  const permissions = permissionsData?.data?.data || [];
 
   return (
     <DashboardContentWrapper>
