@@ -1,7 +1,7 @@
 import RolesList from "@/components/uam/roles/list";
 import { getRoles, getRolesCount } from "@/demo-db/role";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
-import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
+import { BASE_URL, DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 import { convertToNumber, filterObject } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { cache } from "react";
@@ -10,12 +10,9 @@ async function getUser() {
   // refresh
 }
 
+const token = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJ7XCJpZFwiOlwidHl1aW9vamhnNjc4OVwifSIsImlhdCI6MTcwODA3NzcxNiwiZXhwIjoxNzA4MTA2NTE2fQ.9Py3LLg7HerSqSNe5biv8ehK7fkCWINJA0MHIYLbW9E`;
+
 const filtersWhiteList = ["role", "department", "description", "createdBy"];
-const breadcrumbItems = [
-  {
-    label: "Roles",
-  },
-];
 
 export default async function Page({ searchParams }) {
   const { page, rows, ...filters } = searchParams;
@@ -24,19 +21,31 @@ export default async function Page({ searchParams }) {
     ? convertToNumber(rows)
     : DEFAULT_ROWS_PER_PAGE;
 
-  const where = filterObject(filters, filtersWhiteList);
+  const applicableFilters = filterObject(filters, filtersWhiteList);
 
-  const rolesPromise = getRoles({
-    take: rowsPerPage,
-    skip: (currentPage - 1) * rowsPerPage,
-    where,
+  const queryString = new URLSearchParams({
+    ...applicableFilters,
+    page: currentPage,
+    limit: rowsPerPage,
+  }).toString();
+
+  console.log(queryString);
+
+  const url = `${BASE_URL}roles?${queryString}`;
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
-  const countPromise = getRolesCount(where);
+  const data = await response.json();
 
-  const [count, roles] = await Promise.all([countPromise, rolesPromise]);
+  const roles = data?.data?.data || [];
 
-  const totalPages = Number(count) / rowsPerPage;
+  const count = data?.data?.total || -1;
+
+  const totatlPages = count > 0 ? Number(count) / rowsPerPage : 1;
 
   return (
     <DashboardContentWrapper breadcrumbOmit={["uam"]}>
@@ -44,7 +53,7 @@ export default async function Page({ searchParams }) {
         data={roles}
         currentPage={currentPage}
         rowsPerPage={rowsPerPage}
-        totalPages={totalPages}
+        totalPages={totatlPages}
         count={count}
       />
     </DashboardContentWrapper>
