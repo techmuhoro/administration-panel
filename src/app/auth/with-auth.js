@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 export const withAuth = () => {
   const cookiesList = cookies();
-  const hasCookie = cookiesList.has("iPayAdmin");
+  const hasCookie = cookiesList.has("token");
   if (hasCookie) {
     redirect("/");
   }
