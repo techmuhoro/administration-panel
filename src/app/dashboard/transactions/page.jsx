@@ -3,6 +3,7 @@ import TransactionsList from "@/components/transactions/list";
 import { convertToNumber, filterObject } from "@/lib/utils";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 import { getTransactions, getTransactionsCount } from "@/demo-db/transactions";
+import { withAuth } from "@/app/auth/with-auth";
 
 const filtersWhiteList = ["customer", "transaction_id", "amount", "category"];
 const breadcrumbItems = [
@@ -11,6 +12,7 @@ const breadcrumbItems = [
 ];
 
 export default async function Page({ searchParams }) {
+  withAuth();
   const { page, rows, ...filters } = searchParams;
   const currentPage = convertToNumber(page) ? convertToNumber(page) : 1;
   const rowsPerPage = convertToNumber(rows)

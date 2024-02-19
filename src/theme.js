@@ -44,6 +44,14 @@ const theme = createTheme({
         size: "small",
         disableElevation: true,
       },
+      styleOverrides: {
+        root: {
+          boxShadow: "none",
+          borderRadius: "3px",
+          textTransform: "capitalize",
+          fontSize: "14px",
+        },
+      },
     },
 
     MuiTextField: {

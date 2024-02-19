@@ -3,9 +3,13 @@
 "use client";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import counterReducer from "./redux/feutures/counterSlice";
+import getReducer from "./redux/demo/getdemoSlice";
+import postReducer from "./redux/demo/postdemoSlice";
 
 const rootReducer = combineReducers({
   counter: counterReducer,
+  getReducer,
+  postReducer,
   //add all your reducers here
 });
 
