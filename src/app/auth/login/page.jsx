@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -19,6 +19,8 @@ import AuthWrapper from "../authWrapper";
 
 function Login() {
   const router = useRouter();
+  const queryParams = useSearchParams();
+  const nextLink = queryParams.get("next") || "";
 
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", tyep: "" });
@@ -41,7 +43,9 @@ function Login() {
         console.log(response);
         if (response.data.status === "SUCCESS") {
           Cookies.set("token", response.data.data.token);
-          router.replace("/auth/otp?otp=true");
+          router.replace(
+            `/auth/otp?otp=true${nextLink ? `&next=${nextLink}` : ""}`
+          );
         } else {
           setAlert({
             message: "Something went wrong. Kindly conact support",
