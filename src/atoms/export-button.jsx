@@ -2,6 +2,7 @@
 
 import { useCallback, useState, useRef, useEffect } from "react";
 import Grid from "@mui/material/Grid";
+import LoadingIndicator from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -15,6 +16,7 @@ import TableViewIcon from "@mui/icons-material/TableView";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 
 function ExportButton({
   variant = "outlined",
@@ -145,6 +147,8 @@ function ExportDatesPrompt({
   handleMenuOpen,
   handleExport,
 }) {
+  const setAlertMessage = useNotifyAlertCtx();
+
   useEffect(() => {
     // Important! This makes the Menu re-adjust its dimensions
     handleMenuOpen();
@@ -156,18 +160,47 @@ function ExportDatesPrompt({
       toDate: `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
     },
     validationSchema: dateFieldsSchema,
-    onSubmit: async (values) => {
+    onSubmit: async (values, actions) => {
       // alert(JSON.stringify(values, null, 2));
       try {
-        const result = await handleExport({
+        const [downloadFormat, downloadUrl] = await handleExport({
           from: values.fromDate,
           to: values?.toDate,
           format: exportFormat,
         });
 
-        console.log(result);
+        setAlertMessage("Your document should download shortly", {
+          type: "success",
+          openDuration: 8000,
+          closeOnClickAway: true,
+        });
+        actions.setSubmitting(false);
+
+        const link = document.createElement("a");
+        const crumbleTxt = parseInt(Math.random() * 1e12, 10)
+          .toString(36)
+          .substring(5, 10);
+        link.href = downloadUrl;
+        link.hidden = true;
+        link.setAttribute(
+          "download",
+          `Ipay_Account_activity_logs(${values.fromDate}_to_${values.toDate})_${crumbleTxt}.${downloadFormat}`
+        );
+        document.body.appendChild(link);
+        link.click();
+
+        handleClose();
       } catch (error) {
-        console.log("Oh no! An error occured while trying to export");
+        console.log(error?.message);
+        setAlertMessage(
+          "Oh no! Your file could not be downloaded at this time. Please try again later.",
+          {
+            type: "error",
+            openDuration: 5000,
+            closeOnClickAway: true,
+          }
+        );
+        handleClose();
       }
     },
   });
@@ -256,8 +289,13 @@ function ExportDatesPrompt({
           variant="contained"
           sx={{ flexGrow: 1 }}
           onClick={formikBag.handleSubmit}
+          disabled={formikBag.isSubmitting}
         >
-          Export
+          {formikBag.isSubmitting ? (
+            <LoadingIndicator color="inherit" size={20} />
+          ) : (
+            "Export"
+          )}
         </Button>
         <Button
           color="secondary"

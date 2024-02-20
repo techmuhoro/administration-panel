@@ -24,15 +24,16 @@ export default function AuditsExport() {
     //   format,
     // });
     config.params = { from, to, format };
+    config.responseType = "blob";
     try {
       const response = await axios(config);
 
-      console.log("Handle Export func ran Successfully!");
+      const url = window.URL.createObjectURL(new Blob([response.data]));
 
-      return response;
+      return [format, url];
     } catch (error) {
       console.log("Handle Export func Encountered an Error!");
-      return error;
+      throw new Error(error);
     }
   }
 

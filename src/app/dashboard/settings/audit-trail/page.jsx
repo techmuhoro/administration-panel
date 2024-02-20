@@ -40,6 +40,7 @@ export default async function AuditTrail({ searchParams }) {
       const parsedResults = new UAParser(uaStr).getResult();
       const newValue = {
         ...currentVal.attributes,
+        id: currentVal.id,
         userAgent: {
           uaStr: parsedResults.ua,
           browser:
