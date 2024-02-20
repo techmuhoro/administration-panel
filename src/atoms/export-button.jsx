@@ -36,6 +36,7 @@ export default function ExportButton({
         variant={variant}
         color={color}
         onClick={handleOpen}
+        size="small"
       >
         {label}
       </Button>

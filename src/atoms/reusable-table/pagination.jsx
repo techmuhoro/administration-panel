@@ -85,7 +85,7 @@ export default function TablePagination({
         <Typography>Rows:</Typography>
 
         <select
-          defaultValue={DEFAULT_ROWS_PER_PAGE}
+          defaultValue={rowsPerPage || DEFAULT_ROWS_PER_PAGE}
           onChange={(event) => handleRowsPerPageChange(event.target.value)}
         >
           <option value="5">5</option>

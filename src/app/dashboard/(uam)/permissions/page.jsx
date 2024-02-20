@@ -1,16 +1,17 @@
-import { cookies } from "next/headers";
-import RolesList from "@/components/uam/roles/list";
+import PermissionsList from "@/components/uam/permissions/list";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
-import { BASE_URL, DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 import { convertToNumber, filterObject } from "@/lib/utils";
+import { DEFAULT_ROWS_PER_PAGE, BASE_URL } from "@/lib/constants";
+import { cookies } from "next/headers";
 
-async function getRoles(url, token) {
+async function getPermissions(url, token) {
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
   });
+
   const data = await response.json();
 
   return {
@@ -19,7 +20,7 @@ async function getRoles(url, token) {
   };
 }
 
-const filtersWhiteList = ["role", "department", "description", "createdBy"];
+const filtersWhiteList = ["name", "parentName", "slug"];
 
 export default async function Page({ searchParams }) {
   const { page, rows, ...filters } = searchParams;
@@ -36,19 +37,19 @@ export default async function Page({ searchParams }) {
     limit: rowsPerPage,
   }).toString();
 
-  const url = `${BASE_URL}roles?${queryString}`;
+  const url = `${BASE_URL}permissions?${queryString}`;
   const authToken = cookies().get("token").value;
 
-  const { data } = await getRoles(url, authToken);
+  const { data } = await getPermissions(url, authToken);
 
-  const roles = data?.data?.data || [];
+  const permissions = data?.data?.data || [];
   const count = data?.data?.total || -1;
   const totalPages = count > 0 ? Number(count) / rowsPerPage : 1;
 
   return (
-    <DashboardContentWrapper breadcrumbOmit={["uam"]}>
-      <RolesList
-        data={roles}
+    <DashboardContentWrapper>
+      <PermissionsList
+        data={permissions}
         currentPage={currentPage}
         rowsPerPage={rowsPerPage}
         totalPages={totalPages}

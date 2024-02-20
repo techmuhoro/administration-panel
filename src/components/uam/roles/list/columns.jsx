@@ -3,28 +3,21 @@ import RolesActions from "./actions";
 
 export const columns = [
   {
-    assessor: "id",
+    assessor: "autoincrement()",
     label: "S/N",
   },
   {
-    assessor: "role",
+    assessor: "attributes.name",
     label: "Role",
   },
   {
-    assessor: "department",
+    assessor: "attributes.departmentName",
     label: "Department",
   },
+
   {
-    assessor: "description",
-    label: "Description",
-  },
-  {
-    assessor: "createdAt",
+    assessor: "attributes.createdAt",
     label: "created At",
-  },
-  {
-    assessor: "createdBy",
-    label: "Created By",
   },
 
   {

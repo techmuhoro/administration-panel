@@ -73,19 +73,12 @@ function FilterPopover({ open, anchorEl, handleClose, handleClearFilters }) {
   const router = useRouter();
 
   useEffect(() => {
-    console.log(convertStringSearchParamsToObj(querySearchParams.toString()));
     setFilters((prev) => {
-      console.log("prev", prev);
-      console.log(
-        "url",
-        convertStringSearchParamsToObj(querySearchParams.toString())
-      );
-
       const newFilters = {
         ...prev,
         ...convertStringSearchParamsToObj(querySearchParams.toString()),
       };
-      console.log("new", newFilters);
+
       return newFilters;
     });
   }, [querySearchParams]);

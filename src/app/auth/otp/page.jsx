@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useState } from "react";
 
@@ -17,6 +17,8 @@ import MuiAlert from "@/atoms/MuiAlert";
 
 function Otp() {
   const router = useRouter();
+  const queryParams = useSearchParams();
+  const nextLink = queryParams.get("next") || "";
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -46,7 +48,7 @@ function Otp() {
       .then((response) => {
         if (response.data.status === "SUCCESS") {
           Cookies.set("token", response.data.data.token);
-          router.replace("/dashboard");
+          router.replace(nextLink ? nextLink : "/dashboard");
         }
       })
       .catch((error) => {

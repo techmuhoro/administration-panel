@@ -35,6 +35,22 @@ const StyledContainer = styled(Box)(({ theme }) => ({
   borderRadius: "5px !important",
 }));
 
+function getObjValueByPath(obj, path) {
+  const keys = path.split(".");
+
+  let value = obj;
+
+  for (let key of keys) {
+    if (value.hasOwnProperty(key)) {
+      value = value[key];
+    } else {
+      return undefined;
+    }
+  }
+
+  return value;
+}
+
 export default function ReusableTable({
   data,
   columns,
@@ -44,6 +60,25 @@ export default function ReusableTable({
   rowsPerPage,
   paginate = true,
 }) {
+  // function to simplify the logic of display the cell content
+  const getCellValue = ({ item, assessor, cell, index }) => {
+    // support for auto incrementing column / serial
+    if (assessor === "autoincrement()") {
+      return index + 1;
+    }
+
+    // support for callback function
+    if (cell && typeof cell === "function") {
+      return cell({
+        row: item,
+        cell: getObjValueByPath(item, assessor),
+      });
+    }
+
+    // the raw value
+    return getObjValueByPath(item, assessor);
+  };
+
   return (
     <TableContainer component={StyledContainer}>
       <Table>
@@ -61,18 +96,18 @@ export default function ReusableTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {data?.map((item) => (
+          {data?.map((item, rowIndex) => (
             <StyledTableRow key={item.id}>
               {columns?.map(({ label, assessor, cell, visible }) => {
                 if (visible === undefined || visible === true) {
                   return (
                     <StyledTableCell key={`${item.id}-${label}-${assessor}`}>
-                      {cell && typeof cell === "function"
-                        ? cell({
-                            row: item,
-                            cell: item[assessor],
-                          })
-                        : item[assessor]}
+                      {getCellValue({
+                        item,
+                        cell,
+                        assessor,
+                        index: rowIndex,
+                      })}
                     </StyledTableCell>
                   );
                 }
