@@ -5,6 +5,7 @@ import { DEFAULT_ROWS_PER_PAGE, BASE_URL } from "@/lib/constants";
 import { cookies } from "next/headers";
 
 async function getPermissions(url, token) {
+  console.log(url);
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,

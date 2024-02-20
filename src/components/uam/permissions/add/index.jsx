@@ -1,28 +1,35 @@
 "use client";
+import { Input, Select } from "@/atoms/form";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Unstable_Grid2/Grid2";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+import LoadingButton from "@/atoms/loading-button";
+import AddIcon from "@mui/icons-material/Add";
 
 import { Formik, Form } from "formik";
+import PermissionForm from "../form";
 
-export default function PermissionsAdd() {
+export default function PermissionsAdd({ categories }) {
+  const handleSumnit = (values, { setSubmitting }) => {
+    console.log(values);
+    console.log("To create");
+
+    const payload = {
+      name: "",
+      critical: "",
+      parentId: values.parentId === "none" ? null : values.parentId,
+      description: values?.description || "",
+      permissions: values.permissions
+        .filter((value) => !!value)
+        .map((value) => ({ name: value })),
+    };
+  };
+
   return (
     <>
-      <Box>
-        <Typography component="h1" variant="h5" mb={1}>
-          Create a new role
-        </Typography>
-
-        <Box
-          sx={{
-            // border: "1px solid gray",
-            maxWidth: "600px",
-            mx: "auto",
-            borderRadius: "5px",
-          }}
-        >
-          <Typography>Add New Permission</Typography>
-        </Box>
-      </Box>
+      <PermissionForm handleSubmit={handleSumnit} categories={categories} />
     </>
   );
 }

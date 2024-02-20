@@ -1,3 +1,6 @@
+"use client";
+import PermissionActions from "./actions";
+
 export const columns = [
   {
     assessor: "autoincrement()",
@@ -22,5 +25,9 @@ export const columns = [
   {
     assessor: "attributes.createdAt",
     label: "Created At",
+  },
+  {
+    assessor: "actions",
+    cell: ({ row }) => <PermissionActions row={row} />,
   },
 ];

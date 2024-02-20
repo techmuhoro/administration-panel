@@ -14,6 +14,7 @@ async function getDepartments(url, token) {
 
   return {
     data,
+    response,
     error: !response.status.toString().startsWith("2"), // boolean of whether the was an error or not
   };
 }
@@ -46,7 +47,7 @@ export default async function Page() {
     permissionsPromise,
   ]);
 
-  const departments = departmentsData?.data?.data || [];
+  const departments = departmentsData?.data?.data?.message || [];
   const permissions = permissionsData?.data?.data || [];
 
   return (

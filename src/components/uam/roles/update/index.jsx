@@ -7,9 +7,17 @@ const data = {
   department: "DevOps",
   description: "This as short message",
 };
-export default function RolesUpdate() {
+export default function RolesUpdate({ role, departments }) {
   function handleSubmit() {
     console.log("updating...");
   }
-  return <RoleForm handleSubmit={handleSubmit} data={data} isUpdate={false} />;
+
+  return (
+    <RoleForm
+      handleSubmit={handleSubmit}
+      data={role}
+      departments={departments}
+      isUpdate={true}
+    />
+  );
 }
