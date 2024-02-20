@@ -1,23 +1,40 @@
 "use client";
 
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useSearchParams } from "next/navigation";
+
 import ExportButton from "@/atoms/export-button";
 
-export default function AuditsExport() {
-  const handleExport = (type) => {
-    if (type === "pdf") {
-      alert("To export in pdf");
-      return;
-    }
-    if (type === "csv") {
-      alert("To export in csv");
-      return;
-    }
+const authTkn = Cookies.get("token");
+const config = {
+  url: `${process.env.NEXT_PUBLIC_API_BASE_URL}audit/export`,
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${authTkn}`,
+  },
+};
 
-    if (type === "xlsx") {
-      alert("To export in excel");
-      return;
+export default function AuditsExport() {
+  console.log({ config });
+  async function handleExport({ from, to, format }) {
+    // console.log("Handle Export called with these values: ", {
+    //   from,
+    //   to,
+    //   format,
+    // });
+    config.params = { from, to, format };
+    try {
+      const response = await axios(config);
+
+      console.log("Handle Export func ran Successfully!");
+
+      return response;
+    } catch (error) {
+      console.log("Handle Export func Encountered an Error!");
+      return error;
     }
-  };
+  }
 
   return <ExportButton handleExport={handleExport} />;
 }

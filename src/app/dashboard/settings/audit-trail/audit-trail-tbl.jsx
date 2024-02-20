@@ -8,7 +8,8 @@ import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper
 import AuditsFilter from "./tbl-traits/filter";
 import AuditsExport from "./tbl-traits/audits-export";
 
-function AuditTrailTbl({ data, columnTraits }) {
+function AuditTrailTbl({ data, columnTraits, paginationData }) {
+  // console.log({ data });
   return (
     <DashboardContentWrapper>
       <Typography component="h1" variant="h5">
@@ -19,7 +20,7 @@ function AuditTrailTbl({ data, columnTraits }) {
         <AuditsFilter />
         <AuditsExport />
       </Stack>
-      <ReusableTable data={data} columns={columnTraits} />
+      <ReusableTable data={data} columns={columnTraits} {...paginationData} />
     </DashboardContentWrapper>
   );
 }

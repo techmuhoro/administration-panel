@@ -15,7 +15,7 @@ import Stack from "@mui/material/Stack";
 import { convertStringSearchParamsToObj, filterObject } from "@/lib/utils";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 
-function TransactionsFilter() {
+function AuditTrailFilter() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [addedFiltersCount, setAddedFiltersCount] = useState(0);
   const popoverRefKey = useRef("kjxQl4d");
@@ -78,9 +78,8 @@ function TransactionsFilter() {
 
 function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
   const [filters, setFilters] = useState({
-    user: "",
-    ip_addr: "",
-    time: "",
+    from: "",
+    to: "",
   });
   const pathname = usePathname();
   const querySearchParams = useSearchParams();
@@ -91,7 +90,7 @@ function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
     const filterObj = convertStringSearchParamsToObj(
       querySearchParams.toString()
     );
-    // Below method, sifts out pagination filters and use only table data filters
+    // Below method, sifts out pagination filters and use only 'data' filters
     const siftedFilterObj = Object.keys(filters).reduce(
       (pileValue, filterKey) => {
         if (filterObj[filterKey]) {
@@ -154,7 +153,7 @@ function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
     handleClose();
   };
 
-  const popoverId = open ? "transaction-filter-popover" : undefined;
+  const popoverId = open ? "audit-trail-filter-popover" : undefined;
   return (
     <Popover
       id={popoverId}
@@ -175,46 +174,37 @@ function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
           Filter by
         </Typography>
 
-        <Grid container rowGap={1} columnGap={2} sx={{ mb: 2 }}>
-          <Grid sm={12} md={5.5}>
+        <Grid container rowGap={1} sx={{ mb: 2 }}>
+          <Grid sm={12} md={5}>
             <TextField
-              label="user"
+              label="From Date"
               size="small"
-              name="user"
-              value={filters.user}
+              name="from"
+              placeholder="YYYY-MM-DD"
+              value={filters.from}
               onChange={handleFilterChange}
             />
           </Grid>
-
-          <Grid sm={12} md={5.5}>
+          <Grid
+            sm={2}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <span style={{ fontWeight: 700 }}>-</span>
+          </Grid>
+          <Grid sm={12} md={5}>
             <TextField
-              label="IP address"
-              name="ip_addr"
+              label="To Date"
               size="small"
-              value={filters.ip_addr}
+              name="to"
+              placeholder="YYYY-MM-DD"
+              value={filters.to}
               onChange={handleFilterChange}
             />
           </Grid>
-
-          <Grid sm={12} md={5.5}>
-            <TextField
-              label="Date/Time"
-              size="small"
-              name="time"
-              value={filters.time}
-              onChange={handleFilterChange}
-            />
-          </Grid>
-
-          {/* <Grid sm={12} md={5.5}>
-            <TextField
-              label="Amount"
-              size="small"
-              name="amount"
-              value={filters.amount}
-              onChange={handleFilterChange}
-            />
-          </Grid> */}
         </Grid>
 
         <Stack direction={"row"}>
@@ -233,4 +223,4 @@ function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
   );
 }
 
-export default TransactionsFilter;
+export default AuditTrailFilter;

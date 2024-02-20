@@ -1,23 +1,22 @@
 "use client";
 
+import UserAgentCell from "../user-agent-cell";
+
 // import TransactionDetails from "./details";
 
 export const columns = [
   {
-    assessor: "email",
-    label: "User",
-  },
-  {
     assessor: "description",
-    label: "Details",
+    label: "Activity",
   },
   {
     assessor: "ip",
     label: "IP adress",
   },
   {
-    assessor: "browser",
+    assessor: "userAgent",
     label: "User Agent",
+    cell: (celldata) => <UserAgentCell data={celldata} />,
   },
   {
     assessor: "createdAt",
