@@ -36,7 +36,7 @@ function ExportButton({
     [setExportFormat]
   );
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = () => {
     if (menuTriggerBtnRef.current) setAnchorEl(menuTriggerBtnRef.current);
   };
   const handleClose = () => setAnchorEl(null);
@@ -136,8 +136,8 @@ function ExportFormatPrompt({ handleClose, setFormat }) {
 }
 
 const dateFieldsSchema = yup.object({
-  fromDate: yup.string("Enter FROM date").required("FROM date is required"),
-  toDate: yup.string("Enter TO date").required("TO date is required"),
+  fromDate: yup.string().required("FROM date is required"),
+  toDate: yup.string().required("TO date is required"),
 });
 const today = new Date();
 function ExportDatesPrompt({
@@ -157,19 +157,19 @@ function ExportDatesPrompt({
   const formikBag = useFormik({
     initialValues: {
       fromDate: "",
-      toDate: `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
+      toDate: `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`,
     },
     validationSchema: dateFieldsSchema,
     onSubmit: async (values, actions) => {
       // alert(JSON.stringify(values, null, 2));
       try {
-        const [downloadFormat, downloadUrl] = await handleExport({
+        const [fileFormat, downloadUrl] = await handleExport({
           from: values.fromDate,
           to: values?.toDate,
           format: exportFormat,
         });
 
-        setAlertMessage("Your document should download shortly", {
+        setAlertMessage("Your file should download shortly", {
           type: "success",
           openDuration: 8000,
           closeOnClickAway: true,
@@ -179,21 +179,25 @@ function ExportDatesPrompt({
         const link = document.createElement("a");
         const crumbleTxt = parseInt(Math.random() * 1e12, 10)
           .toString(36)
-          .substring(5, 10);
+          .substring(4, 10);
         link.href = downloadUrl;
         link.hidden = true;
         link.setAttribute(
           "download",
-          `Ipay_Account_activity_logs(${values.fromDate}_to_${values.toDate})_${crumbleTxt}.${downloadFormat}`
+          `Ipay_Account_activity_logs(${values.fromDate}_to_${values.toDate})_${crumbleTxt}.${fileFormat}`
         );
         document.body.appendChild(link);
-        link.click();
+        setTimeout(() => {
+          link.click();
+        }, 2200);
 
         handleClose();
       } catch (error) {
+        console.group("Handle Export error");
         console.log(error?.message);
+        console.groupEnd();
         setAlertMessage(
-          "Oh no! Your file could not be downloaded at this time. Please try again later.",
+          "Oh no! Your file could not be generated at this time. Please try again later.",
           {
             type: "error",
             openDuration: 5000,

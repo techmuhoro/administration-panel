@@ -51,7 +51,7 @@ export default function TablePagination({
   function getPaginationLabel() {
     const start = (currentPage - 1) * rowsPerPage + 1;
     const end = currentPage * rowsPerPage;
-    return `${start} - ${end} of ${count}`;
+    return `${start} - ${end > count ? count : end} of ${count}`;
   }
 
   function getPaginationLink(page) {

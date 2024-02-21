@@ -2,7 +2,6 @@
 
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useSearchParams } from "next/navigation";
 
 import ExportButton from "@/atoms/export-button";
 
@@ -15,14 +14,8 @@ const config = {
   },
 };
 
-export default function AuditsExport() {
-  console.log({ config });
+function AuditsExport() {
   async function handleExport({ from, to, format }) {
-    // console.log("Handle Export called with these values: ", {
-    //   from,
-    //   to,
-    //   format,
-    // });
     config.params = { from, to, format };
     config.responseType = "blob";
     try {
@@ -32,10 +25,11 @@ export default function AuditsExport() {
 
       return [format, url];
     } catch (error) {
-      console.log("Handle Export func Encountered an Error!");
       throw new Error(error);
     }
   }
 
   return <ExportButton handleExport={handleExport} />;
 }
+
+export default AuditsExport;

@@ -3,30 +3,32 @@ import { cookies } from "next/headers";
 import UAParser from "ua-parser-js";
 
 import AuditTrailTbl from "./audit-trail-tbl";
-import { sampleData } from "./sample-data";
 import { columns } from "./tbl-traits/columns";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 
-const authTkn = cookies().get("token").value;
 const config = {
   url: `${process.env.NEXT_PUBLIC_API_BASE_URL}audit/logs`,
   method: "GET",
-  headers: {
-    Authorization: `Bearer ${authTkn}`,
-  },
 };
 
 export default async function AuditTrail({ searchParams }) {
+  // console.log({ AuthToken: authTkn, "Config-0bj": config });
   let tblData = [];
   let paginationData = {};
 
   try {
+    const authTkn = cookies().get("token").value;
+    config.headers = {
+      Authorization: `Bearer ${authTkn}`,
+    };
     config.params = {
       limit: parseInt(searchParams?.rows, 10) || DEFAULT_ROWS_PER_PAGE,
       page: parseInt(searchParams?.page, 10) || 1,
+      ...(searchParams?.from && { from: searchParams.from }),
+      ...(searchParams?.to && { to: searchParams.to }),
     };
-    const dataResponse = await axios(config).then((res) => res.data);
 
+    const dataResponse = await axios(config).then((res) => res.data);
     const auditInfoResults = dataResponse.data.data;
     paginationData = {
       count: dataResponse.data.total,
@@ -54,7 +56,7 @@ export default async function AuditTrail({ searchParams }) {
       return accm;
     }, []);
   } catch (err) {
-    console.log(err);
+    console.log("err occured:: ", err?.message);
     tblData = [];
     paginationData = {
       count: 0,

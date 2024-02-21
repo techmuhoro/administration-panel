@@ -1,5 +1,3 @@
-// "use client";
-
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 
@@ -16,7 +14,7 @@ function AuditTrailTbl({ data, columnTraits, paginationData }) {
         Audit Trail
       </Typography>
 
-      <Stack direction="row" justifyContent={"flex-end"} columnGap={1} mb={1}>
+      <Stack direction="row" justifyContent="flex-end" columnGap={1} mb={1}>
         <AuditsFilter />
         <AuditsExport />
       </Stack>
