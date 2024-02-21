@@ -21,7 +21,7 @@ import LoadingButton from "@/atoms/loading-button";
 const errorLookUp = {
   401: "You are Unauthenticated",
   403: "You don not have permission to perform this action",
-  406: "There is an error in your form",
+  // 406: "There is an error in your form",
   500: "An internal server error occurred. Kindly contact Admin.",
 };
 export default function PermissionDelete({ permission }) {

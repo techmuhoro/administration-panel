@@ -43,20 +43,31 @@ export default function PermissionUpdate({ permission }) {
 
     const payload = {
       name: values?.name,
-      critical: values?.critical,
       parentId: permission?.attributes?.parentId,
-      description: values?.description,
     };
 
+    if (values.parentCritical) {
+      payload.parentCritical = values.parentCritical;
+    }
+    if (values.parentName) {
+      payload.parentName = values.parentName;
+    }
+    if (values.parentDescription) {
+      payload.parentDescription = values.parentDescription;
+    }
+
     const url = `${BASE_URL}permissions/${permission?.id}`;
+
+    // make request
   };
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Required"),
-    critical: Yup.string()
+    parentName: Yup.string().required("Required"),
+    parentCritical: Yup.string()
       .required("Required")
-      .oneOf(["0", "1"], "Critical can only be Yes or No"),
-    description: Yup.string().required("Required"),
+      .oneOf(["false", "true"], "Critical can only be Yes or No"),
+    parentDescription: Yup.string().required("Required"),
   });
 
   return (
@@ -92,7 +103,7 @@ export default function PermissionUpdate({ permission }) {
                 parentCritical:
                   permission?.includes?.attributes?.parentCritical || "",
                 parentDescription:
-                  permission?.includes?.attributes?.description || "",
+                  permission?.includes?.attributes?.parentDescription || "",
               }}
               validationSchema={validationSchema}
               onSubmit={handleUpdate}
