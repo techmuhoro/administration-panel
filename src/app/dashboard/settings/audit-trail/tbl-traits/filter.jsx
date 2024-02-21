@@ -177,10 +177,10 @@ function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
         <Grid container rowGap={1} sx={{ mb: 2 }}>
           <Grid sm={12} md={5}>
             <TextField
-              label="From Date"
+              type="date"
+              //label="From Date"
               size="small"
               name="from"
-              placeholder="YYYY-MM-DD"
               value={filters.from}
               onChange={handleFilterChange}
             />
@@ -197,10 +197,9 @@ function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
           </Grid>
           <Grid sm={12} md={5}>
             <TextField
-              label="To Date"
+              type="date"
               size="small"
               name="to"
-              placeholder="YYYY-MM-DD"
               value={filters.to}
               onChange={handleFilterChange}
             />
