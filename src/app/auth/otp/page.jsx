@@ -47,19 +47,27 @@ function Otp() {
     axios(config)
       .then((response) => {
         if (response.data.status === "SUCCESS") {
-          Cookies.set("token", response.data.data.token);
-          router.replace(nextLink ? nextLink : "/dashboard");
+          Cookies.set("token", response.data.data.includes.token);
+          router.replace("/dashboard");
+          setLoading(false);
+        } else {
+          setAlert({
+            message: "Something went wrong. Kindly contact support",
+            type: "error",
+          });
         }
       })
       .catch((error) => {
-        console.log("ERR", error);
         if (error.response === undefined) {
           setAlert({
             message: "Something went wrong. Kindly contact support",
             type: "error",
           });
         } else if (error.response.status === 401) {
-          setAlert({ type: "error", message: error.response.data.error });
+          setAlert({
+            type: "error",
+            message: error.response.data.error.message,
+          });
         } else if (error.response.status === 406) {
           setAlert({
             type: "error",
@@ -136,10 +144,10 @@ function Otp() {
       {alert.message !== "" && alert.type !== "" && (
         <MuiAlert variant={alert.type} message={alert.message} />
       )}
-      <MuiAlert
+      {/* <MuiAlert
         variant="success"
         message="A One Time Password has been sent to your Email or Phone"
-      />
+      /> */}
     </AuthWrapper>
   );
 }
