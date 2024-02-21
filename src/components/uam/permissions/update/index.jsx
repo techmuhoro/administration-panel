@@ -49,11 +49,6 @@ export default function PermissionUpdate({ permission }) {
     };
 
     const url = `${BASE_URL}permissions/${permission?.id}`;
-
-    // make a fetch request
-
-    console.log(url);
-    console.log(payload);
   };
 
   const validationSchema = Yup.object({
@@ -93,8 +88,10 @@ export default function PermissionUpdate({ permission }) {
             <Formik
               initialValues={{
                 name: permission?.attributes?.name || "",
-                critical: "0",
-                description: permission?.attributes?.description || "",
+                critical:
+                  permission?.includes?.attributes?.parentCritical || "",
+                description:
+                  permission?.includes?.attributes?.description || "",
               }}
               validationSchema={validationSchema}
               onSubmit={handleUpdate}
@@ -105,8 +102,8 @@ export default function PermissionUpdate({ permission }) {
                     <Input name="name" label="Name" />
 
                     <Select name="critical" label="Critical?">
-                      <MenuItem value="0">No</MenuItem>
-                      <MenuItem value="1">Yes</MenuItem>
+                      <MenuItem value="false">No</MenuItem>
+                      <MenuItem value="true">Yes</MenuItem>
                     </Select>
 
                     <Input

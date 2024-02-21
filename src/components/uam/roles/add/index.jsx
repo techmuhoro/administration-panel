@@ -23,8 +23,6 @@ export default function RolesAdd({ departments, permissions }) {
       permissions: truthyPermissions,
     };
     const url = `${BASE_URL}roles`;
-    console.log(url);
-    console.log(payload);
 
     const response = await fetch(url, {
       method: "POST",

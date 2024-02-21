@@ -72,7 +72,7 @@ export default function RoleForm({
           initialValues={{
             name: data?.attributes?.name || "",
             department: data?.attributes?.departmentId || "",
-            description: data?.description || "",
+            // description: data?.description || "",
             permissions: [...getShapedPermissions()],
           }}
           validationSchema={validationSchema}
@@ -152,7 +152,7 @@ export default function RoleForm({
                 variant="contained"
                 type="submit"
               >
-                Create
+                {isUpdate ? "Update" : "Create"}
               </LoadingButton>
             </Form>
           )}

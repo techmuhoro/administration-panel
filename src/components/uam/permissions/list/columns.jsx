@@ -7,7 +7,7 @@ export const columns = [
     label: "S/N",
   },
   {
-    assessor: "attributes.parentName",
+    assessor: "includes.attributes.parentName",
     label: "Group",
   },
   {

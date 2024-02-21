@@ -13,7 +13,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import RoleView from "../view";
+import RoleView from "../view/role-view-modal";
 import RoleDelete from "../delete";
 import Link from "next/link";
 
@@ -53,7 +53,15 @@ export default function RolesActions({ row }) {
         </Typography>
         <Divider />
 
-        <RoleView row={row} />
+        {/* <RoleView row={row} /> */}
+        <Link href={`/dashboard/roles/view/${row.id}`}>
+          <MenuItem onClick={handleClose}>
+            <Stack direction="row" alignItems={"center"} columnGap={1}>
+              <VisibilityIcon sx={{ fontSize: "1rem" }} />
+              <Typography>View</Typography>
+            </Stack>
+          </MenuItem>
+        </Link>
         <Link href={`/dashboard/roles/update/${row.id}`}>
           <MenuItem onClick={handleClose}>
             <Stack direction="row" alignItems={"center"} columnGap={1}>

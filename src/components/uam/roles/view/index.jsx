@@ -13,22 +13,8 @@ import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckIcon from "@mui/icons-material/Check";
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "80%",
-  maxHeight: "90vh",
-  overflowY: "auto",
-  bgcolor: "background.paper",
-  border: (theme) => `2px solid ${theme.palette.border.main}`,
-  borderRadius: "5px",
-};
-
-export default function RoleView({ row }) {
+export default function RoleView({ row, role }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -42,139 +28,127 @@ export default function RoleView({ row }) {
 
   const permissions = Array(50).fill("create_user");
 
-  return (
-    <>
-      <MenuItem onClick={handleOpen}>
-        <Stack direction="row" alignItems={"center"} columnGap={1}>
-          <VisibilityIcon sx={{ fontSize: "1rem" }} />
-          <Typography>View</Typography>
-        </Stack>
-      </MenuItem>
+  const assignedPermissions = [];
+  for (let category of role?.attributes?.defaultPermissions) {
+    // flatten the permissions of category
+    for (let perm of category.attributes.permissions) {
+      if (perm.value === true || perm.value === "true") {
+        assignedPermissions.push(perm);
+      }
+    }
+  }
 
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Box component="header" sx={{ px: 4, py: 2 }}>
-            <Typography variant="h6" color="primary">
-              Role {">"} View
-            </Typography>
-          </Box>
-          <Divider />
-          <Box sx={{ px: 4, py: 2 }}>
-            <Typography
-              sx={{ textTransform: "capitalize" }}
-              id="modal-modal-title"
-              variant="h6"
-              component="h2"
+  console.log("assignedPermissions", assignedPermissions);
+  return (
+    <Box>
+      <Box component="header">
+        <Typography variant="h6">Role {">"} View</Typography>
+      </Box>
+      <Box sx={{ maxWidth: "80%", mx: "auto" }}>
+        <Box sx={{ px: 4, py: 2 }}>
+          <Typography
+            sx={{ textTransform: "capitalize" }}
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+          >
+            {role?.attributes?.name}
+          </Typography>
+          <Box>
+            <Stack
+              direction={{
+                sm: "column",
+                md: "row",
+              }}
+              columnGap={2}
+              rowGap={2}
             >
-              {row?.role}
-            </Typography>
-            <Box>
-              <Stack
-                direction={{
-                  sm: "column",
-                  md: "row",
+              <Box
+                sx={{
+                  border: (theme) => `1px solid ${theme.palette.border.main}`,
+                  width: {
+                    sm: "100%",
+                    md: "50%",
+                  },
+                  p: 2,
+                  borderRadius: "5px",
                 }}
-                columnGap={2}
+              >
+                <Typography sx={{ fontWeight: "500", mb: 2 }}>
+                  Details
+                </Typography>
+                <Stack rowGap={1}>
+                  <CustomFlex label={"Name"} content={role?.attributes?.name} />
+                  <CustomFlex
+                    label={"Department"}
+                    content={role?.attributes?.departmentName}
+                  />
+                  <CustomFlex label={"Slug"} content={role?.attributes?.slug} />
+                  <CustomFlex
+                    label={"Date created"}
+                    content={role?.attributes?.createdAt}
+                  />
+                </Stack>
+              </Box>
+              <Stack
+                sx={{
+                  width: {
+                    sm: "100%",
+                    md: "50%",
+                  },
+                }}
                 rowGap={2}
               >
                 <Box
                   sx={{
                     border: (theme) => `1px solid ${theme.palette.border.main}`,
-                    width: {
-                      sm: "100%",
-                      md: "50%",
-                    },
+                    width: "100%",
                     p: 2,
                     borderRadius: "5px",
                   }}
                 >
                   <Typography sx={{ fontWeight: "500", mb: 2 }}>
-                    Details
+                    Users
                   </Typography>
-                  <Stack rowGap={1}>
-                    <CustomFlex label={"Name"} content={row?.role} />
-                    <CustomFlex
-                      label={"Department"}
-                      content={row?.department}
-                    />
-                    <CustomFlex
-                      label={"Description"}
-                      content={row?.description}
-                    />
-                    <CustomFlex
-                      label={"Date created"}
-                      content={row?.createdAt}
-                    />
-                    <CustomFlex label={"Create by"} content={row?.createdBy} />
+                  <Stack direction={"row"} gap={2} flexWrap="wrap">
+                    {users.map((user) => (
+                      <Chip
+                        color="default"
+                        label={user}
+                        key={user}
+                        size="small"
+                      />
+                    ))}
                   </Stack>
                 </Box>
-                <Stack
+
+                <Box
                   sx={{
-                    width: {
-                      sm: "100%",
-                      md: "50%",
-                    },
+                    border: (theme) => `1px solid ${theme.palette.border.main}`,
+                    width: "100%",
+                    p: 2,
+                    borderRadius: "5px",
                   }}
-                  rowGap={2}
                 >
-                  <Box
-                    sx={{
-                      border: (theme) =>
-                        `1px solid ${theme.palette.border.main}`,
-                      width: "100%",
-                      p: 2,
-                      borderRadius: "5px",
-                    }}
-                  >
-                    <Typography sx={{ fontWeight: "500", mb: 2 }}>
-                      Users
-                    </Typography>
-                    <Stack direction={"row"} gap={2} flexWrap="wrap">
-                      {users.map((user) => (
-                        <Chip
-                          color="default"
-                          label={user}
-                          key={user}
-                          size="small"
-                        />
-                      ))}
-                    </Stack>
-                  </Box>
+                  <Typography sx={{ fontWeight: "500", mb: 2 }}>
+                    Permissions
+                  </Typography>
 
-                  <Box
-                    sx={{
-                      border: (theme) =>
-                        `1px solid ${theme.palette.border.main}`,
-                      width: "100%",
-                      p: 2,
-                      borderRadius: "5px",
-                    }}
-                  >
-                    <Typography sx={{ fontWeight: "500", mb: 2 }}>
-                      Permissions
-                    </Typography>
-
-                    <Grid container columnSpacing={2} rowSpacing={2}>
-                      {permissions.map((item, index) => (
-                        <PermissionGridItem
-                          key={item + index}
-                          permissionName={item}
-                        />
-                      ))}
-                    </Grid>
-                  </Box>
-                </Stack>
+                  <Grid container columnSpacing={2} rowSpacing={2}>
+                    {assignedPermissions.map((item, index) => (
+                      <PermissionGridItem
+                        key={item.key}
+                        permissionName={item.key}
+                      />
+                    ))}
+                  </Grid>
+                </Box>
               </Stack>
-            </Box>
+            </Stack>
           </Box>
         </Box>
-      </Modal>
-    </>
+      </Box>
+    </Box>
   );
 }
 

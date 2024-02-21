@@ -45,10 +45,21 @@ export default function PermissionForm({
       then: (schema) => schema.required("Required"),
       otherwise: (schema) => schema.optional(),
     }),
-    critical: Yup.string()
-      .required("Required")
-      .oneOf(["0", "1"], "Critcal shoould be either Yes or No"),
-    description: Yup.string().required("Required"),
+
+    critical: Yup.string().when("parentId", {
+      is: "none",
+      then: (schema) =>
+        schema
+          .required("Required")
+          .oneOf(["true", "false"], "Critcal shoould be either Yes or No"),
+      otherwise: (schema) => schema.optional(),
+    }),
+    // description: Yup.string().required("Required"),
+    description: Yup.string().when("parentId", {
+      is: "none",
+      then: (schema) => schema.required("Required"),
+      otherwise: (schema) => schema.optional(),
+    }),
   });
 
   return (
@@ -104,22 +115,28 @@ export default function PermissionForm({
                     />
                   </Grid>
 
-                  <Grid sm={12}>
-                    <Select name="critical" label={"Critical ?"}>
-                      <MenuItem value="0">No</MenuItem>
-                      <MenuItem value="1">Yes</MenuItem>
-                    </Select>
-                  </Grid>
+                  <>
+                    {form.values.parentId === "none" && (
+                      <>
+                        <Grid sm={12}>
+                          <Select name="critical" label={"Critical ?"}>
+                            <MenuItem value="false">No</MenuItem>
+                            <MenuItem value="true">Yes</MenuItem>
+                          </Select>
+                        </Grid>
 
-                  <Grid sm={12}>
-                    <Input
-                      name="description"
-                      label="Description"
-                      multiline
-                      minRows={2}
-                      maxRows={5}
-                    />
-                  </Grid>
+                        <Grid sm={12}>
+                          <Input
+                            name="description"
+                            label="Description"
+                            multiline
+                            minRows={2}
+                            maxRows={5}
+                          />
+                        </Grid>
+                      </>
+                    )}
+                  </>
                 </Grid>
 
                 <Box>
