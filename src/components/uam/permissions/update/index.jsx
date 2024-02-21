@@ -88,9 +88,10 @@ export default function PermissionUpdate({ permission }) {
             <Formik
               initialValues={{
                 name: permission?.attributes?.name || "",
-                critical:
+                parentName: permission?.includes?.attributes?.parentName || "",
+                parentCritical:
                   permission?.includes?.attributes?.parentCritical || "",
-                description:
+                parentDescription:
                   permission?.includes?.attributes?.description || "",
               }}
               validationSchema={validationSchema}
@@ -100,15 +101,16 @@ export default function PermissionUpdate({ permission }) {
                 <Form>
                   <Stack rowGap={2}>
                     <Input name="name" label="Name" />
+                    <Input name="parentName" label="Group Name" />
 
-                    <Select name="critical" label="Critical?">
+                    <Select name="parentCritical" label="Critical?">
                       <MenuItem value="false">No</MenuItem>
                       <MenuItem value="true">Yes</MenuItem>
                     </Select>
 
                     <Input
-                      name="description"
-                      label="Description"
+                      name="parentDescription"
+                      label="Parent Description"
                       multiline
                       minRows={2}
                       maxRows={4}
