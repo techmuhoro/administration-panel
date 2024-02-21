@@ -3,20 +3,37 @@ import UsersList from "@/components/uam/users";
 import { BASE_URL, DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 import { convertToNumber, filterObject } from "@/lib/utils";
 import { cookies } from "next/headers";
+
 //import axiosInstance from "@/apis";
 async function getUsers(url, token) {
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await response.json();
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
 
-  return {
-    data,
-    error: !response.status.toString().startsWith("2"), // boolean of whether the was an error or not,
-  };
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = await response.json();
+
+    return {
+      data,
+      error: false, // return response with ok no error
+    };
+  } catch (error) {
+    // Handle network errors
+    return {
+      data: null,
+      error: true,
+      errorMessage: error.message,
+    };
+  }
 }
 
 const filtersWhiteList = ["name", "email", "phone", "role"];
@@ -39,15 +56,21 @@ export default async function Page({ searchParams }) {
   const url = `${BASE_URL}users?${queryString}`;
   const authToken = cookies().get("token").value;
 
-  const { data } = await getUsers(url, authToken);
+  const { data, errorMessage, error } = await getUsers(url, authToken);
 
   const users = data?.data?.data || [];
   const count = data?.data?.total || -1;
   const totalPages = count > 0 ? Number(count) / rowsPerPage : 1;
 
+  let errors = {
+    errorMessage: errorMessage,
+    error: error,
+  };
+
   return (
     <DashboardContentWrapper breadcrumbOmit={["uam"]}>
       <UsersList
+        errorDetails={errors}
         data={users}
         currentPage={currentPage}
         rowsPerPage={rowsPerPage}
