@@ -4,34 +4,53 @@ import { BASE_URL, DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 import { convertToNumber, filterObject } from "@/lib/utils";
 import { cookies } from "next/headers";
 
-//import axiosInstance from "@/apis";
-async function getUsers(url, token) {
+import http from "@/http";
+async function getUsers(url) {
+  // try {
+  //   const response = await fetch(url, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
+
+  //   if (!response.ok) {
+  //     throw new Error(
+  //       `Failed to fetch: ${response.status} ${response.statusText}`
+  //     );
+  //   }
+
+  //   const data = await response.json();
+
+  //   return {
+  //     data,
+  //     error: false, // return response with ok no error
+  //   };
+  // } catch (error) {
+  //   // Handle network errors
+  //   return {
+  //     data: null,
+  //     error: true,
+  //     errorMessage: error.message,
+  //   };
+  // }
   try {
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch: ${response.status} ${response.statusText}`
-      );
-    }
-
-    const data = await response.json();
+    console.log("Gettin data using Axios Instance");
+    const apiData = await http
+      .get(url, { includeAuthorization: true })
+      .then((res) => res.data);
 
     return {
-      data,
+      data: apiData,
       error: false, // return response with ok no error
     };
-  } catch (error) {
-    // Handle network errors
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : "An error occured";
+
     return {
       data: null,
       error: true,
-      errorMessage: error.message,
+      errorMessage: errorMsg,
     };
   }
 }
@@ -53,10 +72,11 @@ export default async function Page({ searchParams }) {
     limit: rowsPerPage,
   }).toString();
 
-  const url = `${BASE_URL}users?${queryString}`;
-  const authToken = cookies().get("token").value;
+  // const url = `${BASE_URL}users?${queryString}`;
+  // const authToken = cookies().get("token").value;
 
-  const { data, errorMessage, error } = await getUsers(url, authToken);
+  // NOTE: We've only passed api path, since baseURL is already configured when using `http` axios instance
+  const { data, errorMessage, error } = await getUsers(`/users?${queryString}`);
 
   const users = data?.data?.data || [];
   const count = data?.data?.total || -1;
