@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import ReusableTable from "@/atoms/reusable-table";
 import { Box, Stack } from "@mui/material";
-import { columns } from "./list/columns";
+import { columns } from "../list/columns";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 import AddNew from "@/atoms/button/add-new";
 
@@ -18,7 +18,7 @@ export default function UsersList({
   const setAlertMessage = useNotifyAlertCtx();
 
   useEffect(() => {
-    if (errorDetails.error) {
+    if (errorDetails && errorDetails.error) {
       setAlertMessage(errorDetails.errorMessage, {
         type: "error",
         closeOnClickAway: true,

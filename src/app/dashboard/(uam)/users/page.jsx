@@ -1,5 +1,5 @@
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
-import UsersList from "@/components/uam/users";
+import UsersList from "@/components/uam/users/list";
 import { BASE_URL, DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 import { convertToNumber, filterObject } from "@/lib/utils";
 import { cookies } from "next/headers";

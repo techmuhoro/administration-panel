@@ -3,7 +3,7 @@ import { Box, Typography, Button, Grid, Container } from "@mui/material";
 import { Input, ReusableDropdown } from "@/atoms/form";
 import { Formik, Form } from "formik";
 
-export default function AddUserForm({ rolesData }) {
+export default function UpdateUserForm({ rolesData }) {
   //replace the naming
   const options = rolesData.map((item) => {
     return {
@@ -27,7 +27,7 @@ export default function AddUserForm({ rolesData }) {
   return (
     <Box>
       <Typography component="h6" variant="h5" mb={1}>
-        Add user
+        Update user details
       </Typography>
       <Formik
         initialValues={initialValue}
@@ -78,7 +78,7 @@ export default function AddUserForm({ rolesData }) {
                     type="submit"
                     disabled={isSubmitting}
                   >
-                    Add users
+                    Update
                   </Button>
                 </Grid>
               </Form>

@@ -1,5 +1,5 @@
 "use client";
-import RolesActions from "../../roles/list/actions";
+import UsersActions from "./actions";
 
 export const columns = [
   {
@@ -30,6 +30,6 @@ export const columns = [
   {
     assessor: "Details",
     label: "details",
-    cell: ({ row, cell }) => <RolesActions row={row} />,
+    cell: ({ row, cell }) => <UsersActions row={row} />,
   },
 ];
