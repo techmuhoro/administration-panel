@@ -71,6 +71,9 @@ axiosInstance.interceptors.response.use(
     return response.data;
   },
   (error) => {
+    if (error.response === 402) {
+      return error.message;
+    }
     //console.log("failied");
     return Promise.reject(error);
   }
