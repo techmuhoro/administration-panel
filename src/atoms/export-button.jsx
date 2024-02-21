@@ -136,8 +136,15 @@ function ExportFormatPrompt({ handleClose, setFormat }) {
 }
 
 const dateFieldsSchema = yup.object({
-  fromDate: yup.string().required("FROM date is required"),
-  toDate: yup.string().required("TO date is required"),
+  fromDate: yup
+    .date()
+    .typeError("Invalid date")
+    .required("FROM date is required"),
+  toDate: yup
+    .date()
+    .typeError("Invalid date")
+    .required("TO date is required")
+    .default(() => new Date()),
 });
 const today = new Date();
 function ExportDatesPrompt({
