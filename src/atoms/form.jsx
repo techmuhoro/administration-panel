@@ -2,6 +2,7 @@
 
 import { useField } from "formik";
 import TextField from "@mui/material/TextField";
+import { MenuItem } from "@mui/material";
 import MuiCheckbox from "@mui/material/Checkbox";
 import MuiRadio from "@mui/material/Radio";
 import MuiRadioGroup from "@mui/material/RadioGroup";
@@ -12,6 +13,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import InputLabel from "@mui/material/InputLabel";
+import { Field } from "formik";
 
 function Input({ label, ...props }) {
   const [field, meta] = useField(props);
@@ -103,5 +105,25 @@ function Select({ label, ...props }) {
     </FormControl>
   );
 }
+function ReusableDropdown({ label, name, options, ...rest }) {
+  return (
+    <Field
+      as={TextField}
+      select
+      label={label}
+      name={name}
+      variant="outlined"
+      fullWidth
+      margin="normal"
+      {...rest}
+    >
+      {options.map((option) => (
+        <MenuItem key={option.value} value={option.value}>
+          {option.label}
+        </MenuItem>
+      ))}
+    </Field>
+  );
+}
 
-export { Input, Checkbox, Select, RadioGroup, Radio };
+export { Input, Checkbox, Select, RadioGroup, Radio, ReusableDropdown };

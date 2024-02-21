@@ -3,19 +3,27 @@ import RolesActions from "../../roles/list/actions";
 
 export const columns = [
   {
-    assessor: "fullname",
+    assessor: "attributes.name",
     label: "Full Name",
   },
   {
-    assessor: "email",
+    assessor: "attributes.email",
     label: "Email",
   },
   {
-    assessor: "role",
+    assessor: "attributes.phone",
+    label: "Phone",
+  },
+  {
+    assessor: "attributes.role",
     label: "Role",
   },
   {
-    assessor: "status",
+    assessor: "attributes.department",
+    label: "Department",
+  },
+  {
+    assessor: "attributes.status",
     label: "Status",
   },
 
