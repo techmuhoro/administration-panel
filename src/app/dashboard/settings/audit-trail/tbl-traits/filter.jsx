@@ -76,10 +76,12 @@ function AuditTrailFilter() {
   );
 }
 
+const today = new Date(),
+  todayDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString(10).padStart(2, "0")}-${today.getDate().toString(10).padStart(2, "0")}`;
 function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
   const [filters, setFilters] = useState({
     from: "",
-    to: "",
+    to: todayDate,
   });
   const pathname = usePathname();
   const querySearchParams = useSearchParams();
@@ -181,7 +183,12 @@ function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
               //label="From Date"
               size="small"
               name="from"
+              label="FROM date"
               value={filters.from}
+              inputProps={{
+                max: todayDate,
+              }}
+              InputLabelProps={{ shrink: true }}
               onChange={handleFilterChange}
             />
           </Grid>
@@ -201,6 +208,11 @@ function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
               size="small"
               name="to"
               value={filters.to}
+              label="TO date"
+              inputProps={{
+                max: todayDate,
+              }}
+              InputLabelProps={{ shrink: true }}
               onChange={handleFilterChange}
             />
           </Grid>

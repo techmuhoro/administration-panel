@@ -3,7 +3,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-import ExportButton from "@/atoms/export-button";
+import ExportButton from "./export-btn";
 
 const authTkn = Cookies.get("token");
 const config = {
