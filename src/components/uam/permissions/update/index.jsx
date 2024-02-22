@@ -14,9 +14,16 @@ import { Formik, Form } from "formik";
 import { Input, Select } from "@/atoms/form";
 import * as Yup from "yup";
 import LoadingButton from "@/atoms/loading-button";
-import { BASE_URL } from "@/lib/constants";
+import { BASE_URL, ERROR_MSG_LOOKUP } from "@/lib/constants";
+import Cookies from "js-cookie";
+import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function PermissionUpdate({ permission }) {
+  const setAlertMessage = useNotifyAlertCtx();
+  const authToken = Cookies.get("token");
+  const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
 
   const openModal = () => setOpen(true);
@@ -37,28 +44,68 @@ export default function PermissionUpdate({ permission }) {
     p: 4,
   };
 
-  const handleUpdate = (values, { setSubmitting }) => {
-    // updating logic
-    console.log("Update permission");
-
+  const handleUpdate = async (values, { setSubmitting }) => {
     const payload = {
       name: values?.name,
-      parentId: permission?.attributes?.parentId,
+      parentId: permission?.includes?.id || "",
     };
 
     if (values.parentCritical) {
       payload.parentCritical = values.parentCritical;
     }
+
     if (values.parentName) {
       payload.parentName = values.parentName;
     }
+
     if (values.parentDescription) {
       payload.parentDescription = values.parentDescription;
     }
 
-    const url = `${BASE_URL}permissions/${permission?.id}`;
+    console.log(payload);
 
-    // make request
+    try {
+      const url = `${BASE_URL}permissions/${permission?.id}`;
+
+      // make request
+      const response = await fetch(url, {
+        method: "PUT",
+        body: JSON.stringify(payload),
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      setSubmitting(false);
+
+      console.log(data);
+      console.log(response.status);
+
+      if (response.status == 200) {
+        let msg = data?.data?.message || "Permission updated successfully!";
+        setAlertMessage(msg);
+        router.refresh();
+        closeModal();
+      } else if (response.status == 401) {
+        let msg = ERROR_MSG_LOOKUP[401];
+        setAlertMessage(msg);
+        router.push(`/?&next=${pathname}`);
+      } else if ([403, 404, 406, 500].includes(response.status)) {
+        let msg = data?.error?.message || ERROR_MSG_LOOKUP[response.status];
+
+        setAlertMessage(msg);
+
+        // handle form error
+      } else {
+        setAlertMessage("An error occured! Contact system admin for support.");
+      }
+    } catch (e) {
+      setAlertMessage("An error occured! Contact system admin for support");
+    }
   };
 
   const validationSchema = Yup.object({
