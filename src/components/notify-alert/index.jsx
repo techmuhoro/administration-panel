@@ -9,8 +9,8 @@ const defaults = {
   alertOpen: false,
   alertMessage: "",
   closeFn: undefined,
-  alertType: "info",
-  openDuration: null,
+  alertType: "success",
+  openDuration: 3000,
 };
 
 const slideTransition = (props) => {

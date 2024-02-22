@@ -14,6 +14,7 @@ import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import * as Yup from "yup";
 
 import { Formik, Form, FieldArray } from "formik";
+import LoadingButton from "@/atoms/loading-button";
 
 export default function RoleForm({
   data = null,
@@ -25,15 +26,29 @@ export default function RoleForm({
   const getShapedPermissions = () => {
     const results = [];
 
-    for (let category of permissions) {
-      for (let perm of category.attributes.children) {
-        results.push(perm);
+    if (isUpdate) {
+      // use list on role
+      for (let category of data.attributes.defaultPermissions) {
+        for (let perm of category?.attributes?.permissions) {
+          results.push(perm);
+        }
+      }
+    } else {
+      // use list from backend
+      for (let category of permissions) {
+        for (let perm of category.attributes.children) {
+          results.push(perm);
+        }
       }
     }
+    console.log("results", results);
 
     return results;
   };
 
+  const permissionCategories = isUpdate
+    ? data.attributes.defaultPermissions
+    : permissions;
   const validationSchema = Yup.object({
     name: Yup.string().required("Required"),
     department: Yup.string().required("Required"),
@@ -42,7 +57,7 @@ export default function RoleForm({
   return (
     <Box>
       <Typography component="h1" variant="h5" mb={1}>
-        Create a new role
+        {isUpdate ? "Update Role" : "Create a new role"}
       </Typography>
 
       <Box
@@ -55,9 +70,9 @@ export default function RoleForm({
       >
         <Formik
           initialValues={{
-            name: data?.name || "",
-            department: data?.department || "",
-            description: data?.description || "",
+            name: data?.attributes?.name || "",
+            department: data?.attributes?.departmentId || "",
+            // description: data?.description || "",
             permissions: [...getShapedPermissions()],
           }}
           validationSchema={validationSchema}
@@ -87,11 +102,12 @@ export default function RoleForm({
                     maxRows={10}
                   />
                 </Grid> */}
+
                 <Grid xs={12}>
                   <FieldArray name="permissions">
                     {({ push }) => (
                       <Stack rowGap={1}>
-                        {permissions?.map((permissionCategory) => (
+                        {permissionCategories?.map((permissionCategory) => (
                           <Box key={permissionCategory.id}>
                             <Typography
                               sx={{
@@ -131,9 +147,13 @@ export default function RoleForm({
                 </Grid>
               </Grid>
 
-              <Button variant="contained" type="submit">
-                Create
-              </Button>
+              <LoadingButton
+                loading={form.isSubmitting}
+                variant="contained"
+                type="submit"
+              >
+                {isUpdate ? "Update" : "Create"}
+              </LoadingButton>
             </Form>
           )}
         </Formik>

@@ -48,7 +48,7 @@ function Otp() {
       .then((response) => {
         if (response.data.status === "SUCCESS") {
           Cookies.set("token", response.data.data.includes.token);
-          router.replace("/dashboard");
+          router.replace(nextLink ? nextLink : "/dashboard");
           setLoading(false);
         } else {
           setAlert({

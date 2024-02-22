@@ -10,20 +10,27 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import LoadingButton from "@/atoms/loading-button";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { BASE_URL } from "@/lib/constants";
-import Cookies from "js-cookie";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
+import Cookies from "js-cookie";
 import { useRouter, usePathname } from "next/navigation";
 
-export default function RoleDelete({ row }) {
-  const [open, setOpen] = useState(false);
+import DeleteIcon from "@mui/icons-material/Delete";
+import { BASE_URL } from "@/lib/constants";
+import LoadingButton from "@/atoms/loading-button";
+
+const errorLookUp = {
+  401: "You are Unauthenticated",
+  403: "You don not have permission to perform this action",
+  // 406: "There is an error in your form",
+  500: "An internal server error occurred. Kindly contact Admin.",
+};
+export default function PermissionDelete({ permission }) {
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const setAlertMessage = useNotifyAlertCtx();
   const router = useRouter();
   const pathname = usePathname();
   const authToken = Cookies.get("token");
-  const setAlertMessage = useNotifyAlertCtx();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -33,8 +40,8 @@ export default function RoleDelete({ row }) {
     setOpen(false);
   };
 
-  async function deleteRole() {
-    const url = `${BASE_URL}roles/${row.id}`;
+  const deletePermission = async () => {
+    const url = `${BASE_URL}permissions/${permission.id}`;
 
     setLoading(true);
     try {
@@ -43,67 +50,38 @@ export default function RoleDelete({ row }) {
         headers: {
           Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
         },
       });
 
       const data = await response.json();
 
-      // handle the response
+      // handle response
       // success
       if (response.status == 200) {
-        setAlertMessage("Role Deleted successfully", {
-          openDuration: 3000,
-          type: "success",
-        });
-
-        return router.push(pathname);
+        let msg = data?.data?.message || "Permission deleted successfully";
+        setAlertMessage(msg, { type: "success", openDuration: 3000 });
+        router.push("/dashboard/permissions");
       }
       // unauthenticated
       else if (response.status == 401) {
-        return router.push(`/?next=${pathname}`);
-      }
-      // unathorized
-      else if (response.status == 403) {
-        setAlertMessage(
+        router.push(`/?next=${pathname}`);
+      } else {
+        let msg =
           data?.error?.message ||
-            "You do not have the permission to perform this action",
-          {
-            openDuration: 3000,
-            type: "info",
-          }
-        );
-      }
-      // internal server error
-      else if (response.status.toString().startsWith("5")) {
-        setAlertMessage(
-          data?.error?.message || "An internal server error occurred",
-          {
-            openDuration: 3000,
-            type: "error",
-          }
-        );
-      }
-      // default
-      else {
-        setAlertMessage(
-          data?.error?.message ||
-            "An error occurred! Kindly contact system admin.",
-          {
-            openDuration: 3000,
-            type: "error",
-          }
-        );
+          errorLookUp[response.status] ||
+          "An error occurred! Contact Admin";
+
+        // set from form error in case of 406
+
+        setAlertMessage(msg, { type: "error", openDuration: 3000 });
       }
     } catch (error) {
-      setAlertMessage("An error occurred. Kindly contact system admin", {
-        openDuration: 3000,
-        type: "error",
-      });
+      let msg = data?.error?.message || "An error occurred! Contact Admin";
+      setAlertMessage(msg, { type: "error", openDuration: 3000 });
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <>
@@ -122,25 +100,21 @@ export default function RoleDelete({ row }) {
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle id="alert-dialog-title">
-            Confirm Action to delete role - {row?.role}
+            Confirm Action to delete Permission ({permission?.attributes?.name})
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              This action is not reversible, all users under this role will be
-              affected.
+              This action is not reversible
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button type="button" onClick={handleClose}>
-              Cancel
-            </Button>
+            <Button onClick={handleClose}>Cancel</Button>
             <LoadingButton
-              type="button"
               variant="contained"
               color="error"
-              autoFocus
+              onClick={deletePermission}
               loading={loading}
-              onClick={deleteRole}
+              autoFocus
             >
               Delete
             </LoadingButton>

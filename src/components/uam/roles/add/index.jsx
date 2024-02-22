@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { BASE_URL } from "@/lib/constants";
 import RoleForm from "../form";
 import { useRouter } from "next/navigation";
@@ -7,11 +8,10 @@ import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-contex
 import Cookie from "js-cookie";
 
 export default function RolesAdd({ departments, permissions }) {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const setAlertMessage = useNotifyAlertCtx();
   const token = Cookie.get("token");
-
-  console.log(permissions);
 
   async function handleSubmit(values, { setSubmitting }) {
     const truthyPermissions =
@@ -22,7 +22,6 @@ export default function RolesAdd({ departments, permissions }) {
       department: values?.department || "",
       permissions: truthyPermissions,
     };
-
     const url = `${BASE_URL}roles`;
 
     const response = await fetch(url, {
@@ -36,15 +35,29 @@ export default function RolesAdd({ departments, permissions }) {
 
     const data = await response.json();
 
+    setSubmitting(false);
+
     if (data.statusCode == 200) {
       setAlertMessage("Role has been created successfully", {
         type: "success",
+        openDuration: 3000,
       });
 
-      router.push("/dashboard/roles");
-    } else {
-      setAlertMessage("Role could not be created!", {
+      return router.push("/dashboard/roles");
+    } else if (data.statusCode == 406) {
+      // handle form error
+
+      // use formik setField errors to set Errors
+      setAlertMessage("Kindly reactify errors in your form!", {
         type: "error",
+        openDuration: 3000,
+      });
+    } else {
+      const error = data.error.message || "Error! could not create role";
+
+      setAlertMessage(error, {
+        type: "error",
+        openDuration: 3000,
       });
     }
   }

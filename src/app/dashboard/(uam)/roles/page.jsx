@@ -43,7 +43,7 @@ export default async function Page({ searchParams }) {
 
   const roles = data?.data?.data || [];
   const count = data?.data?.total || -1;
-  const totalPages = count > 0 ? Number(count) / rowsPerPage : 1;
+  const totalPages = count > 0 ? Math.ceil(Number(count) / rowsPerPage) : 1;
 
   return (
     <DashboardContentWrapper breadcrumbOmit={["uam"]}>
