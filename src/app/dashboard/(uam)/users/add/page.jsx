@@ -3,32 +3,58 @@ import AddUser from "@/components/uam/users/add";
 import { BASE_URL } from "@/lib/constants";
 import { cookies } from "next/headers";
 
-async function getRole(url, token) {
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await response.json();
+//get role
+async function getRoleAndDepartment(url1, url2, token) {
+  try {
+    const responsePromise1 = fetch(url1, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const responsePromise2 = fetch(url2, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
 
-  return {
-    data,
-    error: !response.status.toString().startsWith("2"),
-  };
+    const [response1, response2] = await Promise.all([
+      responsePromise1,
+      responsePromise2,
+    ]);
+
+    const data = await response1.json();
+    const derpermentData = await response2.json();
+
+    return {
+      data,
+      derpermentData,
+      error: !response1.ok || !response2.ok,
+    };
+  } catch (error) {
+    console.error(error);
+    return { error: true };
+  }
 }
 
-const url = `${BASE_URL}roles`;
+const roleUrl = `${BASE_URL}roles`;
+const departmentUrl = `${BASE_URL}departments`;
 const authToken = cookies().get("token").value;
 
-const { data } = await getRole(url, authToken);
+const { data, derpermentData } = await getRoleAndDepartment(
+  roleUrl,
+  departmentUrl,
+  authToken
+);
 
 let roles = data?.data?.data || [];
+let derperment = derpermentData?.data?.data || [];
 
 export default async function Page() {
   return (
     <DashboardContentWrapper>
-      <AddUser data={roles} />
+      <AddUser data={roles} derp={derperment} />
     </DashboardContentWrapper>
   );
 }

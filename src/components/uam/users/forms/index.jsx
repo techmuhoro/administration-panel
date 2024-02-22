@@ -3,7 +3,7 @@ import { Box, Typography, Button, Grid, Container } from "@mui/material";
 import { Input, ReusableDropdown } from "@/atoms/form";
 import { Formik, Form } from "formik";
 
-export default function AddUserForm({ rolesData }) {
+export default function AddUserForm({ rolesData, derpartmentData }) {
   //replace the naming
   const options = rolesData.map((item) => {
     return {
@@ -11,10 +11,12 @@ export default function AddUserForm({ rolesData }) {
       label: item.attributes.name,
     };
   });
-
-  // rolesData?.map((item) => {
-  //   console.log(item.attributes);
-  // });
+  const derpetmentOptions = derpartmentData?.map((item) => {
+    return {
+      value: item.attributes.slug,
+      label: item.attributes.name,
+    };
+  });
 
   let initialValue = {
     fullname: "",
@@ -43,7 +45,7 @@ export default function AddUserForm({ rolesData }) {
           <Container maxWidth="md">
             <Box boxShadow={3} p={3}>
               <Form>
-                <Grid container spacing={2}>
+                <Grid container spacing={1}>
                   <Grid item sm={6} md={6}>
                     <Input name="name" label="Full name" />
                   </Grid>
@@ -52,23 +54,27 @@ export default function AddUserForm({ rolesData }) {
                     <Input name="email" label="Email" />
                   </Grid>
 
-                  <Grid item sm={6} md={6} mt={2}>
+                  <Grid item sm={6} md={6} mt={1}>
                     <Input name="phone" label="Phone Number" />
                   </Grid>
 
-                  <Grid item sm={6} md={6} mt={2}>
+                  <Grid item sm={6} md={6} mt={1}>
                     <Input name="country" label="Country" />
                   </Grid>
 
-                  <Grid item sm={6} md={6} mt={2}>
-                    <Input name="derpartment" label="Department" />
-                  </Grid>
-
-                  <Grid item sm={6} md={6}>
+                  <Grid item sm={6} md={6} mt={1}>
                     <ReusableDropdown
                       label="Select role"
                       name="role"
                       options={options}
+                    />
+                  </Grid>
+
+                  <Grid item sm={6} md={6} mt={1}>
+                    <ReusableDropdown
+                      label="Select derpetment"
+                      name="derpartment"
+                      options={derpetmentOptions}
                     />
                   </Grid>
 
