@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -13,11 +12,11 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import RoleView from "../view/role-view-modal";
-import RoleDelete from "../delete";
 import Link from "next/link";
+import PermissionDelete from "../delete";
+import PermissionUpdate from "../update";
 
-export default function RolesActions({ row }) {
+export default function PermissionActions({ row }) {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const open = Boolean(anchorEl);
@@ -28,7 +27,6 @@ export default function RolesActions({ row }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   return (
     <>
       <IconButton
@@ -53,25 +51,25 @@ export default function RolesActions({ row }) {
         </Typography>
         <Divider />
 
-        {/* <RoleView row={row} /> */}
-        <Link href={`/dashboard/roles/view/${row.id}`}>
-          <MenuItem onClick={handleClose}>
-            <Stack direction="row" alignItems={"center"} columnGap={1}>
-              <VisibilityIcon sx={{ fontSize: "1rem" }} />
-              <Typography>View</Typography>
-            </Stack>
-          </MenuItem>
-        </Link>
-        <Link href={`/dashboard/roles/update/${row.id}`}>
+        {/* <MenuItem onClick={handleClose}>
+          <Stack direction="row" alignItems={"center"} columnGap={1}>
+            <VisibilityIcon sx={{ fontSize: "1rem" }} />
+            <Typography>View</Typography>
+          </Stack>
+        </MenuItem> */}
+
+        {/* <Link href={`/dashboard/permissions/update/${row?.id}`}>
           <MenuItem onClick={handleClose}>
             <Stack direction="row" alignItems={"center"} columnGap={1}>
               <EditIcon sx={{ fontSize: "1rem" }} />
               <Typography>Update</Typography>
             </Stack>
           </MenuItem>
-        </Link>
+        </Link> */}
 
-        <RoleDelete row={row} />
+        <PermissionUpdate permission={row} />
+
+        <PermissionDelete permission={row} />
       </Menu>
     </>
   );

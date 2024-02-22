@@ -13,8 +13,13 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import InputLabel from "@mui/material/InputLabel";
-import { Field } from "formik";
+import { TextFieldProps } from "@mui/material";
 
+/**
+ *
+ * @param {TextFieldProps} props
+ * @returns
+ */
 function Input({ label, ...props }) {
   const [field, meta] = useField(props);
   return (
@@ -31,10 +36,11 @@ function Input({ label, ...props }) {
 
 function Checkbox({ label, ...props }) {
   const [field, meta] = useField(props);
+
   return (
     <Box>
       <FormControlLabel
-        control={<MuiCheckbox {...field} {...props} />}
+        control={<MuiCheckbox {...field} {...props} checked={field.value} />}
         label={label}
       />
 
