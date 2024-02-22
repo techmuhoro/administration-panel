@@ -2,8 +2,8 @@ import axios from "axios";
 import { cookies } from "next/headers";
 import UAParser from "ua-parser-js";
 
-import AuditTrailTbl from "./audit-trail-tbl";
-import { columns } from "./tbl-traits/columns";
+import AuditTrailTbl from "../../../../components/audit-trail/audit-trail-tbl";
+import { columns } from "@/components/audit-trail/tbl-traits/columns";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 
 const config = {
@@ -46,8 +46,10 @@ export default async function AuditTrail({ searchParams }) {
         userAgent: {
           uaStr: parsedResults.ua,
           browser:
-            parsedResults.browser.name + " V" + parsedResults.browser.version,
-          os: parsedResults.os.name + " " + parsedResults.os.version,
+            parsedResults.browser.name +
+            " V" +
+            (parsedResults.browser.version || "??"),
+          os: parsedResults.os.name + " " + (parsedResults.os.version || ""),
         },
       };
 
