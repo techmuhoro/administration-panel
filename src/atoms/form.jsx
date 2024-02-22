@@ -14,7 +14,7 @@ import Typography from "@mui/material/Typography";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import InputLabel from "@mui/material/InputLabel";
 import { TextFieldProps } from "@mui/material";
-import { Field } from "@mui/icons-material";
+import { Field, ErrorMessage } from "formik";
 
 /**
  *
@@ -112,24 +112,33 @@ function Select({ label, ...props }) {
     </FormControl>
   );
 }
+
 function ReusableDropdown({ label, name, options, ...rest }) {
   return (
-    <Field
-      as={TextField}
-      select
-      label={label}
-      name={name}
-      variant="outlined"
-      fullWidth
-      margin="normal"
-      {...rest}
-    >
-      {options.map((option) => (
-        <MenuItem key={option.value} value={option.value}>
-          {option.label}
-        </MenuItem>
-      ))}
-    </Field>
+    <>
+      <Field
+        as={TextField}
+        select
+        label={label}
+        name={name}
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        {...rest}
+        error={Boolean(rest.formik && rest.formik.errors[name])}
+        helperText={rest.formik && rest.formik.errors[name]}
+      >
+        {options.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </Field>
+
+      <Typography variant="body2" style={{ color: "red" }}>
+      <ErrorMessage name={name} sx ={{}} component="div" className="error-message" />
+      </Typography>
+    </>
   );
 }
 
