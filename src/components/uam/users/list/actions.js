@@ -10,7 +10,6 @@ import Divider from "@mui/material/Divider";
 
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import EditIcon from "@mui/icons-material/Edit";
-import UsersView from "../view";
 import UserDelete from "../delete";
 import Link from "next/link";
 
@@ -50,12 +49,11 @@ export default function UsersActions({ row }) {
         </Typography>
         <Divider />
 
-        <UsersView row={row} />
         <Link href={`/dashboard/users/update/?id=${row.id}`}>
           <MenuItem onClick={handleClose}>
             <Stack direction="row" alignItems={"center"} columnGap={1}>
               <EditIcon sx={{ fontSize: "1rem" }} />
-              <Typography>Update</Typography>
+              <Typography>Details</Typography>
             </Stack>
           </MenuItem>
         </Link>

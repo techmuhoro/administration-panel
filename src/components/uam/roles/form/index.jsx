@@ -46,6 +46,8 @@ export default function RoleForm({
     return results;
   };
 
+  console.log(getShapedPermissions(), "shape permission");
+
   const permissionCategories = isUpdate
     ? data.attributes.defaultPermissions
     : permissions;
@@ -56,7 +58,7 @@ export default function RoleForm({
 
   return (
     <Box>
-      <Typography component="h1" variant="h5" mb={1}>
+      <Typography compisonent="h1" variant="h5" mb={1}>
         {isUpdate ? "Update Role" : "Create a new role"}
       </Typography>
 

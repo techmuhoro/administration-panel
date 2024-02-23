@@ -64,3 +64,24 @@ export async function getSystemPermissions(url, token) {
     return { data: null, response: null, isError: true };
   }
 }
+
+//returns user information
+export async function getUsers(url, token) {
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    return {
+      data,
+      response,
+      isError: !response.status.toString().startsWith("2"), // bool. whether there was an error or not
+    };
+  } catch (error) {
+    return { data: null, response: null, isError: true };
+  }
+}

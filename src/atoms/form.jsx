@@ -113,7 +113,14 @@ function Select({ label, ...props }) {
   );
 }
 
-function ReusableDropdown({ label, name, options, ...rest }) {
+function ReusableDropdown({
+  label,
+  name,
+  options,
+  setSelectedValue,
+  selectedValue,
+  ...rest
+}) {
   return (
     <>
       <Field
@@ -136,7 +143,12 @@ function ReusableDropdown({ label, name, options, ...rest }) {
       </Field>
 
       <Typography variant="body2" style={{ color: "red" }}>
-      <ErrorMessage name={name} sx ={{}} component="div" className="error-message" />
+        <ErrorMessage
+          name={name}
+          sx={{}}
+          component="div"
+          className="error-message"
+        />
       </Typography>
     </>
   );

@@ -1,35 +1,34 @@
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
-import UpdateUserForm from "@/components/uam/users/update";
+import UpdateUser from "@/components/uam/users/update";
 import { BASE_URL } from "@/lib/constants";
 import { cookies } from "next/headers";
+import { getUsers, getSystemDepartments, getRole } from "../../api";
 
-async function getRole(url, token) {
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await response.json();
+export default async function Page({ searchParams }) {
+  const { id } = searchParams;
 
-  return {
-    data,
-    error: !response.status.toString().startsWith("2"),
-  };
-}
+  const Userurl = `${BASE_URL}users/${id}`;
+  const roleUrl = `${BASE_URL}roles`;
+  const departmentUrl = `${BASE_URL}departments`;
+  const authToken = cookies().get("token").value;
 
-const url = `${BASE_URL}roles`;
-const authToken = cookies().get("token").value;
+  const departmentsPromise = getSystemDepartments(departmentUrl, authToken);
+  const rolePromise = getRole(roleUrl, authToken);
+  const userPromise = getUsers(Userurl, authToken);
 
-const { data } = await getRole(url, authToken);
+  const [departmentsData, roleData, userData] = await Promise.all([
+    departmentsPromise,
+    rolePromise,
+    userPromise,
+  ]);
 
-let roles = data?.data?.data || [];
+  const departments = departmentsData?.data?.data || [];
+  const roles = roleData?.data?.data || [];
+  const user = userData.data;
 
-export default async function Page() {
   return (
     <DashboardContentWrapper>
-      <p> update user details</p>
-      {/* <UpdateUserForm data={roles} /> */}
+      <UpdateUser data={roles} derp={departments} userData={user} />
     </DashboardContentWrapper>
   );
 }

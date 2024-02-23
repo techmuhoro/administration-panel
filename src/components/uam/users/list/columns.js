@@ -15,11 +15,11 @@ export const columns = [
     label: "Phone",
   },
   {
-    assessor: "attributes.role",
+    assessor: "attributes.roleName",
     label: "Role",
   },
   {
-    assessor: "attributes.department",
+    assessor: "attributes.departmentName",
     label: "Department",
   },
   {

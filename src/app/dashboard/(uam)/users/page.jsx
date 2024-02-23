@@ -49,7 +49,7 @@ async function getUsers(url) {
     return {
       data: null,
       error: true,
-      errorMessage: err.error.message,
+      errorMessage: err.error?.message,
     };
   }
 }
