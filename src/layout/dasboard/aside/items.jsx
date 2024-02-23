@@ -7,6 +7,7 @@ import CreditCardIcon from "@mui/icons-material/CreditCard";
 import PhonelinkRingIcon from "@mui/icons-material/PhonelinkRing";
 import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import GroupIcon from "@mui/icons-material/Group";
+import ApartmentIcon from '@mui/icons-material/Apartment';
 
 export const asideMenuItems = [
   {
@@ -21,6 +22,12 @@ export const asideMenuItems = [
     label: "Transactions",
     icon: <CompareArrowsIcon fontSize="small" />,
     to: "/dashboard/transactions",
+  },
+  {
+    key: "departments",
+    label: "Departments",
+    icon: <ApartmentIcon fontSize="small" />,
+    to: "/dashboard/departments",
   },
   {
     key: "merchants",
