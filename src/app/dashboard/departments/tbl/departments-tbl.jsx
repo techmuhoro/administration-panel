@@ -1,7 +1,11 @@
+import Link from "next/link";
 import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import ReusableTable from "@/atoms/reusable-table";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
+import DepartmentsFilter from "./tblComponents/departments-filter";
+import { PlusOne, Add } from "@mui/icons-material";
 
 function DepartmentsTbl({ data, columnTraits, paginationData }) {
   return (
@@ -9,10 +13,33 @@ function DepartmentsTbl({ data, columnTraits, paginationData }) {
       <Typography component="h1" variant="h5">
         Departments
       </Typography>
-      <Stack direction="row" justifyContent="flex-end" columnGap={1} mb={1}>
-        {/* <AuditsFilter /> */}
-        {/* <AuditsExport /> */}
-      </Stack>
+      {/* <Stack direction="row" justifyContent="flex-end" columnGap={1} mb={1}> */}
+      <Box
+        sx={{
+          display: "grid",
+          gridAutoFlow: "column",
+          justifyContent: "space-between",
+          mt: 2,
+          mb: 1,
+        }}
+      >
+        <Box>
+          <Button
+            startIcon={<Add />}
+            variant="contained"
+            sx={{ textTransform: "capitalize", color: "#ffffff !important" }}
+            component={Link}
+            href="departments/add"
+          >
+            Create
+          </Button>
+        </Box>
+
+        <Box>
+          <DepartmentsFilter />
+          {/* <DepartmentsExport /> */}
+        </Box>
+      </Box>
       <ReusableTable data={data} columns={columnTraits} {...paginationData} />
     </DashboardContentWrapper>
   );

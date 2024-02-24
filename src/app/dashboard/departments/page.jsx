@@ -14,7 +14,7 @@ const config = {
   method: "GET",
 };
 
-const getDepts = cache(async (url) => await axios({ ...config, url }));
+const getDepts = cache((url) => axios({ ...config, url }));
 // const getDepts = cache(async (url) => {
 //   await new Promise((resolve, reject) => {
 //     setTimeout(async () => {
@@ -34,8 +34,7 @@ async function Departments({ searchParams }) {
   const searchQueryParams = {
     limit: parseInt(searchParams?.rows, 10) || DEFAULT_ROWS_PER_PAGE,
     page: parseInt(searchParams?.page, 10) || 1,
-    ...(searchParams?.from && { from: searchParams.from }),
-    ...(searchParams?.to && { to: searchParams.to }),
+    ...(searchParams?.deptName && { name: searchParams.deptName }),
   };
 
   // let endpoint = "";
@@ -55,7 +54,7 @@ async function Departments({ searchParams }) {
     const deptsResponse = await getDepts(endpoint).then((res) => res.data);
     tblData = deptsResponse?.data?.data;
 
-    console.log(JSON.stringify(tblData, null, 2));
+    // console.log(JSON.stringify(tblData, null, 2));
 
     paginationData = {
       count: deptsResponse?.data?.total || 0,
@@ -63,7 +62,6 @@ async function Departments({ searchParams }) {
       totalPages: deptsResponse?.data?.total || 0,
       rowsPerPage: deptsResponse?.data?.limit || 0,
     };
-    console.log({ paginationData });
   } catch (err) {
     console.log("Error fetching departments");
     paginationData = {
@@ -75,13 +73,11 @@ async function Departments({ searchParams }) {
   }
 
   return (
-    <>
-      <DepartmentsTbl
-        data={tblData}
-        columnTraits={columns}
-        paginationData={paginationData}
-      />
-    </>
+    <DepartmentsTbl
+      data={tblData}
+      columnTraits={columns}
+      paginationData={paginationData}
+    />
   );
 }
 
