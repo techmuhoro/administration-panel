@@ -26,6 +26,7 @@ export default function AddUserForm({
     //filter user with the role and derp
   }
 
+  //console.log(userDetails,'user-details')
   const options = rolesData.data.map((item) => {
     return {
       value: item.id,
@@ -86,14 +87,18 @@ export default function AddUserForm({
   console.log(options, "role optiona");
   console.log(userDetails);
 
-  let permissionsData = userDetails.data.attributes.permissions;
+  let permissionsData = [];
+  let allPermissionObjects = [];
 
-  const allPermissionObjects = userDetails.data.attributes.permissions
-    .reduce((acc, permissionGroup) => {
-      acc.push(permissionGroup.attributes.permissions);
-      return acc;
-    }, [])
-    .flat();
+  if (isUpdate) {
+    permissionsData = userDetails.data?.attributes?.permissions;
+    allPermissionObjects = userDetails.data.attributes.permissions
+      .reduce((acc, permissionGroup) => {
+        acc.push(permissionGroup.attributes.permissions);
+        return acc;
+      }, [])
+      .flat();
+  }
 
   let initialValue = {
     name: isUpdate ? userDetails.data.attributes.name : "",
@@ -102,7 +107,7 @@ export default function AddUserForm({
     country: isUpdate ? userDetails.data.attributes.country : "",
     department: isUpdate ? userDetails.data.attributes.departmentId : "",
     role: isUpdate ? userDetails.data.attributes.roleId : "",
-    permissions: allPermissionObjects,
+    permissions: isUpdate ? allPermissionObjects : "",
   };
 
   const validationSchema = Yup.object({

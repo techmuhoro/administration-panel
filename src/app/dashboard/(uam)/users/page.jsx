@@ -4,52 +4,33 @@ import { BASE_URL, DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 import { convertToNumber, filterObject } from "@/lib/utils";
 import { cookies } from "next/headers";
 
-import http from "@/http";
-async function getUsers(url) {
-  // try {
-  //   const response = await fetch(url, {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-
-  //   if (!response.ok) {
-  //     throw new Error(
-  //       `Failed to fetch: ${response.status} ${response.statusText}`
-  //     );
-  //   }
-
-  //   const data = await response.json();
-
-  //   return {
-  //     data,
-  //     error: false, // return response with ok no error
-  //   };
-  // } catch (error) {
-  //   // Handle network errors
-  //   return {
-  //     data: null,
-  //     error: true,
-  //     errorMessage: error.message,
-  //   };
-  // }
+async function getUsers(url, token) {
   try {
-    const apiData = await http
-      .get(url, { includeAuthorization: true })
-      .then((res) => res.data);
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = await response.json();
 
     return {
-      data: apiData,
+      data,
       error: false, // return response with ok no error
     };
-  } catch (err) {
-    const errorMsg = err instanceof Error ? err.message : "An error occured";
-
+  } catch (error) {
+    // Handle network errors
     return {
       data: null,
       error: true,
-      errorMessage: err.error?.message,
+      errorMessage: error.message,
     };
   }
 }
@@ -71,11 +52,11 @@ export default async function Page({ searchParams }) {
     limit: rowsPerPage,
   }).toString();
 
-  // const url = `${BASE_URL}users?${queryString}`;
-  // const authToken = cookies().get("token").value;
+  const url = `${BASE_URL}users?${queryString}`;
+  const authToken = cookies().get("token").value;
 
-  // NOTE: We've only passed api path, since baseURL is already configured when using `http` axios instance
-  const { data, errorMessage, error } = await getUsers(`/users?${queryString}`);
+  //NOTE: We've only passed api path, since baseURL is already configured when using `http` axios instance
+  const { data, errorMessage, error } = await getUsers(url, authToken);
 
   const users = data?.data?.data || [];
   const count = data?.data?.total || -1;
