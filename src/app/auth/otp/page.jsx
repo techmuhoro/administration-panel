@@ -94,17 +94,27 @@ function Otp() {
 
     axios(config)
       .then((response) => {
-        console.log("Resend Otp res", response);
+        if (response.data.status === "SUCCESS") {
+          setAlert({
+            message: "OTP has been resent!",
+            type: "error",
+          });
+          setLoading(false);
+        } else {
+          setAlert({
+            message: "Something went wrong. Kindly contact support",
+            type: "error",
+          });
+        }
       })
       .catch((error) => {
-        console.log("RESEND OTP ERR", error);
         if (error.response === undefined) {
           setAlert({
             message: "Something went wrong. Kindly contact support",
             type: "error",
           });
         } else if (error.response.status === 401) {
-          setAlert({ type: "error", message: error.response.data.error });
+          setAlert({ type: "error", message: error.response.data.message });
         } else if (error.response.status == 406) {
           setAlert({
             message: Object.values(error.response.data.error)[0],
