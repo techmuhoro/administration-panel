@@ -5,7 +5,8 @@ import Button from "@mui/material/Button";
 import ReusableTable from "@/atoms/reusable-table";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
 import DepartmentsFilter from "./tblComponents/departments-filter";
-import { PlusOne, Add } from "@mui/icons-material";
+import CreateBtn from "./tblComponents/create-btn";
+
 
 function DepartmentsTbl({ data, columnTraits, paginationData }) {
   return (
@@ -24,15 +25,7 @@ function DepartmentsTbl({ data, columnTraits, paginationData }) {
         }}
       >
         <Box>
-          <Button
-            startIcon={<Add />}
-            variant="contained"
-            sx={{ textTransform: "capitalize", color: "#ffffff !important" }}
-            component={Link}
-            href="departments/add"
-          >
-            Create
-          </Button>
+          <CreateBtn />
         </Box>
 
         <Box>
