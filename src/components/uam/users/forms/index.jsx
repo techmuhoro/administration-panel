@@ -86,6 +86,7 @@ export default function AddUserForm({
   };
 
   const handleUpdateUser = (values) => {
+    console.log(values, "update users");
     let headers = {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -111,6 +112,7 @@ export default function AddUserForm({
         console.log(error);
         let errorKey = [
           "email",
+          "message",
           "status",
           "user",
           "name",
@@ -133,7 +135,7 @@ export default function AddUserForm({
 
   // console.log(derpetmentOptions, "option field");
   // console.log(options, "role optiona");
-  // console.log(userDetails);
+  console.log(userDetails);
 
   let permissionsData = [];
   let allPermissionObjects = [];
@@ -233,15 +235,19 @@ export default function AddUserForm({
                                 value={0}
                                 control={<Radio />}
                                 label="ACTIVE"
-                                onChange={() => form.setFieldValue("status", 0)}
-                                checked={field.value === 0}
+                                onChange={() =>
+                                  form.setFieldValue("status", "1")
+                                }
+                                checked={field.value === "1"}
                               />
                               <FormControlLabel
                                 value={1}
                                 control={<Radio />}
                                 label="INACTIVE"
-                                onChange={() => form.setFieldValue("status", 1)}
-                                checked={field.value === 1}
+                                onChange={() =>
+                                  form.setFieldValue("status", "0")
+                                }
+                                checked={field.value === "0"}
                               />
                             </>
                           )}
