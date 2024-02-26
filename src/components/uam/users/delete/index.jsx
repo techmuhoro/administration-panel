@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import axios from "axios";
+import LoadingButton from "@/atoms/loading-button";
+import { Button } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -10,11 +11,17 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { BASE_URL } from "@/lib/constants";
+import Cookies from "js-cookie";
+import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function UserDelete({ row }) {
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const token = Cookies.get("token");
+  const setAlertMessage = useNotifyAlertCtx();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -22,6 +29,44 @@ export default function UserDelete({ row }) {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleDeleteUser = () => {
+    let headers = {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+
+    setLoading(true);
+    axios
+      .delete(`${BASE_URL}users/${row.id}`, { headers })
+      .then((response) => {
+        setAlertMessage("User has been deleted successfully", {
+          type: "success",
+          openDuration: 3000,
+        });
+        setLoading(false);
+
+        setTimeout(() => {
+          setOpen(false);
+          window.location.reload();
+        }, 2000);
+      })
+      .catch((error) => {
+        let errorObject = error.response?.data?.error;
+        console.log(error);
+        let errorKey = ["message"];
+        errorKey.forEach((key) => {
+          if (errorObject.hasOwnProperty(key)) {
+            setAlertMessage(errorObject[key], {
+              type: "error",
+              openDuration: 3000,
+            });
+          }
+        });
+        setLoading(false);
+        window.location.reload();
+      });
   };
 
   return (
@@ -41,19 +86,26 @@ export default function UserDelete({ row }) {
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle id="alert-dialog-title">
-            Confirm Action to delete role - {row?.role}
+            Confirm Action to delete user - {row?.attributes?.name}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              This action is not reversible, all users under this role will be
-              affected.
+              This action is not reversible user {row?.attributes?.name} will be
+              deleted permanently.
             </DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button variant="contained" color="error" autoFocus>
+            <LoadingButton
+              type="button"
+              variant="contained"
+              color="error"
+              autoFocus
+              loading={loading}
+              onClick={handleDeleteUser}
+            >
               Delete
-            </Button>
+            </LoadingButton>
           </DialogActions>
         </Dialog>
       </>

@@ -1,15 +1,18 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Box, Typography, Grid, Container } from "@mui/material";
 import { Input, ReusableDropdown, Checkbox } from "@/atoms/form";
-import { Formik, Form } from "formik";
+import { Formik, Form, Field } from "formik";
 import { BASE_URL } from "@/lib/constants";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 import axios from "axios";
 import Cookie from "js-cookie";
 import LoadingButton from "@/atoms/loading-button";
 import * as Yup from "yup";
+
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 export default function AddUserForm({
   rolesData,
@@ -19,7 +22,6 @@ export default function AddUserForm({
 }) {
   const setAlertMessage = useNotifyAlertCtx();
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const token = Cookie.get("token");
 
   if (isUpdate) {
@@ -40,8 +42,7 @@ export default function AddUserForm({
     };
   });
 
-  const handleSubmit = (value) => {
-    console.log(value, "this are the new values");
+  const handleAddUser = (values) => {
     let headers = {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -49,15 +50,16 @@ export default function AddUserForm({
 
     setLoading(true);
     axios
-      .post(`${BASE_URL}users`, JSON.stringify(value), { headers })
+      .post(`${BASE_URL}users`, JSON.stringify(values), { headers })
       .then((response) => {
         setAlertMessage("User has been created successfully", {
           type: "success",
           openDuration: 3000,
         });
         setLoading(false);
-
-        router.push("/dashboard/users");
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       })
       .catch((error) => {
         let errorObject = error.response?.data?.error;
@@ -83,9 +85,55 @@ export default function AddUserForm({
       });
   };
 
-  console.log(derpetmentOptions, "option field");
-  console.log(options, "role optiona");
-  console.log(userDetails);
+  const handleUpdateUser = (values) => {
+    let headers = {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+
+    setLoading(true);
+    axios
+      .put(`${BASE_URL}users/${userDetails.data.id}`, JSON.stringify(values), {
+        headers,
+      })
+      .then((response) => {
+        setAlertMessage("User has updated succesfully", {
+          type: "success",
+          openDuration: 3000,
+        });
+        setLoading(false);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 2000);
+      })
+      .catch((error) => {
+        let errorObject = error.response?.data?.error;
+        console.log(error);
+        let errorKey = [
+          "email",
+          "status",
+          "user",
+          "name",
+          "phone",
+          "country",
+          "department",
+          "role",
+        ];
+        errorKey.forEach((key) => {
+          if (errorObject.hasOwnProperty(key)) {
+            setAlertMessage(errorObject[key], {
+              type: "error",
+              openDuration: 3000,
+            });
+          }
+        });
+        setLoading(false);
+      });
+  };
+
+  // console.log(derpetmentOptions, "option field");
+  // console.log(options, "role optiona");
+  // console.log(userDetails);
 
   let permissionsData = [];
   let allPermissionObjects = [];
@@ -103,6 +151,7 @@ export default function AddUserForm({
   let initialValue = {
     name: isUpdate ? userDetails.data.attributes.name : "",
     email: isUpdate ? userDetails.data.attributes.email : "",
+    status: isUpdate ? userDetails.data.attributes.status : "",
     phone: isUpdate ? userDetails.data.attributes.phone : "",
     country: isUpdate ? userDetails.data.attributes.country : "",
     department: isUpdate ? userDetails.data.attributes.departmentId : "",
@@ -126,7 +175,7 @@ export default function AddUserForm({
       <Formik
         initialValues={initialValue}
         validationSchema={validationSchema}
-        onSubmit={handleSubmit}
+        onSubmit={isUpdate ? handleUpdateUser : handleAddUser}
       >
         {(form) => (
           <Container maxWidth="md">
@@ -165,6 +214,41 @@ export default function AddUserForm({
                       options={derpetmentOptions}
                     />
                   </Grid>
+                  {isUpdate ? (
+                    <Grid item sm={6} md={3}>
+                      <Typography
+                        sx={{
+                          textTransform: "capitalize",
+                          fontWeight: "500",
+                        }}
+                        component="h4"
+                      >
+                        User status
+                      </Typography>
+                      <RadioGroup name="status">
+                        <Field name="status">
+                          {({ field, form }) => (
+                            <>
+                              <FormControlLabel
+                                value={0}
+                                control={<Radio />}
+                                label="ACTIVE"
+                                onChange={() => form.setFieldValue("status", 0)}
+                                checked={field.value === 0}
+                              />
+                              <FormControlLabel
+                                value={1}
+                                control={<Radio />}
+                                label="INACTIVE"
+                                onChange={() => form.setFieldValue("status", 1)}
+                                checked={field.value === 1}
+                              />
+                            </>
+                          )}
+                        </Field>
+                      </RadioGroup>
+                    </Grid>
+                  ) : null}
                 </Grid>
 
                 {permissionsData.map((item) => (
@@ -187,7 +271,6 @@ export default function AddUserForm({
                         return (
                           <Grid key={index} sm={4}>
                             <Checkbox
-                              key={index}
                               name={`permissions.${index}.value`}
                               label={permissionItem.key}
                             />
