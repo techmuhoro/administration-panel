@@ -112,7 +112,12 @@ function Login() {
                 name="email"
                 label="Email address"
               />
-              <FormikCustomInput id="email" name="password" label="Password" />
+              <FormikCustomInput
+                id="email"
+                name="password"
+                label="Password"
+                type="password"
+              />
               <Stack alignItems="flex-end">
                 <Typography
                   sx={linkStyles}

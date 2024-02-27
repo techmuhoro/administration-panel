@@ -103,11 +103,13 @@ function ResetPassword() {
                 id="password"
                 name="password"
                 label="Password"
+                type="password"
               />
               <FormikCustomInput
                 id="confirmPassword"
                 name="confirmPassword"
                 label="Confirm Password"
+                type="password"
               />
               <LoadingButton loading={loading} variant="blue" type="submit">
                 Submit

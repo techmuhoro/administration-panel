@@ -5,7 +5,7 @@ export const containerStyles = {
   backgroundColor: "#fff",
 };
 
-export const headerStyles = { fontSize: 26, fontWeight: "medium" };
+export const headerStyles = { fontSize: 26, fontWeight: "bold" };
 
 export const textStyles = { fontSize: 14, fontWeight: 500 };
 
