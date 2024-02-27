@@ -1,8 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Box, Typography, Grid, Container } from "@mui/material";
-import { Input, ReusableDropdown, Checkbox } from "@/atoms/form";
+import { Input } from "@/atoms/form";
 import { Formik, Form, Field } from "formik";
 import { BASE_URL } from "@/lib/constants";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
@@ -10,19 +10,37 @@ import axios from "axios";
 import Cookie from "js-cookie";
 import LoadingButton from "@/atoms/loading-button";
 import * as Yup from "yup";
+import {
+  fetchCountry,
+  getCountry,
+  getLoading,
+  getError,
+} from "../../lib/redux/country/country-slice";
 
 import { useDispatch, useSelector } from "react-redux";
-import { getCountry } from "../../lib/redux/country/country-slice";
+import { decrement, increment } from "../../lib/redux/feutures/counterSlice";
 
 export default function UserProfile() {
   const setAlertMessage = useNotifyAlertCtx();
   const [loading, setLoading] = useState(false);
   const token = Cookie.get("token");
   const router = useRouter();
-
   const dispatch = useDispatch();
 
-  console.log(dispatch(getCountry()));
+  const count = useSelector((state) => state.counter.value); // Access the counter state
+
+  // Selectors
+  const countryData = useSelector(getCountry);
+  const loading2 = useSelector(getLoading);
+  const error = useSelector(getError);
+
+  console.log(countryData?.data, "contry-data");
+  console.log(loading2, "loading2");
+  console.log(error, "errro");
+
+  useEffect(() => {
+    dispatch(fetchCountry());
+  }, [dispatch]);
 
   const handleUpdateUser = (values) => {
     console.log(values, "update users");
@@ -129,6 +147,27 @@ export default function UserProfile() {
           </Container>
         )}
       </Formik>
+      <Container maxWidth="lg">
+        <Box
+          sx={{
+            my: 4,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h4" component="h1">
+            Admin dashboard
+          </Typography>
+
+          <Box>
+            <h1>Counter: {count}</h1> {/* Display the counter state */}
+            <button onClick={() => dispatch(increment())}>Increment</button>
+            <button onClick={() => dispatch(decrement())}>Decrement</button>
+          </Box>
+        </Box>
+      </Container>
     </Box>
   );
 }
