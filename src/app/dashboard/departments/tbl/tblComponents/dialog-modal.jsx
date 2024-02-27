@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
 import Divider from "@mui/material/Divider";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -21,13 +21,20 @@ function DeptModal({
   onConfirmAction,
   cancelText,
   confirmText,
+  loading,
 }) {
-  return createPortal(
+  return (
     <Dialog
       open={open}
       onClose={handleClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
+      PaperProps={{
+        ...(typeof onConfirmAction === "function" && {
+          component: "form",
+          onSubmit: onConfirmAction,
+        }),
+      }}
     >
       {title && (
         <>
@@ -36,39 +43,37 @@ function DeptModal({
         </>
       )}
       <DialogContent>
-        <DialogContentText id="alert-dialog-description" component="div">
-          {children}
-        </DialogContentText>
+        {children}
+        {/* <DialogContentText id="alert-dialog-description" component="div">
+        </DialogContentText> */}
       </DialogContent>
-      <DialogActions
-        sx={{
-          display: "flex",
-          // justifyContent: "stretch",
-          alignItems: "center",
-        }}
-      >
+      <DialogActions>
         {typeof onConfirmAction === "function" && (
           <Button
-            onClick={onConfirmAction}
-            sx={{ flex: "1 0 100%" }}
+            sx={{ flex: "1 1 100%" }}
             variant="contained"
+            type="submit"
             //   autoFocus
           >
-            {confirmText || "Yes"}
+            {loading ? (
+              <CircularProgress size={25} color="inherit" />
+            ) : (
+              confirmText || "Yes"
+            )}
           </Button>
         )}
         {typeof handleClose === "function" && (
           <Button
             onClick={handleClose}
-            sx={{ flex: "1 0 100%" }}
+            sx={{ flex: "1 1 100%" }}
+            color="secondary"
             variant="outlined"
           >
             {cancelText || "No"}
           </Button>
         )}
       </DialogActions>
-    </Dialog>,
-    document.body
+    </Dialog>
   );
 }
 

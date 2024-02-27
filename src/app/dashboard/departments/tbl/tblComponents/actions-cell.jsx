@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -13,11 +13,24 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ViewAction from "./actions/view";
 import UpdateAction from "./actions/update";
 import DeleteAction from "./actions/delete";
+import DeptModal from "./dialog-modal";
 
 // import TransactionDelete from "../delete";
 
 const ActionsCell = ({ data: { row } }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalInitials, setModalInitials] = useState({
+    onConfirmAction: null,
+    title: "",
+    confirmText: "Yes",
+    cancelText: "No",
+    loading: false,
+  });
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
 
   const open = Boolean(anchorEl);
 
@@ -51,18 +64,41 @@ const ActionsCell = ({ data: { row } }) => {
           Actions
         </Typography>
         <Divider />
-        <MenuItem disableRipple>
-          <ViewAction handleMenuClose={handleClose} item={row} />
+        <MenuItem onClick={handleClose}>
+          <ViewAction
+            setModalContent={setModalContent}
+            setModalOpen={setModalOpen}
+            setModalInitials={setModalInitials}
+            item={row}
+          />
         </MenuItem>
 
-        <MenuItem disableRipple>
-          <UpdateAction handleMenuClose={handleClose} />
+        <MenuItem onClick={handleClose}>
+          <UpdateAction
+            setModalContent={setModalContent}
+            setModalOpen={setModalOpen}
+            setModalInitials={setModalInitials}
+            item={row}
+          />
         </MenuItem>
 
-        <MenuItem disableRipple>
-          <DeleteAction handleMenuClose={handleClose} />
+        <MenuItem onClick={handleClose}>
+          <DeleteAction
+            setModalContent={setModalContent}
+            setModalOpen={setModalOpen}
+            setModalInitials={setModalInitials}
+            item={row}
+          />
         </MenuItem>
       </Menu>
+
+      <DeptModal
+        open={modalOpen}
+        handleClose={handleCloseModal}
+        {...modalInitials}
+      >
+        {modalContent}
+      </DeptModal>
     </>
   );
 };
