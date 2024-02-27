@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import LoadingButton from "@/atoms/loading-button";
 import { Button } from "@mui/material";
@@ -21,6 +22,8 @@ export default function UserDelete({ row }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const token = Cookies.get("token");
+  const router = useRouter();
+
   const setAlertMessage = useNotifyAlertCtx();
 
   const handleClickOpen = () => {
@@ -49,7 +52,7 @@ export default function UserDelete({ row }) {
 
         setTimeout(() => {
           setOpen(false);
-          window.location.reload();
+          router.refresh();
         }, 2000);
       })
       .catch((error) => {
@@ -65,7 +68,7 @@ export default function UserDelete({ row }) {
           }
         });
         setLoading(false);
-        window.location.reload();
+        router.refresh();
       });
   };
 

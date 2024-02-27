@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Box, Typography, Grid, Container } from "@mui/material";
 import { Input, ReusableDropdown, Checkbox } from "@/atoms/form";
 import { Formik, Form, Field } from "formik";
@@ -23,6 +24,7 @@ export default function AddUserForm({
   const setAlertMessage = useNotifyAlertCtx();
   const [loading, setLoading] = useState(false);
   const token = Cookie.get("token");
+  const router = useRouter();
 
   if (isUpdate) {
     //filter user with the role and derp
@@ -103,9 +105,9 @@ export default function AddUserForm({
           openDuration: 3000,
         });
         setLoading(false);
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 2000);
+        setTimeout(() => {
+          router.refresh();
+        }, 2000);
       })
       .catch((error) => {
         let errorObject = error.response?.data?.error;
