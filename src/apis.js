@@ -1,7 +1,7 @@
 import axios from "axios";
 
-//let BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-let BASE_URL = "https://jsonplaceholder.typicode.com";
+let BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+// let BASE_URL = "https://jsonplaceholder.typicode.com";
 
 export const handleFetchData = async (endpoint, withHeaders) => {
   const headers = {
