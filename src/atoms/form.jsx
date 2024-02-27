@@ -154,11 +154,4 @@ function ReusableDropdown({
   );
 }
 
-export {
-  Input,
-  Checkbox,
-  Select,
-  RadioGroup,
-  Radio,
-  ReusableDropdown,
-};
+export { Input, Checkbox, Select, RadioGroup, Radio, ReusableDropdown };
