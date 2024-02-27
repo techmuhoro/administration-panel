@@ -32,7 +32,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: inter.style.fontFamily,
+    fontFamily: roboto.style.fontFamily,
   },
   components: {
     MuiCssBaseline: {
@@ -52,6 +52,22 @@ const theme = createTheme({
           fontSize: "14px",
         },
       },
+      variants: [
+        {
+          props: { variant: "blue" },
+          style: {
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            color: "#fff",
+            backgroundColor: "#1247DC",
+            fontSize: "16px",
+            borderRadius: "3px",
+            "&:hover": {
+              backgroundColor: "#2979ff",
+            },
+          },
+        },
+      ],
     },
 
     MuiTextField: {
