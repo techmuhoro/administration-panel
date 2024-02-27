@@ -56,8 +56,8 @@ const theme = createTheme({
         {
           props: { variant: "blue" },
           style: {
-            paddingTop: "10px",
-            paddingBottom: "10px",
+            paddingTop: "8px",
+            paddingBottom: "8px",
             color: "#fff",
             backgroundColor: "#1247DC",
             fontSize: "16px",
