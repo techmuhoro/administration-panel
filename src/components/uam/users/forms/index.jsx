@@ -154,7 +154,6 @@ export default function AddUserForm({
     name: isUpdate ? userDetails.data.attributes.name : "",
     email: isUpdate ? userDetails.data.attributes.email : "",
     status: isUpdate ? userDetails.data.attributes.status : "",
-    status: true,
     phone: isUpdate ? userDetails.data.attributes.phone : "",
     country: isUpdate ? userDetails.data.attributes.country : "",
     department: isUpdate ? userDetails.data.attributes.departmentId : "",
@@ -237,18 +236,18 @@ export default function AddUserForm({
                                 control={<Radio />}
                                 label="ACTIVE"
                                 onChange={() =>
-                                  form.setFieldValue("status", true)
+                                  form.setFieldValue("status", "true")
                                 }
-                                checked={field.value === true}
+                                checked={field.value === "true"}
                               />
                               <FormControlLabel
                                 value={1}
                                 control={<Radio />}
                                 label="INACTIVE"
                                 onChange={() =>
-                                  form.setFieldValue("status", false)
+                                  form.setFieldValue("status", "false")
                                 }
-                                checked={field.value === false}
+                                checked={field.value === "false"}
                               />
                             </>
                           )}
