@@ -1,33 +1,14 @@
 "use client";
-
-import { useState } from "react";
 import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import MenuItem from "@mui/material/MenuItem";
 import Chip from "@mui/material/Chip";
-import Divider from "@mui/material/Divider";
+import Tooltip from "@mui/material/Tooltip";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckIcon from "@mui/icons-material/Check";
 
-export default function RoleView({ row, role }) {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const users = [
-    "Albert Ndege",
-    "James Muhoro",
-    "Zacky Aduoli",
-    "Shirley Githingi",
-  ];
-
-  const permissions = Array(50).fill("create_user");
-
+export default function RoleView({ role }) {
   const assignedPermissions = [];
   for (let category of role?.attributes?.defaultPermissions) {
     // flatten the permissions of category
@@ -38,7 +19,8 @@ export default function RoleView({ row, role }) {
     }
   }
 
-  console.log("assignedPermissions", assignedPermissions);
+  const userList = role?.includes?.users || [];
+
   return (
     <Box>
       <Box component="header">
@@ -111,13 +93,19 @@ export default function RoleView({ row, role }) {
                     Users
                   </Typography>
                   <Stack direction={"row"} gap={2} flexWrap="wrap">
-                    {users.map((user) => (
-                      <Chip
-                        color="default"
-                        label={user}
-                        key={user}
-                        size="small"
-                      />
+                    {userList.length < 1 && <Typography>No users!</Typography>}
+                    {userList.map((user) => (
+                      <Tooltip
+                        key={user.id}
+                        title={user.attributes.email}
+                        sx={{ cursor: "pointer" }}
+                      >
+                        <Chip
+                          color="default"
+                          label={user.attributes.name}
+                          size="small"
+                        />
+                      </Tooltip>
                     ))}
                   </Stack>
                 </Box>
@@ -166,7 +154,7 @@ function PermissionGridItem({ permissionName }) {
     <Grid sm={6} md={6} lg={4}>
       <Stack direction="row" alignItems="center" columnGap={0.5}>
         <CheckIcon sx={{ fontSize: "0.9rem" }} />
-        <Typography>{permissionName}</Typography>
+        <Typography variant="body2">{permissionName}</Typography>
       </Stack>
     </Grid>
   );
