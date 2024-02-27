@@ -14,6 +14,7 @@ import { LoadingButton } from "@mui/lab";
 
 import AuthWrapper from "../authWrapper";
 import MuiAlert from "@/atoms/MuiAlert";
+import { containerStyles, headerStyles, linkStyles } from "../styles";
 
 function Otp() {
   const router = useRouter();
@@ -129,15 +130,16 @@ function Otp() {
 
   return (
     <AuthWrapper>
-      <Stack width={{ md: "30%", xs: "90%" }} spacing={2}>
-        <Typography variant="h5">Enter OTP</Typography>
+      <Stack width={{ md: "30%", xs: "90%" }} spacing={2} sx={containerStyles}>
+        <Typography sx={headerStyles}>Enter OTP</Typography>
         <MuiOtpInput value={otp} onChange={handleChange} length={6} />
-        <Stack direction="row" justifyContent="space-between">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignContent="center"
+        >
           <Typography>Didn&#39;t receive otp?</Typography>{" "}
-          <Typography
-            onClick={handleResendOtp}
-            sx={{ color: "blue", cursor: "pointer" }}
-          >
+          <Typography onClick={handleResendOtp} sx={linkStyles}>
             Resend
           </Typography>
         </Stack>

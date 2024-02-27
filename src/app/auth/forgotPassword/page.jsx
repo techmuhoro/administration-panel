@@ -16,6 +16,8 @@ import AuthWrapper from "../authWrapper";
 
 import { forgotPassword } from "@/app/utils/formValidations/auth/forgotPassword";
 
+import { containerStyles, headerStyles } from "../styles";
+
 function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", type: "" });
@@ -65,25 +67,17 @@ function ForgotPassword() {
 
   return (
     <AuthWrapper>
-      <Stack width={{ md: "40%", xs: "90%" }} spacing={2}>
-        <Typography variant="h5">Forgot Password</Typography>
+      <Stack width={{ md: "40%", xs: "90%" }} spacing={2} sx={containerStyles}>
+        <Typography sx={headerStyles}>Forgot Password</Typography>
         <Formik
           validationSchema={forgotPassword}
           initialValues={{ email: "" }}
           onSubmit={handleSubmit}
         >
           <Form>
-            <Stack spacing={2}>
-              <FormikCustomInput
-                name="email"
-                placeholder="email@gmail.com"
-                required
-              />
-              <LoadingButton
-                variant="contained"
-                type="submit"
-                loading={loading}
-              >
+            <Stack spacing={3}>
+              <FormikCustomInput id="email" name="email" label="Email" />
+              <LoadingButton variant="blue" type="submit" loading={loading}>
                 Submit
               </LoadingButton>
             </Stack>
