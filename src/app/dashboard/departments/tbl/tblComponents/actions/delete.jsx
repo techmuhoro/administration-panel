@@ -37,15 +37,6 @@ function Delete({ item, setModalContent, setModalInitials, setModalOpen }) {
         <DeleteIcon fontSize="small" />
         <Typography>Delete</Typography>
       </Stack>
-
-      {/* <DeptModal
-        open={modalOpen}
-        // handleOpen={handleOpenModal}
-        handleClose={handleCloseModal}
-        title="Are you sure you want to delete"
-      >
-        <p>Delete Modal</p>
-      </DeptModal> */}
     </>
   );
 }
@@ -79,10 +70,7 @@ function DeleteContent({ item, setModalInitials, closeModal }) {
     initialValues: {
       deptName: item?.attributes?.name,
     },
-    // validationSchema: validationSchema,
     onSubmit: async () => {
-      // alert(JSON.stringify(values, null, 2));
-
       const deptId = item?.id;
       config.url = `${config.url}/${deptId}`;
       setModalInitials((prev) => {
@@ -109,12 +97,8 @@ function DeleteContent({ item, setModalInitials, closeModal }) {
               openDuration: 4000,
             });
           }
-          // console.group("Dept not added successfully!");
-          // console.error(err);
-          // console.groupEnd();
         })
         .finally(() => {
-          // formik.setSubmitting(false);
           setModalInitials((prev) => {
             return { ...prev, loading: false };
           });
@@ -131,22 +115,11 @@ function DeleteContent({ item, setModalInitials, closeModal }) {
         alignItems: "center",
       }}
     >
-      {/* <TextField
-        fullWidth
-        id={deptInputID}
-        name="deptName"
-        label="Name"
-        value={formik.values.deptName}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        error={formik.touched.deptName && Boolean(formik.errors.deptName)}
-        helperText={formik.touched.deptName && formik.errors.deptName}
-      /> */}
-      <Typography variant="subtitle2">
+      <Typography variant="subtitle1">
         <span
           style={{
             fontWeight: 700,
-            margin: "0 10px",
+            margin: "0 8px",
             textTransform: "capitalize",
           }}
         >

@@ -24,56 +24,60 @@ function DeptModal({
   loading,
 }) {
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-      PaperProps={{
-        ...(typeof onConfirmAction === "function" && {
-          component: "form",
-          onSubmit: onConfirmAction,
-        }),
-      }}
-    >
-      {title && (
-        <>
-          <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
-          <Divider />
-        </>
-      )}
-      <DialogContent>
-        {children}
-        {/* <DialogContentText id="alert-dialog-description" component="div">
+    typeof window !== "undefined" &&
+    createPortal(
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        PaperProps={{
+          ...(typeof onConfirmAction === "function" && {
+            component: "form",
+            onSubmit: onConfirmAction,
+          }),
+        }}
+      >
+        {title && (
+          <>
+            <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+            <Divider />
+          </>
+        )}
+        <DialogContent>
+          {children}
+          {/* <DialogContentText id="alert-dialog-description" component="div">
         </DialogContentText> */}
-      </DialogContent>
-      <DialogActions>
-        {typeof onConfirmAction === "function" && (
-          <Button
-            sx={{ flex: "1 1 100%" }}
-            variant="contained"
-            type="submit"
-            //   autoFocus
-          >
-            {loading ? (
-              <CircularProgress size={25} color="inherit" />
-            ) : (
-              confirmText || "Yes"
-            )}
-          </Button>
-        )}
-        {typeof handleClose === "function" && (
-          <Button
-            onClick={handleClose}
-            sx={{ flex: "1 1 100%" }}
-            color="secondary"
-            variant="outlined"
-          >
-            {cancelText || "No"}
-          </Button>
-        )}
-      </DialogActions>
-    </Dialog>
+        </DialogContent>
+        <DialogActions>
+          {typeof onConfirmAction === "function" && (
+            <Button
+              sx={{ flex: "1 1 100%" }}
+              variant="contained"
+              type="submit"
+              //   autoFocus
+            >
+              {loading ? (
+                <CircularProgress size={25} color="inherit" />
+              ) : (
+                confirmText || "Yes"
+              )}
+            </Button>
+          )}
+          {typeof handleClose === "function" && (
+            <Button
+              onClick={handleClose}
+              sx={{ flex: "1 1 100%" }}
+              color="secondary"
+              variant="outlined"
+            >
+              {cancelText || "No"}
+            </Button>
+          )}
+        </DialogActions>
+      </Dialog>,
+      document.body
+    )
   );
 }
 

@@ -111,7 +111,8 @@ function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
       [name]: event.target.value,
     }));
   };
-  const applyFilters = () => {
+  const applyFilters = (e) => {
+    e?.preventDefault();
     const existingParams = convertStringSearchParamsToObj(
       querySearchParams.toString()
     );
@@ -161,7 +162,11 @@ function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
         horizontal: "center",
       }}
     >
-      <Box sx={{ width: "500px", py: 3, px: 4 }}>
+      <Box
+        sx={{ width: "500px", py: 3, px: 4 }}
+        component="form"
+        onSubmit={applyFilters}
+      >
         <Typography sx={{ mb: 2 }} color="primary" variant="h6" component="p">
           Filter by
         </Typography>
@@ -179,7 +184,7 @@ function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
         <Stack direction={"row"}>
           <Button color="secondary">Clear Filters</Button>
           <Stack direction={"row"} spacing={1} sx={{ ml: "auto" }}>
-            <Button variant="contained" color="primary" onClick={applyFilters}>
+            <Button variant="contained" color="primary" type="submit">
               Apply
             </Button>
             <Button variant="outlined" color="primary" onClick={handleClose}>

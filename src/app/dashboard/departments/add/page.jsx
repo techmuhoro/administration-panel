@@ -1,7 +1,7 @@
 "use client";
 
 import { useId } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useFormik } from "formik";
 import Cookie from "js-cookie";
@@ -28,6 +28,7 @@ const validationSchema = Yup.object({
 function AddDepartment() {
   const searchParams = useSearchParams();
   const appTheme = useTheme();
+  const router = useRouter();
   const deptInputID = useId();
   const goBackUrl = searchParams.get("prev") || "/dashboard/departments";
   const setAlertMessage = useNotifyAlertCtx();
@@ -59,13 +60,17 @@ function AddDepartment() {
           });
         })
         .catch((err) => {
+          const msg =
+            err?.response?.data?.error?.message ||
+            "Department could not be created!";
+          console.log({ "err-MSG": msg });
           if (err?.response?.status === 401) {
-            setAlertMessage(
-              "You are Unathenticated/ not allowed to perform this operation",
-              { type: "error", openDuration: 4000 }
-            );
+            setAlertMessage("Log in required", {
+              type: "error",
+              openDuration: 4000,
+            });
           } else {
-            setAlertMessage("Department could not be created!", {
+            setAlertMessage(msg, {
               type: "error",
               openDuration: 4000,
             });
@@ -80,26 +85,17 @@ function AddDepartment() {
 
   return (
     <Container maxWidth="md">
-      <Typography variant="body2" component="div" sx={{ textAlign: "end" }}>
-        <MUILink
-          component={Link}
-          sx={{
-            padding: 1,
-            display: "inline-flex",
-            justifyContent: "center",
-            alignItems: "center",
+      <Box sx={{ textAlign: "end" }}>
+        <Button
+          startIcon={<DoubleArrowLeftIcon />}
+          onClick={() => {
+            router.push(goBackUrl);
+            router.refresh();
           }}
-          // use style attr to override next link styling
-          style={{
-            color: appTheme.palette.primary.main,
-            textDecoration: "underline",
-          }}
-          href={goBackUrl}
         >
-          <DoubleArrowLeftIcon />
           Back
-        </MUILink>
-      </Typography>
+        </Button>
+      </Box>
       <Card variant="outlined">
         {/* <CardHeader title="buluu" /> */}
         <Typography
