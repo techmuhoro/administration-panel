@@ -9,17 +9,23 @@ import axios from "axios";
 
 import { MuiOtpInput } from "mui-one-time-password-input";
 
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, Alert, Box } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
 import AuthWrapper from "../authWrapper";
 import MuiAlert from "@/atoms/MuiAlert";
-import { containerStyles, headerStyles, linkStyles } from "../styles";
+import {
+  containerStyles,
+  headerStyles,
+  linkStyles,
+  textStyles,
+} from "../styles";
 
 function Otp() {
   const router = useRouter();
   const queryParams = useSearchParams();
   const nextLink = queryParams.get("next") || "";
+  const email = queryParams.get("email");
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -130,15 +136,21 @@ function Otp() {
 
   return (
     <AuthWrapper>
-      <Stack width={{ md: "30%", xs: "90%" }} spacing={2} sx={containerStyles}>
+      <Stack width={{ md: "35%", xs: "90%" }} spacing={2} sx={containerStyles}>
         <Typography sx={headerStyles}>Enter OTP</Typography>
-        <MuiOtpInput value={otp} onChange={handleChange} length={6} />
+        <Alert severity="success">
+          An OTP has been sent to{" "}
+          <span style={{ fontWeight: 500 }}>{email}</span>
+        </Alert>
+        <Stack>
+          <MuiOtpInput value={otp} onChange={handleChange} length={6} />
+        </Stack>
         <Stack
           direction="row"
           justifyContent="space-between"
           alignContent="center"
         >
-          <Typography>Didn&#39;t receive otp?</Typography>{" "}
+          <Typography sx={textStyles}>Didn&#39;t receive otp?</Typography>{" "}
           <Typography onClick={handleResendOtp} sx={linkStyles}>
             Resend
           </Typography>
@@ -156,10 +168,6 @@ function Otp() {
       {alert.message !== "" && alert.type !== "" && (
         <MuiAlert variant={alert.type} message={alert.message} />
       )}
-      {/* <MuiAlert
-        variant="success"
-        message="A One Time Password has been sent to your Email or Phone"
-      /> */}
     </AuthWrapper>
   );
 }

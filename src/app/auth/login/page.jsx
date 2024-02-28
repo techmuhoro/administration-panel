@@ -51,7 +51,7 @@ function Login() {
         if (response.data.status === "SUCCESS") {
           Cookies.set("token", response.data.data.token);
           router.replace(
-            `/auth/otp?otp=true${nextLink ? `&next=${nextLink}` : ""}`
+            `/auth/otp?otp=true&email=${values.email}${nextLink ? `&next=${nextLink}` : ""}`
           );
         } else {
           setAlert({
