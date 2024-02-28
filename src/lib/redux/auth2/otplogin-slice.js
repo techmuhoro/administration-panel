@@ -18,17 +18,17 @@ export const handleOtpLogin = createAsyncThunk(
       });
 
       if (!response.ok) {
-        // If response is not successful, parse the error message from response body
         const errorData = await response.json();
-        console.log(errorData);
-        const errorMessage = errorData.error.message || "Failed to log in"; // Default message if no specific error message found
+        let errorObject = errorData.error;
+
+        const errorMessage =
+          Object.values(errorObject)[0] || "Failed to log in";
         throw new Error(errorMessage);
       }
 
       const data = await response.json();
       return data;
     } catch (error) {
-      // If there's an error, throw it for Redux Toolkit to handle rejection
       throw error;
     }
   }
@@ -48,7 +48,7 @@ const otploginSlice = createSlice({
     builder
       .addCase(handleOtpLogin.pending, (state) => {
         state.loading = true;
-        state.error = ""; // Clear error when starting request
+        state.error = "";
       })
       .addCase(handleOtpLogin.fulfilled, (state, action) => {
         state.loading = false;
@@ -56,7 +56,7 @@ const otploginSlice = createSlice({
       })
       .addCase(handleOtpLogin.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to log in"; // Set error to actual error message or default message
+        state.error = action.error.message || "Failed to log in";
       });
   },
 });
