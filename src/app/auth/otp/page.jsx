@@ -15,6 +15,16 @@ import { LoadingButton } from "@mui/lab";
 import AuthWrapper from "../authWrapper";
 import MuiAlert from "@/atoms/MuiAlert";
 
+/**added redux to handle this page */
+import {
+  handleOtpLogin,
+  getLoginData,
+  getLoading,
+  getError,
+} from "../../../lib/redux/auth2/otplogin-slice";
+
+import { useDispatch, useSelector } from "react-redux";
+
 function Otp() {
   const router = useRouter();
   const queryParams = useSearchParams();
@@ -23,6 +33,28 @@ function Otp() {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ type: "", message: "" });
+
+  /** */
+  let dispatch = useDispatch();
+  const loginData = useSelector(getLoginData);
+  const loading2 = useSelector(getLoading);
+  const error = useSelector(getError);
+  /*
+
+  
+
+  /** */
+
+  console.log(loginData?.data, "contry-data");
+  console.log(loading2, "loading2");
+  console.log(error, "errro");
+
+  // useEffect(() => {}, [dispatch]);
+
+  const handleLogin = async () => {
+    console.log("otp-login");
+    dispatch(handleOtpLogin({ code: 141454 }));
+  };
 
   const handleChange = (newValue) => {
     setOtp(newValue);
@@ -141,6 +173,8 @@ function Otp() {
           Continue
         </LoadingButton>
       </Stack>
+
+      <LoadingButton onClick={handleLogin}> loginotps</LoadingButton>
 
       {alert.message !== "" && alert.type !== "" && (
         <MuiAlert variant={alert.type} message={alert.message} />

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Box, Typography, Grid, Container } from "@mui/material";
+import { Box, Typography, Grid, Container, Button } from "@mui/material";
 import { Input } from "@/atoms/form";
 import { Formik, Form } from "formik";
 import { BASE_URL } from "@/lib/constants";
@@ -10,35 +10,12 @@ import axios from "axios";
 import Cookie from "js-cookie";
 import LoadingButton from "@/atoms/loading-button";
 import * as Yup from "yup";
-import {
-  fetchCountry,
-  getCountry,
-  getLoading,
-  getError,
-} from "../../lib/redux/country/country-slice";
-
-import { useDispatch, useSelector } from "react-redux";
 
 export default function UserProfile() {
   const setAlertMessage = useNotifyAlertCtx();
   const [loading, setLoading] = useState(false);
   const token = Cookie.get("token");
   const router = useRouter();
-
-  let dispatch = useDispatch();
-
-  // Selectors
-  const countryData = useSelector(getCountry);
-  const loading2 = useSelector(getLoading);
-  const error = useSelector(getError);
-
-  console.log(countryData?.data, "contry-data");
-  console.log(loading2, "loading2");
-  console.log(error, "errro");
-
-  useEffect(() => {
-    dispatch(fetchCountry());
-  }, [dispatch]);
 
   const handleUpdateUser = (values) => {
     console.log(values, "update users");
@@ -105,29 +82,29 @@ export default function UserProfile() {
             <Form>
               <Box boxShadow={3} p={3}>
                 <Grid container spacing={1}>
-                  <Grid item sm={6} md={6}>
+                  <Grid item sm={12} md={6}>
                     <Input name="name" label="Name" />
                   </Grid>
 
-                  <Grid item sm={6} md={6}>
+                  <Grid item sm={12} md={6}>
                     <Input name="email" label="Email" />
                   </Grid>
 
-                  <Grid item sm={6} md={6} mt={1}>
+                  <Grid item sm={12} md={6} mt={1}>
                     <Input name="phone" label="Phone Number" />
                   </Grid>
 
                   {/**get this country from global storage   */}
-                  <Grid item sm={6} md={6} mt={1}>
+                  <Grid item sm={12} md={6} mt={1}>
                     <Input name="country" label="Country" />
                   </Grid>
 
-                  <Grid item sm={6} md={6} mt={1}>
+                  <Grid item sm={12} md={6} mt={1}>
                     <Input name="department" label="Department" />
                   </Grid>
 
                   {/**get this country from global storage   */}
-                  <Grid item sm={6} md={6} mt={1}>
+                  <Grid item sm={12} md={6} mt={1}>
                     <Input name="role" label="Role" />
                   </Grid>
                 </Grid>

@@ -194,24 +194,24 @@ export default function AddUserForm({
             <Form>
               <Box boxShadow={3} p={3}>
                 <Grid container spacing={1}>
-                  <Grid item sm={6} md={6}>
+                  <Grid item sm={12} md={6}>
                     <Input name="name" label="Name" />
                   </Grid>
 
-                  <Grid item sm={6} md={6}>
+                  <Grid item sm={12} md={6}>
                     <Input name="email" label="Email" />
                   </Grid>
 
-                  <Grid item sm={6} md={6} mt={1}>
+                  <Grid item sm={12} md={6} mt={1}>
                     <Input name="phone" label="Phone Number" />
                   </Grid>
 
                   {/**get this country from global storage  redux get country*/}
-                  <Grid item sm={6} md={6} mt={1}>
+                  <Grid item sm={12} md={6} mt={1}>
                     <Input name="country" label="Country" />
                   </Grid>
 
-                  <Grid item sm={6} md={6}>
+                  <Grid item sm={12} md={6}>
                     <ReusableDropdown
                       label="Select role"
                       name="role"
@@ -219,7 +219,7 @@ export default function AddUserForm({
                     />
                   </Grid>
 
-                  <Grid item sm={6} md={6}>
+                  <Grid item sm={12} md={6}>
                     <ReusableDropdown
                       label="Select derpetment"
                       name="department"

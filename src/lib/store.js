@@ -1,13 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import counterReducer from "./redux/feutures/counterSlice";
-import getReducer from "./redux/demo/getdemoSlice";
-import postReducer from "./redux/demo/postdemoSlice";
-import countryReducer, {
-  fetchCountry,
-  getCountry,
-  getLoading,
-  getError,
-} from "../lib/redux/country/country-slice";
+import otpLoginReducer from "./redux/auth2/otplogin-slice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 
@@ -24,9 +17,7 @@ const persistedReducer = persistReducer(
   persistConfig,
   combineReducers({
     counter: counterReducer,
-    getReducer,
-    postReducer,
-    country: countryReducer,
+    loginData: otpLoginReducer,
     // Add all your reducers here
   })
 );
