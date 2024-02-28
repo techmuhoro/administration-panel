@@ -26,8 +26,8 @@ export default function RoleView({ role }) {
       <Box component="header">
         <Typography variant="h6">Role {">"} View</Typography>
       </Box>
-      <Box sx={{ maxWidth: "80%", mx: "auto" }}>
-        <Box sx={{ px: 4, py: 2 }}>
+      <Box sx={{ maxWidth: "80%", mx: "auto" }} boxShadow={2}>
+        <Box sx={{ px: 4, py: 3 }}>
           <Typography
             sx={{ textTransform: "capitalize" }}
             id="modal-modal-title"

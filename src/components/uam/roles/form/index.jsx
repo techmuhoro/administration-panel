@@ -15,6 +15,7 @@ import * as Yup from "yup";
 
 import { Formik, Form, FieldArray } from "formik";
 import LoadingButton from "@/atoms/loading-button";
+import { Container } from "@mui/material";
 
 export default function RoleForm({
   data = null,
@@ -63,10 +64,13 @@ export default function RoleForm({
       <Box
         sx={{
           // border: "1px solid gray",
-          maxWidth: "600px",
+          maxWidth: "650px",
           mx: "auto",
           borderRadius: "5px",
+          px: 2,
+          py: 4,
         }}
+        boxShadow={2}
       >
         <Formik
           initialValues={{
@@ -81,10 +85,10 @@ export default function RoleForm({
           {(form) => (
             <Form>
               <Grid container columnSpacing={2} rowSpacing={2} mb={1}>
-                <Grid sm={12} md={6}>
+                <Grid xs={12} sm={12} md={6}>
                   <Input name="name" label="Role Name" />
                 </Grid>
-                <Grid sm={12} md={6}>
+                <Grid xs={12} sm={12} md={6}>
                   <Select name="department" label="Department">
                     {departments?.map((item) => (
                       <MenuItem key={item.id} value={item.id}>
@@ -93,15 +97,6 @@ export default function RoleForm({
                     ))}
                   </Select>
                 </Grid>
-                {/* <Grid xs={12}>
-                  <Input
-                    name="description"
-                    label="Description"
-                    multiline
-                    minRows={4}
-                    maxRows={10}
-                  />
-                </Grid> */}
 
                 <Grid xs={12}>
                   <FieldArray name="permissions">

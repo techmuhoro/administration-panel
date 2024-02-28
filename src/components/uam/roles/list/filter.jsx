@@ -12,8 +12,9 @@ import TextField from "@mui/material/TextField";
 
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
-import { convertStringSearchParamsToObj } from "@/lib/utils";
+import { convertStringSearchParamsToObj, backendDateFormat } from "@/lib/utils";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
+import { FormLabel } from "@mui/material";
 
 export default function RolesFilter() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -64,8 +65,8 @@ function FilterPopover({ open, anchorEl, handleClose, handleClearFilters }) {
   const [filters, setFilters] = useState({
     role: "",
     department: "",
-    description: "",
-    createdBy: "",
+    startDate: "",
+    endDate: "",
   });
 
   const pathname = usePathname();
@@ -73,6 +74,10 @@ function FilterPopover({ open, anchorEl, handleClose, handleClearFilters }) {
   const router = useRouter();
 
   useEffect(() => {
+    const paramsObj = convertStringSearchParamsToObj(
+      querySearchParams.toString()
+    );
+    console.log(querySearchParams);
     setFilters((prev) => {
       const newFilters = {
         ...prev,
@@ -95,11 +100,14 @@ function FilterPopover({ open, anchorEl, handleClose, handleClearFilters }) {
     );
 
     const { page, rows, ...existingFilters } = existingParams;
+    console.log("existingFilters", existingFilters);
 
     // override the existing filters with the new filters
     const newFilters = {
       ...existingFilters,
       ...filters,
+      // startDate: backendDateFormat(filters.startDate),
+      // endDate: backendDateFormat(filters.endDate),
     };
 
     // remove empty values
@@ -111,10 +119,11 @@ function FilterPopover({ open, anchorEl, handleClose, handleClearFilters }) {
       }
     }
 
+    console.log(cleanFilters);
+
     const queryParams = new URLSearchParams({
+      ...(rows && { rows: rows }),
       ...cleanFilters,
-      rows: rows ? rows : DEFAULT_ROWS_PER_PAGE,
-      page: 1, // reset page to one for every new search
     }).toString();
 
     const url = `${pathname}/?${queryParams}`;
@@ -146,8 +155,8 @@ function FilterPopover({ open, anchorEl, handleClose, handleClearFilters }) {
           Filter by
         </Typography>
 
-        <Grid container rowGap={1} columnGap={2} sx={{ mb: 2 }}>
-          <Grid sm={12} md={5.5}>
+        <Grid container rowSpacing={1} columnSpacing={2} sx={{ mb: 2 }}>
+          <Grid xs={12} sm={12} md={6}>
             <TextField
               label="Role"
               size="small"
@@ -155,7 +164,7 @@ function FilterPopover({ open, anchorEl, handleClose, handleClearFilters }) {
               onChange={handleFilterChange("role")}
             />
           </Grid>
-          <Grid sm={12} md={5.5}>
+          <Grid xs={12} sm={12} md={5.5}>
             <TextField
               label="Department"
               size="small"
@@ -164,7 +173,7 @@ function FilterPopover({ open, anchorEl, handleClose, handleClearFilters }) {
             />
           </Grid>
 
-          <Grid sm={12} md={5.5}>
+          {/* <Grid xs={12} sm={12} md={5.5}>
             <TextField
               label="Description"
               size="small"
@@ -172,12 +181,35 @@ function FilterPopover({ open, anchorEl, handleClose, handleClearFilters }) {
               onChange={handleFilterChange("description")}
             />
           </Grid>
-          <Grid sm={12} md={5.5}>
+          <Grid xs={12} sm={12} md={5.5}>
             <TextField
               label="Created By"
               size="small"
               value={filters.createdBy}
               onChange={handleFilterChange("createdBy")}
+            />
+          </Grid> */}
+
+          <Grid xs={12} sm={12} md={6}>
+            <FormLabel>Start Date</FormLabel>
+            <TextField
+              // label="Start Date"
+              size="small"
+              value={filters.startDate}
+              onChange={handleFilterChange("startDate")}
+              fullWidth
+              type="date"
+            />
+          </Grid>
+
+          <Grid xs={12} sm={12} md={5.5}>
+            <FormLabel>End Date</FormLabel>
+            <TextField
+              size="small"
+              value={filters.endDate}
+              onChange={handleFilterChange("endDate")}
+              fullWidth
+              type="date"
             />
           </Grid>
         </Grid>
