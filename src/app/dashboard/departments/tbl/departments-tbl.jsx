@@ -6,6 +6,7 @@ import ReusableTable from "@/atoms/reusable-table";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
 import DepartmentsFilter from "./tblComponents/departments-filter";
 import CreateBtn from "./tblComponents/create-btn";
+import DepartmentsExport from "./tblComponents/departments-export";
 
 
 function DepartmentsTbl({ data, columnTraits, paginationData }) {
@@ -30,7 +31,7 @@ function DepartmentsTbl({ data, columnTraits, paginationData }) {
 
         <Box>
           <DepartmentsFilter />
-          {/* <DepartmentsExport /> */}
+          <DepartmentsExport />
         </Box>
       </Box>
       <ReusableTable data={data} columns={columnTraits} {...paginationData} />

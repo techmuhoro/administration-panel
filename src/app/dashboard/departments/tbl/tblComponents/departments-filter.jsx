@@ -10,7 +10,7 @@ import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import Stack from "@mui/material/Stack";
-import { convertStringSearchParamsToObj, filterObject } from "@/lib/utils";
+import { convertStringSearchParamsToObj } from "@/lib/utils";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 
 function DepartmentsFilter() {
@@ -37,7 +37,12 @@ function DepartmentsFilter() {
 
   return (
     <>
-      <Stack direction="row" alignItems="center" columnGap={1}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        columnGap={1}
+        sx={{ display: "inline-flex" }}
+      >
         <Typography variant="body2">
           {addedFiltersCount} Applied{" "}
           {addedFiltersCount == 1 ? "filter" : "filters"}
