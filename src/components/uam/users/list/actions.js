@@ -57,8 +57,8 @@ export default function UsersActions({ row }) {
             </Stack>
           </MenuItem>
         </Link>
-
-        <UserDelete row={row} />
+        {/* to enable delete uncomment this section
+        <UserDelete row={row} />  */}
       </Menu>
     </>
   );

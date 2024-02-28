@@ -15,6 +15,8 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
+import { store } from "../../../../lib/store";
+
 export default function AddUserForm({
   rolesData,
   departmentData,
@@ -25,6 +27,12 @@ export default function AddUserForm({
   const [loading, setLoading] = useState(false);
   const token = Cookie.get("token");
   const router = useRouter();
+  const state = store.getState();
+
+  // Access specific values from the store state using selectors
+  const country = state.country;
+
+  console.log(country);
 
   if (isUpdate) {
     //filter user with the role and derp
@@ -137,7 +145,7 @@ export default function AddUserForm({
 
   // console.log(derpetmentOptions, "option field");
   // console.log(options, "role optiona");
-  console.log(userDetails);
+  //console.log(userDetails);
 
   let permissionsData = [];
   let allPermissionObjects = [];
@@ -198,7 +206,7 @@ export default function AddUserForm({
                     <Input name="phone" label="Phone Number" />
                   </Grid>
 
-                  {/**get this country from global storage   */}
+                  {/**get this country from global storage  redux get country*/}
                   <Grid item sm={6} md={6} mt={1}>
                     <Input name="country" label="Country" />
                   </Grid>
@@ -291,7 +299,7 @@ export default function AddUserForm({
 
                 <LoadingButton
                   variant="outlined"
-                  sx={{ marginLeft: "10px" }}
+                  sx={{ marginTop: "10px" }}
                   loading={loading}
                   type="submit"
                 >

@@ -47,6 +47,7 @@ function Otp() {
     axios(config)
       .then((response) => {
         if (response.data.status === "SUCCESS") {
+          console.log(response);
           Cookies.set("token", response.data.data.includes.token);
           router.replace(nextLink ? nextLink : "/dashboard");
           setLoading(false);

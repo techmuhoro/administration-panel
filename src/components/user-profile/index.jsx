@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Box, Typography, Grid, Container } from "@mui/material";
 import { Input } from "@/atoms/form";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 import { BASE_URL } from "@/lib/constants";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 import axios from "axios";
@@ -18,16 +18,14 @@ import {
 } from "../../lib/redux/country/country-slice";
 
 import { useDispatch, useSelector } from "react-redux";
-import { decrement, increment } from "../../lib/redux/feutures/counterSlice";
 
 export default function UserProfile() {
   const setAlertMessage = useNotifyAlertCtx();
   const [loading, setLoading] = useState(false);
   const token = Cookie.get("token");
   const router = useRouter();
-  const dispatch = useDispatch();
 
-  const count = useSelector((state) => state.counter.value); // Access the counter state
+  let dispatch = useDispatch();
 
   // Selectors
   const countryData = useSelector(getCountry);
@@ -51,7 +49,7 @@ export default function UserProfile() {
 
     setLoading(true);
     axios
-      .put(`${BASE_URL}users/${userDetails.data.id}`, JSON.stringify(values), {
+      .put(`${BASE_URL}profile`, JSON.stringify(values), {
         headers,
       })
       .then((response) => {
@@ -67,17 +65,7 @@ export default function UserProfile() {
       .catch((error) => {
         let errorObject = error.response?.data?.error;
         console.log(error);
-        let errorKey = [
-          "email",
-          "message",
-          "status",
-          "user",
-          "name",
-          "phone",
-          "country",
-          "department",
-          "role",
-        ];
+        let errorKey = ["email", "message", "name", "phone", "country"];
         errorKey.forEach((key) => {
           if (errorObject?.hasOwnProperty(key)) {
             setAlertMessage(errorObject[key], {
@@ -90,6 +78,7 @@ export default function UserProfile() {
       });
   };
 
+  // pick this value from the redux store
   let initialValue = {
     name: "",
     email: "",
@@ -132,6 +121,15 @@ export default function UserProfile() {
                   <Grid item sm={6} md={6} mt={1}>
                     <Input name="country" label="Country" />
                   </Grid>
+
+                  <Grid item sm={6} md={6} mt={1}>
+                    <Input name="department" label="Department" />
+                  </Grid>
+
+                  {/**get this country from global storage   */}
+                  <Grid item sm={6} md={6} mt={1}>
+                    <Input name="role" label="Role" />
+                  </Grid>
                 </Grid>
 
                 <LoadingButton
@@ -156,17 +154,7 @@ export default function UserProfile() {
             justifyContent: "center",
             alignItems: "center",
           }}
-        >
-          <Typography variant="h4" component="h1">
-            Admin dashboard
-          </Typography>
-
-          <Box>
-            <h1>Counter: {count}</h1> {/* Display the counter state */}
-            <button onClick={() => dispatch(increment())}>Increment</button>
-            <button onClick={() => dispatch(decrement())}>Decrement</button>
-          </Box>
-        </Box>
+        ></Box>
       </Container>
     </Box>
   );
