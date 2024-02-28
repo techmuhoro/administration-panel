@@ -17,6 +17,13 @@ import MuiAlert from "@/atoms/MuiAlert";
 import { login } from "@/app/utils/formValidations/auth/login";
 import AuthWrapper from "../authWrapper";
 
+import {
+  containerStyles,
+  headerStyles,
+  linkStyles,
+  textStyles,
+} from "../styles";
+
 function Login() {
   const router = useRouter();
   const queryParams = useSearchParams();
@@ -44,7 +51,7 @@ function Login() {
         if (response.data.status === "SUCCESS") {
           Cookies.set("token", response.data.data.token);
           router.replace(
-            `/auth/otp?otp=true${nextLink ? `&next=${nextLink}` : ""}`
+            `/auth/otp?otp=true&email=${values.email}${nextLink ? `&next=${nextLink}` : ""}`
           );
         } else {
           setAlert({
@@ -66,7 +73,7 @@ function Login() {
           });
         } else if (error.response.status === 403) {
           setAlert({
-            message: error.response.data.error,
+            message: error.response.data.error.message,
             type: "error",
           });
         } else {
@@ -81,33 +88,46 @@ function Login() {
 
   return (
     <AuthWrapper>
-      <Stack width={{ md: "40%", xs: "90%" }} spacing={2}>
-        <Typography>Login</Typography>
+      <Stack width={{ md: "40%", xs: "90%" }} spacing={2} sx={containerStyles}>
+        <Stack pb={3} spacing={2}>
+          <Typography sx={headerStyles}>
+            Sign in to iPay&#39;s Admin Dashboard
+          </Typography>
+          <Typography sx={textStyles}>
+            New user?{" "}
+            <span style={{ color: "#f57c00" }}>
+              Request an admin to create your account
+            </span>
+          </Typography>
+        </Stack>
         <Formik
           validationSchema={login}
           initialValues={{ email: "", password: "" }}
           onSubmit={handleSubmit}
         >
           <Form>
-            <Stack spacing={2}>
+            <Stack spacing={3}>
               <FormikCustomInput
+                id="email"
                 name="email"
-                placeholder="email@gmail.com"
-                required
+                label="Email address"
               />
-              <FormikCustomInput name="password" placeholder="password" />
-              <Typography
-                sx={{ fontSize: 12, color: "blue", cursor: "pointer" }}
-                onClick={() => router.replace("/auth/forgotPassword")}
-              >
-                Forgot Password?
-              </Typography>
-              <LoadingButton
-                variant="contained"
-                type="submit"
-                loading={loading}
-              >
-                Submit
+              <FormikCustomInput
+                id="email"
+                name="password"
+                label="Password"
+                type="password"
+              />
+              <Stack alignItems="flex-end">
+                <Typography
+                  sx={linkStyles}
+                  onClick={() => router.replace("/auth/forgotPassword")}
+                >
+                  Forgot Password?
+                </Typography>
+              </Stack>
+              <LoadingButton variant="blue" type="submit" loading={loading}>
+                Login
               </LoadingButton>
             </Stack>
           </Form>

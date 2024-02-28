@@ -9,16 +9,23 @@ import axios from "axios";
 
 import { MuiOtpInput } from "mui-one-time-password-input";
 
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, Alert, Box } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
 import AuthWrapper from "../authWrapper";
 import MuiAlert from "@/atoms/MuiAlert";
+import {
+  containerStyles,
+  headerStyles,
+  linkStyles,
+  textStyles,
+} from "../styles";
 
 function Otp() {
   const router = useRouter();
   const queryParams = useSearchParams();
   const nextLink = queryParams.get("next") || "";
+  const email = queryParams.get("email");
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -94,17 +101,27 @@ function Otp() {
 
     axios(config)
       .then((response) => {
-        console.log("Resend Otp res", response);
+        if (response.data.status === "SUCCESS") {
+          setAlert({
+            message: "OTP has been resent!",
+            type: "error",
+          });
+          setLoading(false);
+        } else {
+          setAlert({
+            message: "Something went wrong. Kindly contact support",
+            type: "error",
+          });
+        }
       })
       .catch((error) => {
-        console.log("RESEND OTP ERR", error);
         if (error.response === undefined) {
           setAlert({
             message: "Something went wrong. Kindly contact support",
             type: "error",
           });
         } else if (error.response.status === 401) {
-          setAlert({ type: "error", message: error.response.data.error });
+          setAlert({ type: "error", message: error.response.data.message });
         } else if (error.response.status == 406) {
           setAlert({
             message: Object.values(error.response.data.error)[0],
@@ -119,15 +136,22 @@ function Otp() {
 
   return (
     <AuthWrapper>
-      <Stack width={{ md: "30%", xs: "90%" }} spacing={2}>
-        <Typography variant="h5">Enter OTP</Typography>
-        <MuiOtpInput value={otp} onChange={handleChange} length={6} />
-        <Stack direction="row" justifyContent="space-between">
-          <Typography>Didn&#39;t receive otp?</Typography>{" "}
-          <Typography
-            onClick={handleResendOtp}
-            sx={{ color: "blue", cursor: "pointer" }}
-          >
+      <Stack width={{ md: "35%", xs: "90%" }} spacing={2} sx={containerStyles}>
+        <Typography sx={headerStyles}>Enter OTP</Typography>
+        <Alert severity="success">
+          An OTP has been sent to{" "}
+          <span style={{ fontWeight: 500 }}>{email}</span>
+        </Alert>
+        <Stack>
+          <MuiOtpInput value={otp} onChange={handleChange} length={6} />
+        </Stack>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignContent="center"
+        >
+          <Typography sx={textStyles}>Didn&#39;t receive otp?</Typography>{" "}
+          <Typography onClick={handleResendOtp} sx={linkStyles}>
             Resend
           </Typography>
         </Stack>
@@ -144,10 +168,6 @@ function Otp() {
       {alert.message !== "" && alert.type !== "" && (
         <MuiAlert variant={alert.type} message={alert.message} />
       )}
-      {/* <MuiAlert
-        variant="success"
-        message="A One Time Password has been sent to your Email or Phone"
-      /> */}
     </AuthWrapper>
   );
 }
