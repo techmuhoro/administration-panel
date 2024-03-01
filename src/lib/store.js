@@ -8,8 +8,6 @@ import storage from "redux-persist/lib/storage"; // defaults to localStorage for
 const persistConfig = {
   key: "root",
   storage,
-  // Optionally, you can whitelist specific reducers to be persisted
-  // whitelist: ['counter'],
 };
 
 // Wrap your root reducer with persistReducer
@@ -18,11 +16,10 @@ const persistedReducer = persistReducer(
   combineReducers({
     counter: counterReducer,
     loginData: otpLoginReducer,
-    // Add all your reducers here
   })
 );
 
-// Create the Redux store
+//store
 export const store = configureStore({
   reducer: persistedReducer,
 });

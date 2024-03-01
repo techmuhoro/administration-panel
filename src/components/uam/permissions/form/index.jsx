@@ -71,11 +71,13 @@ export default function PermissionForm({
 
         <Box
           sx={{
-            // border: "1px solid gray",
             maxWidth: "600px",
             mx: "auto",
             borderRadius: "5px",
+            // border: "1px solid rgb(211, 211, 211)",
+            p: 4,
           }}
+          boxShadow={2}
         >
           <Formik
             initialValues={{
@@ -91,7 +93,7 @@ export default function PermissionForm({
             {(form) => (
               <Form>
                 <Grid container columnSpacing={2} rowSpacing={2} mb={1}>
-                  <Grid sm={12} md={6}>
+                  <Grid xs={12} md={6}>
                     <Select name="parentId" label={"Parent Group"}>
                       <MenuItem value="none">Does not Exist</MenuItem>
                       {parentCategories.map((parent) => (
@@ -106,7 +108,7 @@ export default function PermissionForm({
                     </Select>
                   </Grid>
 
-                  <Grid sm={12} md={6}>
+                  <Grid xs={12} md={6}>
                     <Input
                       name="name"
                       label="Category Name"
@@ -118,14 +120,14 @@ export default function PermissionForm({
                   <>
                     {form.values.parentId === "none" && (
                       <>
-                        <Grid sm={12}>
+                        <Grid xs={12}>
                           <Select name="critical" label={"Critical ?"}>
                             <MenuItem value="false">No</MenuItem>
                             <MenuItem value="true">Yes</MenuItem>
                           </Select>
                         </Grid>
 
-                        <Grid sm={12}>
+                        <Grid xs={12}>
                           <Input
                             name="description"
                             label="Description"

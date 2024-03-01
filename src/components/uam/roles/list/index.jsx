@@ -34,7 +34,6 @@ export default function RolesList({
 
         <Stack direction="row" sx={{ ml: "auto" }} columnGap={1}>
           <RolesFilter />
-          <RolesExport />
         </Stack>
       </Stack>
 

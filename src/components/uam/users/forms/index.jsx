@@ -14,6 +14,8 @@ import * as Yup from "yup";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import { getLoginData } from "../../../../lib/redux/auth2/otplogin-slice";
+import { useDispatch, useSelector } from "react-redux";
 
 import { store } from "../../../../lib/store";
 
@@ -27,19 +29,31 @@ export default function AddUserForm({
   const [loading, setLoading] = useState(false);
   const token = Cookie.get("token");
   const router = useRouter();
-  const state = store.getState();
+
+  let dispatch = useDispatch();
+  const loginData = useSelector(getLoginData);
+
+  let Contries = loginData?.data?.includes?.opCountries;
+
+  console.log(Contries);
+
+  let operationContries = Contries?.filter(
+    (item) => item.attributes.opStatus === 1
+  );
+
+  let allContries = operationContries?.map((item) => ({
+    label: item.attributes.name,
+    value: item.attributes.iso,
+  }));
 
   // Access specific values from the store state using selectors
-  const country = state.country;
-
-  console.log(country);
 
   if (isUpdate) {
     //filter user with the role and derp
   }
 
   //console.log(userDetails,'user-details')
-  const options = rolesData.data.map((item) => {
+  const options = rolesData?.data?.map((item) => {
     return {
       value: item.id,
       label: item.attributes.name,
@@ -151,7 +165,7 @@ export default function AddUserForm({
   let allPermissionObjects = [];
 
   if (isUpdate) {
-    permissionsData = userDetails.data?.attributes?.permissions;
+    permissionsData = userDetails?.data?.attributes?.permissions;
     allPermissionObjects = userDetails.data.attributes.permissions
       .reduce((acc, permissionGroup) => {
         acc.push(permissionGroup.attributes.permissions);
@@ -202,13 +216,17 @@ export default function AddUserForm({
                     <Input name="email" label="Email" />
                   </Grid>
 
-                  <Grid item sm={12} md={6} mt={1}>
+                  <Grid item sm={12} md={6} mt={2}>
                     <Input name="phone" label="Phone Number" />
                   </Grid>
 
                   {/**get this country from global storage  redux get country*/}
-                  <Grid item sm={12} md={6} mt={1}>
-                    <Input name="country" label="Country" />
+                  <Grid item sm={12} md={6}>
+                    <ReusableDropdown
+                      label="Select Country"
+                      name="country"
+                      options={allContries}
+                    />
                   </Grid>
 
                   <Grid item sm={12} md={6}>

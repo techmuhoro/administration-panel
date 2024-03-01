@@ -16,6 +16,7 @@ import MuiAlert from "@/atoms/MuiAlert";
 import AuthWrapper from "../authWrapper";
 
 import { resetPassword } from "@/app/utils/formValidations/auth/resetPassword";
+import { containerStyles, headerStyles } from "../styles";
 
 function ResetPassword() {
   const router = useRouter();
@@ -89,25 +90,28 @@ function ResetPassword() {
 
   return (
     <AuthWrapper>
-      <Stack width={{ md: "40%", xs: "90%" }} spacing={2}>
-        <Typography>Reset Password</Typography>
+      <Stack width={{ md: "40%", xs: "90%" }} spacing={2} sx={containerStyles}>
+        <Typography sx={headerStyles}>Reset Password</Typography>
         <Formik
           validationSchema={resetPassword}
           initialValues={{ password: "", confirmPassword: "" }}
           onSubmit={handleSubmit}
         >
           <Form>
-            <Stack spacing={2}>
-              <FormikCustomInput name="password" placeholder="Password" />
+            <Stack spacing={3}>
               <FormikCustomInput
-                name="confirmPassword"
-                placeholder="Confirm Password"
+                id="password"
+                name="password"
+                label="Password"
+                type="password"
               />
-              <LoadingButton
-                loading={loading}
-                variant="contained"
-                type="submit"
-              >
+              <FormikCustomInput
+                id="confirmPassword"
+                name="confirmPassword"
+                label="Confirm Password"
+                type="password"
+              />
+              <LoadingButton loading={loading} variant="blue" type="submit">
                 Submit
               </LoadingButton>
             </Stack>

@@ -1,82 +1,28 @@
-// import axios from "axios";
-
-// let BASE_URL = "https://jsonplaceholder.typicode.com";
-
-// const Service = axios.create({
-//   baseURL: BASE_URL,
-//   headers: {
-//     Accept: "application/json",
-//   },
-// });
-
-// export const handleFetchData = async (endpoint, withHeaders) => {
-//   const headers = {
-//     "Content-Type": "application/json",
-//     Authorization: "Bearer YourAccessToken", // Access token from cookie
-//   };
-
-//   const options = withHeaders ? { headers } : {};
-
-//   const response = await axios.get(BASE_URL + endpoint, options);
-//   return response;
-// };
-
-// export const handlePostData = async (endpoint, payload, withHeaders) => {
-//   const headers = {
-//     "Content-Type": "application/json",
-//     Authorization: "Bearer YourAccessToken", // Access token from cookie
-//   };
-
-//   const options = withHeaders ? { headers } : {};
-
-//   const response = await axios.post(BASE_URL + endpoint, payload, options);
-//   return response;
-// };
+import axios from "axios";
 
 let BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+// let BASE_URL = "https://jsonplaceholder.typicode.com";
 
-import axios from "axios";
-import { cookies } from "next/headers";
+export const handleFetchData = async (endpoint, withHeaders) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: "Bearer YourAccessToken", // Access token from cookie
+  };
 
-const cookiesList = cookies();
-const hasCookie = cookiesList.has("token");
+  const options = withHeaders ? { headers } : {};
 
-const cookieStore = cookies();
-const token = cookieStore.get("token");
+  const response = await axios.get(BASE_URL + endpoint, options);
+  return response;
+};
 
-const axiosInstance = axios.create({
-  baseURL: BASE_URL,
-  timeout: 10000,
-});
+export const handlePostData = async (endpoint, payload, withHeaders) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: "Bearer YourAccessToken", // Access token from cookie
+  };
 
-// Request interceptor
-axiosInstance.interceptors.request.use(
-  (config) => {
-    if (hasCookie) {
-      config.headers.Authorization = `Bearer ${token.value}`;
-    }
-    config.headers["Content-Type"] = "application/json";
+  const options = withHeaders ? { headers } : {};
 
-    return config;
-  },
-  (error) => {
-    //console.log("failled");
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor
-axiosInstance.interceptors.response.use(
-  (response) => {
-    return response.data;
-  },
-  (error) => {
-    if (error.response === 402) {
-      return error.message;
-    }
-    //console.log("failied");
-    return Promise.reject(error);
-  }
-);
-
-export default axiosInstance;
+  const response = await axios.post(BASE_URL + endpoint, payload, options);
+  return response;
+};

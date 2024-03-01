@@ -2,18 +2,24 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Cookies from "js-cookie";
 import axios from "axios";
 
 import { MuiOtpInput } from "mui-one-time-password-input";
 
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, Alert, Box } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
 import AuthWrapper from "../authWrapper";
 import MuiAlert from "@/atoms/MuiAlert";
+import {
+  containerStyles,
+  headerStyles,
+  linkStyles,
+  textStyles,
+} from "../styles";
 
 /**added redux to handle this page */
 import {
@@ -21,14 +27,16 @@ import {
   getLoginData,
   getLoading,
   getError,
+  clearState,
 } from "../../../lib/redux/auth2/otplogin-slice";
-
 import { useDispatch, useSelector } from "react-redux";
+//import { persistor } from "../../../lib/store";
 
 function Otp() {
   const router = useRouter();
   const queryParams = useSearchParams();
   const nextLink = queryParams.get("next") || "";
+  const email = queryParams.get("email");
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,31 +47,50 @@ function Otp() {
   const loginData = useSelector(getLoginData);
   const loading2 = useSelector(getLoading);
   const error = useSelector(getError);
+  console.log(router);
   /*
 
   
 
   /** */
 
-  console.log(loginData?.data, "contry-data");
+  console.log(loginData?.data, "login data");
   console.log(loading2, "loading2");
-  console.log(error, "errro");
+  console.log(error, "error");
 
-  // useEffect(() => {}, [dispatch]);
+  useEffect(() => {
+    if (loginData?.data === undefined) {
+      setAlert({
+        message: error,
+        type: "error",
+      });
+      //dispatch(clearState());
+    }
 
-  const handleLogin = async () => {
-    console.log("otp-login");
-    dispatch(handleOtpLogin({ code: 141454 }));
+    if (loginData?.data?.type === "users") {
+      setAlert({
+        message: "loged in successfully",
+        type: "success",
+      });
+      Cookies.set("token", loginData?.data.includes.token);
+      router.replace(nextLink ? nextLink : "/dashboard");
+    }
+  }, [error, loginData, nextLink, router]);
+
+  let token = Cookies.get("token");
+  const handleLogin = () => {
+    dispatch(clearState());
+    dispatch(handleOtpLogin({ code: otp, token: token }));
   };
 
   const handleChange = (newValue) => {
+    dispatch(clearState());
     setOtp(newValue);
   };
 
   const handleSubmit = () => {
     setLoading(true);
     setAlert({ type: "", message: "" });
-
     const credentials = Cookies.get("token");
 
     let config = {
@@ -81,7 +108,7 @@ function Otp() {
         if (response.data.status === "SUCCESS") {
           console.log(response);
           Cookies.set("token", response.data.data.includes.token);
-          router.replace(nextLink ? nextLink : "/dashboard");
+          //router.replace(nextLink ? nextLink : "/dashboard");
           setLoading(false);
         } else {
           setAlert({
@@ -127,17 +154,27 @@ function Otp() {
 
     axios(config)
       .then((response) => {
-        console.log("Resend Otp res", response);
+        if (response.data.status === "SUCCESS") {
+          setAlert({
+            message: "OTP has been resent!",
+            type: "success",
+          });
+          setLoading(false);
+        } else {
+          setAlert({
+            message: "Something went wrong. Kindly contact support",
+            type: "error",
+          });
+        }
       })
       .catch((error) => {
-        console.log("RESEND OTP ERR", error);
         if (error.response === undefined) {
           setAlert({
             message: "Something went wrong. Kindly contact support",
             type: "error",
           });
         } else if (error.response.status === 401) {
-          setAlert({ type: "error", message: error.response.data.error });
+          setAlert({ type: "error", message: error.response.data.message });
         } else if (error.response.status == 406) {
           setAlert({
             message: Object.values(error.response.data.error)[0],
@@ -152,37 +189,38 @@ function Otp() {
 
   return (
     <AuthWrapper>
-      <Stack width={{ md: "30%", xs: "90%" }} spacing={2}>
-        <Typography variant="h5">Enter OTP</Typography>
-        <MuiOtpInput value={otp} onChange={handleChange} length={6} />
-        <Stack direction="row" justifyContent="space-between">
-          <Typography>Didn&#39;t receive otp?</Typography>{" "}
-          <Typography
-            onClick={handleResendOtp}
-            sx={{ color: "blue", cursor: "pointer" }}
-          >
+      <Stack width={{ md: "35%", xs: "90%" }} spacing={2} sx={containerStyles}>
+        <Typography sx={headerStyles}>Enter OTP</Typography>
+        <Alert severity="success">
+          An OTP has been sent to{" "}
+          <span style={{ fontWeight: 500 }}>{email}</span>
+        </Alert>
+        <Stack>
+          <MuiOtpInput value={otp} onChange={handleChange} length={6} />
+        </Stack>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignContent="center"
+        >
+          <Typography sx={textStyles}>Didn&#39;t receive otp?</Typography>{" "}
+          <Typography onClick={handleResendOtp} sx={linkStyles}>
             Resend
           </Typography>
         </Stack>
         <LoadingButton
-          onClick={handleSubmit}
+          onClick={handleLogin}
           disabled={!otp || otp.length !== 6}
           variant="contained"
-          loading={loading}
+          loading={loading2}
         >
           Continue
         </LoadingButton>
       </Stack>
 
-      <LoadingButton onClick={handleLogin}> loginotps</LoadingButton>
-
       {alert.message !== "" && alert.type !== "" && (
         <MuiAlert variant={alert.type} message={alert.message} />
       )}
-      {/* <MuiAlert
-        variant="success"
-        message="A One Time Password has been sent to your Email or Phone"
-      /> */}
     </AuthWrapper>
   );
 }

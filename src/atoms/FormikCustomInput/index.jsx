@@ -7,6 +7,8 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const FormikCustomInput = ({
+  id,
+  label,
   name,
   type,
   select,
@@ -25,10 +27,12 @@ const FormikCustomInput = ({
       {({ field, form }) => (
         <TextField
           {...field}
+          id={id}
+          label={label}
           select={select}
           fullWidth
           name={name}
-          size="small"
+          size="medium"
           placeholder={placeholder}
           type={type !== "password" ? type : visibility ? "text" : "password"}
           helperText={<ErrorMessage name={name} />}
@@ -48,18 +52,17 @@ const FormikCustomInput = ({
                 </IconButton>{" "}
               </InputAdornment>
             ),
-            sx: {
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#DADEF0", // change the border color here
-              },
-
-              input: {
-                "&::placeholder": {
-                  color: "#00000",
-                  fontSize: 13,
-                },
-              },
+          }}
+          sx={{
+            "& label.Mui-focused": {
+              color: "#000",
+              fontWeight: 500,
             },
+            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+              {
+                border: 2,
+                borderColor: "#000",
+              },
           }}
           {...rest}
         >

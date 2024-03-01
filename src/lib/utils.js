@@ -39,3 +39,12 @@ export function convertStringSearchParamsToObj(str) {
 
   return obj;
 }
+
+export function backendDateFormat(str) {
+  if (!str) {
+    return "";
+  }
+  const date = new Date(str);
+
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+}

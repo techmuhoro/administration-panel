@@ -57,7 +57,8 @@ export default function RoleDelete({ row }) {
           type: "success",
         });
 
-        return router.push(pathname);
+        handleClose();
+        return router.refresh();
       }
       // unauthenticated
       else if (response.status == 401) {
@@ -122,7 +123,7 @@ export default function RoleDelete({ row }) {
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle id="alert-dialog-title">
-            Confirm Action to delete role - {row?.role}
+            Confirm Action to delete role - {row?.attributes?.name}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
