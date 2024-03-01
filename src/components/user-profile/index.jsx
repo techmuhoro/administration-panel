@@ -1,8 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Box, Typography, Grid, Container, Button } from "@mui/material";
-import { Input } from "@/atoms/form";
+import { Box, Typography, Grid, Container, TextField } from "@mui/material";
+import { Input, ReusableDropdown } from "@/atoms/form";
 import { Formik, Form } from "formik";
 import { BASE_URL } from "@/lib/constants";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
@@ -11,14 +11,31 @@ import Cookie from "js-cookie";
 import LoadingButton from "@/atoms/loading-button";
 import * as Yup from "yup";
 
+import { getLoginData } from "../../lib/redux/auth2/otplogin-slice";
+import { useSelector } from "react-redux";
+
 export default function UserProfile() {
   const setAlertMessage = useNotifyAlertCtx();
   const [loading, setLoading] = useState(false);
   const token = Cookie.get("token");
   const router = useRouter();
 
+  const loginData = useSelector(getLoginData);
+
+  let Contries = loginData?.includes?.opCountries;
+
+  let operationContries = Contries?.filter(
+    (item) => item.attributes.opStatus === 1
+  );
+  let allContries = [];
+
+  if (operationContries !== undefined) {
+    allContries = operationContries?.map((item) => ({
+      label: item.attributes.name,
+      value: item.attributes.iso,
+    }));
+  }
   const handleUpdateUser = (values) => {
-    console.log(values, "update users");
     let headers = {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -55,12 +72,12 @@ export default function UserProfile() {
       });
   };
 
-  // pick this value from the redux store
+  //pick this value from the redux store
   let initialValue = {
-    name: "",
-    email: "",
-    phone: "",
-    country: "",
+    name: loginData?.attributes?.name,
+    email: loginData?.attributes?.email,
+    phone: loginData?.attributes?.phone,
+    country: loginData?.attributes?.country,
   };
 
   const validationSchema = Yup.object({
@@ -90,22 +107,38 @@ export default function UserProfile() {
                     <Input name="email" label="Email" />
                   </Grid>
 
-                  <Grid item sm={12} md={6} mt={1}>
+                  <Grid item sm={12} md={6} mt={2}>
                     <Input name="phone" label="Phone Number" />
                   </Grid>
 
                   {/**get this country from global storage   */}
-                  <Grid item sm={12} md={6} mt={1}>
-                    <Input name="country" label="Country" />
+                  <Grid item sm={12} md={6}>
+                    <ReusableDropdown
+                      label="Select Country"
+                      name="country"
+                      options={allContries}
+                    />
                   </Grid>
 
-                  <Grid item sm={12} md={6} mt={1}>
-                    <Input name="department" label="Department" />
+                  <Grid item sm={12} md={6}>
+                    <TextField
+                      fullWidth
+                      disabled
+                      label="Department"
+                      id="Department"
+                      defaultValue={loginData?.attributes?.Department}
+                    />
                   </Grid>
 
                   {/**get this country from global storage   */}
-                  <Grid item sm={12} md={6} mt={1}>
-                    <Input name="role" label="Role" />
+                  <Grid item sm={12} md={6}>
+                    <TextField
+                      fullWidth
+                      disabled
+                      label="Role"
+                      id="Role"
+                      defaultValue={loginData?.attributes?.role}
+                    />
                   </Grid>
                 </Grid>
 

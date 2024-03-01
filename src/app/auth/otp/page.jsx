@@ -54,7 +54,7 @@ function Otp() {
 
   /** */
 
-  console.log(loginData?.data, "login data");
+  console.log(loginData, "login iiiifiifissdata");
   console.log(loading2, "loading2");
   console.log(error, "error");
 
@@ -67,12 +67,12 @@ function Otp() {
       //dispatch(clearState());
     }
 
-    if (loginData?.data?.type === "users") {
+    if (loginData?.type === "users") {
       setAlert({
         message: "loged in successfully",
         type: "success",
       });
-      Cookies.set("token", loginData?.data.includes.token);
+      Cookies.set("token", loginData?.includes.token);
       router.replace(nextLink ? nextLink : "/dashboard");
     }
   }, [error, loginData, nextLink, router]);

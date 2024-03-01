@@ -15,9 +15,7 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { getLoginData } from "../../../../lib/redux/auth2/otplogin-slice";
-import { useDispatch, useSelector } from "react-redux";
-
-import { store } from "../../../../lib/store";
+import { useSelector } from "react-redux";
 
 export default function AddUserForm({
   rolesData,
@@ -30,10 +28,9 @@ export default function AddUserForm({
   const token = Cookie.get("token");
   const router = useRouter();
 
-  let dispatch = useDispatch();
   const loginData = useSelector(getLoginData);
 
-  let Contries = loginData?.data?.includes?.opCountries;
+  let Contries = loginData?.includes?.opCountries;
 
   console.log(Contries);
 
