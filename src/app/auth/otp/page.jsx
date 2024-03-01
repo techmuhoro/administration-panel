@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -21,6 +21,17 @@ import {
   textStyles,
 } from "../styles";
 
+/**added redux to handle this page */
+import {
+  handleOtpLogin,
+  getLoginData,
+  getLoading,
+  getError,
+  clearState,
+} from "../../../lib/redux/auth2/otplogin-slice";
+import { useDispatch, useSelector } from "react-redux";
+//import { persistor } from "../../../lib/store";
+
 function Otp() {
   const router = useRouter();
   const queryParams = useSearchParams();
@@ -31,14 +42,55 @@ function Otp() {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ type: "", message: "" });
 
+  /** */
+  let dispatch = useDispatch();
+  const loginData = useSelector(getLoginData);
+  const loading2 = useSelector(getLoading);
+  const error = useSelector(getError);
+  console.log(router);
+  /*
+
+  
+
+  /** */
+
+  console.log(loginData, "login iiiifiifissdata");
+  console.log(loading2, "loading2");
+  console.log(error, "error");
+
+  useEffect(() => {
+    if (loginData?.data === undefined) {
+      setAlert({
+        message: error,
+        type: "error",
+      });
+      //dispatch(clearState());
+    }
+
+    if (loginData?.type === "users") {
+      setAlert({
+        message: "loged in successfully",
+        type: "success",
+      });
+      Cookies.set("token", loginData?.includes.token);
+      router.replace(nextLink ? nextLink : "/dashboard");
+    }
+  }, [error, loginData, nextLink, router]);
+
+  let token = Cookies.get("token");
+  const handleLogin = () => {
+    dispatch(clearState());
+    dispatch(handleOtpLogin({ code: otp, token: token }));
+  };
+
   const handleChange = (newValue) => {
+    dispatch(clearState());
     setOtp(newValue);
   };
 
   const handleSubmit = () => {
     setLoading(true);
     setAlert({ type: "", message: "" });
-
     const credentials = Cookies.get("token");
 
     let config = {
@@ -54,8 +106,9 @@ function Otp() {
     axios(config)
       .then((response) => {
         if (response.data.status === "SUCCESS") {
+          console.log(response);
           Cookies.set("token", response.data.data.includes.token);
-          router.replace(nextLink ? nextLink : "/dashboard");
+          //router.replace(nextLink ? nextLink : "/dashboard");
           setLoading(false);
         } else {
           setAlert({
@@ -104,7 +157,7 @@ function Otp() {
         if (response.data.status === "SUCCESS") {
           setAlert({
             message: "OTP has been resent!",
-            type: "error",
+            type: "success",
           });
           setLoading(false);
         } else {
@@ -156,10 +209,10 @@ function Otp() {
           </Typography>
         </Stack>
         <LoadingButton
-          onClick={handleSubmit}
+          onClick={handleLogin}
           disabled={!otp || otp.length !== 6}
           variant="contained"
-          loading={loading}
+          loading={loading2}
         >
           Continue
         </LoadingButton>

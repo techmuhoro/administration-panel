@@ -17,6 +17,10 @@ import MuiAlert from "@/atoms/MuiAlert";
 import { login } from "@/app/utils/formValidations/auth/login";
 import AuthWrapper from "../authWrapper";
 
+import { useDispatch } from "react-redux";
+import { persistor } from "../../../lib/store";
+import { clearState } from "../../../lib/redux/auth2/otplogin-slice";
+
 import {
   containerStyles,
   headerStyles,
@@ -31,8 +35,10 @@ function Login() {
 
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", tyep: "" });
+  let dispatch = useDispatch();
 
   const handleSubmit = (values) => {
+    dispatch(clearState());
     setLoading(true);
     setAlert({ type: "", message: "" });
 

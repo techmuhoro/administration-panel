@@ -2,6 +2,7 @@
 
 import { useField } from "formik";
 import TextField from "@mui/material/TextField";
+import { MenuItem } from "@mui/material";
 import MuiCheckbox from "@mui/material/Checkbox";
 import MuiRadio from "@mui/material/Radio";
 import MuiRadioGroup from "@mui/material/RadioGroup";
@@ -13,6 +14,7 @@ import Typography from "@mui/material/Typography";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import InputLabel from "@mui/material/InputLabel";
 import { TextFieldProps } from "@mui/material";
+import { Field, ErrorMessage } from "formik";
 
 /**
  *
@@ -111,4 +113,45 @@ function Select({ label, ...props }) {
   );
 }
 
-export { Input, Checkbox, Select, RadioGroup, Radio };
+function ReusableDropdown({
+  label,
+  name,
+  options,
+  setSelectedValue,
+  selectedValue,
+  ...rest
+}) {
+  return (
+    <>
+      <Field
+        as={TextField}
+        select
+        label={label}
+        name={name}
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        {...rest}
+        error={Boolean(rest.formik && rest.formik.errors[name])}
+        helperText={rest.formik && rest.formik.errors[name]}
+      >
+        {options.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </Field>
+
+      <Typography variant="body2" style={{ color: "red" }}>
+        <ErrorMessage
+          name={name}
+          sx={{}}
+          component="div"
+          className="error-message"
+        />
+      </Typography>
+    </>
+  );
+}
+
+export { Input, Checkbox, Select, RadioGroup, Radio, ReusableDropdown };

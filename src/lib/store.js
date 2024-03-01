@@ -1,18 +1,27 @@
-//store.jsx
-
-"use client";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import counterReducer from "./redux/feutures/counterSlice";
-import getReducer from "./redux/demo/getdemoSlice";
-import postReducer from "./redux/demo/postdemoSlice";
+import otpLoginReducer from "./redux/auth2/otplogin-slice";
+import { persistReducer, persistStore } from "redux-persist";
+import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 
-const rootReducer = combineReducers({
-  counter: counterReducer,
-  getReducer,
-  postReducer,
-  //add all your reducers here
-});
+// Define persist config
+const persistConfig = {
+  key: "root",
+  storage,
+};
 
+// Wrap your root reducer with persistReducer
+const persistedReducer = persistReducer(
+  persistConfig,
+  combineReducers({
+    counter: counterReducer,
+    loginData: otpLoginReducer,
+  })
+);
+
+//store
 export const store = configureStore({
-  reducer: rootReducer,
+  reducer: persistedReducer,
 });
+
+export const persistor = persistStore(store);
