@@ -69,7 +69,7 @@ export default function PermissionActions({ row }) {
 
         <PermissionUpdate permission={row} />
 
-        <PermissionDelete permission={row} />
+        {/* <PermissionDelete permission={row} /> */}
       </Menu>
     </>
   );

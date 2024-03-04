@@ -26,7 +26,15 @@ export default function RoleView({ role }) {
       <Box component="header">
         <Typography variant="h6">Role {">"} View</Typography>
       </Box>
-      <Box sx={{ maxWidth: "80%", mx: "auto" }} boxShadow={2}>
+      <Box
+        sx={{
+          maxWidth: "80%",
+          mx: "auto",
+          backgroundColor: "white",
+          border: `1px solid #e5e7eb`,
+          borderRadius: "5px",
+        }}
+      >
         <Box sx={{ px: 4, py: 3 }}>
           <Typography
             sx={{ textTransform: "capitalize" }}

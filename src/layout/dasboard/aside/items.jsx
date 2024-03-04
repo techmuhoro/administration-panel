@@ -1,3 +1,4 @@
+"use client";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
@@ -65,16 +66,19 @@ export const asideMenuItems = [
         key: "access-control-users",
         label: "User",
         to: "/dashboard/users",
+        active: (pathname) => pathname.startsWith("/dashboard/users"),
       },
       {
         key: "access-control-roles",
         label: "Roles",
         to: "/dashboard/roles",
+        active: (pathname) => pathname.startsWith("/dashboard/roles"),
       },
       {
         key: "access-control-permissions",
         label: "Permission",
         to: "/dashboard/permissions",
+        active: (pathname) => pathname.startsWith("/dashboard/permissions"),
       },
       {
         key: "access-control-audit-trail",

@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import { Form, Formik } from "formik";
 
 import { Stack, Typography } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
+// import { LoadingButton } from "@mui/lab";
 
 import FormikCustomInput from "@/atoms/FormikCustomInput";
 import MuiAlert from "@/atoms/MuiAlert";
@@ -27,6 +27,8 @@ import {
   linkStyles,
   textStyles,
 } from "../styles";
+import StyledContentWrapper from "@/atoms/wrappers/styled-content-wrapper";
+import LoadingButton from "@/atoms/loading-button";
 
 function Login() {
   const router = useRouter();
@@ -94,7 +96,11 @@ function Login() {
 
   return (
     <AuthWrapper>
-      <Stack width={{ md: "40%", xs: "90%" }} spacing={2} sx={containerStyles}>
+      <StyledContentWrapper
+        width={{ md: "40%", xs: "90%" }}
+        spacing={2}
+        sx={containerStyles}
+      >
         <Stack pb={3} spacing={2}>
           <Typography sx={headerStyles}>
             Sign in to iPay&#39;s Admin Dashboard
@@ -132,13 +138,18 @@ function Login() {
                   Forgot Password?
                 </Typography>
               </Stack>
-              <LoadingButton variant="blue" type="submit" loading={loading}>
+              <LoadingButton
+                color="primary"
+                variant="contained"
+                type="submit"
+                loading={loading}
+              >
                 Login
               </LoadingButton>
             </Stack>
           </Form>
         </Formik>
-      </Stack>
+      </StyledContentWrapper>
       {alert.message !== "" && (
         <MuiAlert message={alert.message} variant={alert.type} />
       )}

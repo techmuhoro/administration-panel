@@ -1,4 +1,5 @@
 "use client";
+import Chip from "@mui/material/Chip";
 import UsersActions from "./actions";
 
 export const columns = [
@@ -25,6 +26,21 @@ export const columns = [
   {
     assessor: "attributes.status",
     label: "Status",
+    cell: ({ cell }) => {
+      if (cell === "ACTIVE") {
+        return (
+          <Chip color="success" label={cell} size="small" variant="outlined" />
+        );
+      }
+
+      if (cell === "INACTIVE") {
+        return (
+          <Chip color="error" label={cell} size="small" variant="outlined" />
+        );
+      }
+
+      return cell;
+    },
   },
 
   {
