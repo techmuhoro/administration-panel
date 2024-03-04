@@ -5,14 +5,20 @@ import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import { alpha } from "@mui/material/styles";
 
 export default function MenuItem({ menuItem }) {
   const pathname = usePathname();
-  const active = pathname === menuItem?.to;
+
+  const active =
+    typeof menuItem.active === "function"
+      ? menuItem.active(pathname)
+      : pathname === menuItem?.to;
 
   const activeStyles = {
-    background: (theme) => theme.palette.primary.main,
-    color: "white",
+    background: (theme) => alpha(theme.palette.primary.main, 0.2),
+    // color: "white",
+    borderRight: (theme) => `5px solid ${theme.palette.primary.main}`,
   };
 
   return (
@@ -24,12 +30,12 @@ export default function MenuItem({ menuItem }) {
         sx={{
           px: 1,
           py: 1,
-          borderRadius: 1,
+          // borderRadius: 1,
           cursor: "pointer",
           ...(active ? activeStyles : {}),
           "&:hover": {
-            background: (theme) => theme.palette.primary.main,
-            color: "white",
+            background: (theme) => alpha(theme.palette.primary.main, 0.2),
+            color: "black",
           },
         }}
       >

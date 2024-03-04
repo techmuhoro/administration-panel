@@ -1,7 +1,6 @@
 export const containerStyles = {
   py: 8,
   px: { xs: 3, md: 6 },
-  borderRadius: 3,
   backgroundColor: "#fff",
 };
 

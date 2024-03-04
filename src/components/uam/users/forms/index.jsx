@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import StyledContentWrapper from "@/atoms/wrappers/styled-content-wrapper";
 import { Box, Typography, Grid, Container } from "@mui/material";
 import { Input, ReusableDropdown, Checkbox } from "@/atoms/form";
 import { Formik, Form, Field } from "formik";
@@ -203,7 +204,7 @@ export default function AddUserForm({
         {(form) => (
           <Container maxWidth="md">
             <Form>
-              <Box boxShadow={3} p={3}>
+              <StyledContentWrapper sx={{ p: 3 }}>
                 <Grid container spacing={1}>
                   <Grid item sm={12} md={6}>
                     <Input name="name" label="Name" />
@@ -320,7 +321,7 @@ export default function AddUserForm({
                 >
                   {isUpdate ? "Update user" : "Add user"}
                 </LoadingButton>
-              </Box>
+              </StyledContentWrapper>
             </Form>
           </Container>
         )}

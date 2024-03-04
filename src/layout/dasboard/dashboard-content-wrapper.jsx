@@ -9,7 +9,7 @@ export default function DashboardContentWrapper({
   breadcrumbOmit,
 }) {
   return (
-    <Box sx={{ p: 2, backgroundColor: "#f9fafb" }}>
+    <Box sx={{ p: 2, backgroundColor: "#f9fafb", minHeight: "92%" }}>
       <BreadcrumbsComponent items={breadcrumbItems} omit={breadcrumbOmit} />
       <Box sx={{ mb: 1.5 }} />
       {children}
