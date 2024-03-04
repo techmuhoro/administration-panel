@@ -11,6 +11,14 @@ import AddIcon from "@mui/icons-material/Add";
 
 import { columns } from "./columns";
 
+import { styled } from "@mui/material/styles";
+
+// const StyldContentWrapper = styled(Box)(() => ({
+//   backgroundColor: "white",
+//   borderRadius: "5px",
+//   border: "1px solid #e5e7eb",
+// }));
+
 export default function RolesList({
   data,
   count,
@@ -24,27 +32,37 @@ export default function RolesList({
         Roles
       </Typography>
 
-      {/** Actions buttons */}
-      <Stack direction={"row"} mb={1}>
-        <Link href={"/dashboard/roles/add"}>
-          <Button startIcon={<AddIcon />} variant="contained">
-            New
-          </Button>
-        </Link>
+      <Box
+        sx={{
+          backgroundColor: "white",
+          borderRadius: "5px",
+          border: "1px solid #e5e7eb",
+          px: 3,
+          py: 3,
+        }}
+      >
+        {/** Actions buttons */}
+        <Stack direction={"row"} mb={1}>
+          <Link href={"/dashboard/roles/add"}>
+            <Button startIcon={<AddIcon />} variant="contained">
+              New
+            </Button>
+          </Link>
 
-        <Stack direction="row" sx={{ ml: "auto" }} columnGap={1}>
-          <RolesFilter />
+          <Stack direction="row" sx={{ ml: "auto" }} columnGap={1}>
+            <RolesFilter />
+          </Stack>
         </Stack>
-      </Stack>
 
-      <ReusableTable
-        columns={columns}
-        data={data}
-        count={count}
-        currentPage={currentPage}
-        rowsPerPage={rowsPerPage}
-        totalPages={totalPages}
-      />
+        <ReusableTable
+          columns={columns}
+          data={data}
+          count={count}
+          currentPage={currentPage}
+          rowsPerPage={rowsPerPage}
+          totalPages={totalPages}
+        />
+      </Box>
     </Box>
   );
 }
