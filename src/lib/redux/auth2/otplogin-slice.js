@@ -16,6 +16,7 @@ export const handleOtpLogin = createAsyncThunk(
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.log(errorData);
         let errorObject = errorData.error;
 
         const errorMessage =

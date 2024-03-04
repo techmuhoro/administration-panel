@@ -115,6 +115,7 @@ export default function UserProfile() {
                   <Grid item sm={12} md={6}>
                     <ReusableDropdown
                       label="Select Country"
+                      disabled
                       name="country"
                       options={allContries}
                     />
@@ -126,7 +127,7 @@ export default function UserProfile() {
                       disabled
                       label="Department"
                       id="Department"
-                      defaultValue={loginData?.attributes?.Department}
+                      defaultValue={loginData?.attributes?.department}
                     />
                   </Grid>
 
