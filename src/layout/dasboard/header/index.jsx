@@ -14,7 +14,12 @@ export default function DashboardHeader() {
         justifyContent: "space-between",
         borderBottom: (theme) => `1px solid ${theme.palette.border.main}`,
         px: 2,
-        py: 2,
+        py: 1.5,
+        position: "sticky",
+        top: 0,
+        backgroundColor: "#fff",
+        zIndex: "999",
+        height: "8%",
       }}
     >
       <Stack direction="row" alignItems="center" columnGap={2}>

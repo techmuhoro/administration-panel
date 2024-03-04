@@ -11,6 +11,7 @@ import { MuiOtpInput } from "mui-one-time-password-input";
 
 import { Stack, Typography, Alert, Box } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+// import LoadingButton from "@/atoms/loading-button";
 
 import AuthWrapper from "../authWrapper";
 import MuiAlert from "@/atoms/MuiAlert";
@@ -20,6 +21,7 @@ import {
   linkStyles,
   textStyles,
 } from "../styles";
+import StyledContentWrapper from "@/atoms/wrappers/styled-content-wrapper";
 
 /**added redux to handle this page */
 import {
@@ -189,34 +191,40 @@ function Otp() {
 
   return (
     <AuthWrapper>
-      <Stack width={{ md: "35%", xs: "90%" }} spacing={2} sx={containerStyles}>
-        <Typography sx={headerStyles}>Enter OTP</Typography>
-        <Alert severity="success">
-          An OTP has been sent to{" "}
-          <span style={{ fontWeight: 500 }}>{email}</span>
-        </Alert>
-        <Stack>
-          <MuiOtpInput value={otp} onChange={handleChange} length={6} />
+      <StyledContentWrapper
+        width={{ md: "35%", xs: "90%" }}
+        spacing={2}
+        sx={containerStyles}
+      >
+        <Stack spacing={2}>
+          <Typography sx={headerStyles}>Enter OTP</Typography>
+          <Alert severity="success">
+            An OTP has been sent to{" "}
+            <span style={{ fontWeight: 500 }}>{email}</span>
+          </Alert>
+          <Stack>
+            <MuiOtpInput value={otp} onChange={handleChange} length={6} />
+          </Stack>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignContent="center"
+          >
+            <Typography sx={textStyles}>Didn&#39;t receive otp?</Typography>{" "}
+            <Typography onClick={handleResendOtp} sx={linkStyles}>
+              Resend
+            </Typography>
+          </Stack>
+          <LoadingButton
+            onClick={handleLogin}
+            disabled={!otp || otp.length !== 6}
+            variant="contained"
+            loading={loading2}
+          >
+            Continue
+          </LoadingButton>
         </Stack>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignContent="center"
-        >
-          <Typography sx={textStyles}>Didn&#39;t receive otp?</Typography>{" "}
-          <Typography onClick={handleResendOtp} sx={linkStyles}>
-            Resend
-          </Typography>
-        </Stack>
-        <LoadingButton
-          onClick={handleLogin}
-          disabled={!otp || otp.length !== 6}
-          variant="contained"
-          loading={loading2}
-        >
-          Continue
-        </LoadingButton>
-      </Stack>
+      </StyledContentWrapper>
 
       {alert.message !== "" && alert.type !== "" && (
         <MuiAlert variant={alert.type} message={alert.message} />

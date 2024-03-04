@@ -56,7 +56,7 @@ const otploginSlice = createSlice({
       })
       .addCase(handleOtpLogin.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = action.payload;
+        state.data = action.payload.data;
       })
       .addCase(handleOtpLogin.rejected, (state, action) => {
         state.loading = false;
@@ -69,6 +69,8 @@ export const { clearState } = otploginSlice.actions;
 
 export default otploginSlice.reducer;
 
-export const getLoginData = (state) => state.loginData.data?.data;
+export const getLoginData = (state) => state.loginData.data;
 export const getLoading = (state) => state.loginData.loading;
 export const getError = (state) => state.loginData.error;
+export const getUserPermissions = (state) =>
+  state.loginData.data?.includes?.permissions || [];

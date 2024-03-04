@@ -6,6 +6,7 @@ import { Box, Stack } from "@mui/material";
 import { columns } from "../list/columns";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 import AddNew from "@/atoms/button/add-new";
+import StyledContentWrapper from "@/atoms/wrappers/styled-content-wrapper";
 
 export default function UsersList({
   errorDetails,
@@ -29,19 +30,21 @@ export default function UsersList({
 
   return (
     <Box>
-      <Stack sx={{ mb: 1 }}>
-        <Link href={"/dashboard/users/add"}>
-          <AddNew text={"add user"} />
-        </Link>
-      </Stack>
-      <ReusableTable
-        columns={columns}
-        data={data}
-        count={count}
-        currentPage={currentPage}
-        rowsPerPage={rowsPerPage}
-        totalPages={totalPages}
-      />
+      <StyledContentWrapper sx={{ p: 3 }}>
+        <Stack sx={{ mb: 1 }}>
+          <Link href={"/dashboard/users/add"}>
+            <AddNew text={"add user"} />
+          </Link>
+        </Stack>
+        <ReusableTable
+          columns={columns}
+          data={data}
+          count={count}
+          currentPage={currentPage}
+          rowsPerPage={rowsPerPage}
+          totalPages={totalPages}
+        />
+      </StyledContentWrapper>
     </Box>
   );
 }

@@ -11,7 +11,7 @@ const AuthWrapper = ({ children }) => {
   const router = useRouter();
 
   return (
-    <Stack sx={{ backgroundColor: "#F3F8FB" }}>
+    <Stack sx={{ backgroundColor: "#f9fafb" }}>
       <Box sx={{ cursor: "pointer", px: 5, py: 3 }}>
         <Image
           src={ipaylogo}

@@ -73,11 +73,11 @@ export default function PermissionForm({
           sx={{
             maxWidth: "600px",
             mx: "auto",
-            borderRadius: "5px",
-            // border: "1px solid rgb(211, 211, 211)",
             p: 4,
+            backgroundColor: "white",
+            borderRadius: "5px",
+            border: "1px solid #e5e7eb",
           }}
-          boxShadow={2}
         >
           <Formik
             initialValues={{

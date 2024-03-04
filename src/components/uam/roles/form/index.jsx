@@ -4,18 +4,19 @@ import { Input, Select, Checkbox } from "@/atoms/form";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
-import Button from "@mui/material/Button";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import * as Yup from "yup";
 
 import { Formik, Form, FieldArray } from "formik";
 import LoadingButton from "@/atoms/loading-button";
-import { Container } from "@mui/material";
+import { styled } from "@mui/material/styles";
+
+const StyledContentWrapper = styled(Box)(() => ({
+  backgroundColor: "white",
+  borderRadius: "5px",
+  border: "1px solid #e5e7eb",
+}));
 
 export default function RoleForm({
   data = null,
@@ -42,12 +43,9 @@ export default function RoleForm({
         }
       }
     }
-    console.log("results", results);
 
     return results;
   };
-
-  console.log(getShapedPermissions(), "shape permission");
 
   const permissionCategories = isUpdate
     ? data.attributes.defaultPermissions
@@ -63,16 +61,14 @@ export default function RoleForm({
         {isUpdate ? "Update Role" : "Create a new role"}
       </Typography>
 
-      <Box
+      <StyledContentWrapper
         sx={{
           // border: "1px solid gray",
           maxWidth: "650px",
           mx: "auto",
-          borderRadius: "5px",
-          px: 2,
-          py: 4,
+          px: 3,
+          py: 4.5,
         }}
-        boxShadow={2}
       >
         <Formik
           initialValues={{
@@ -154,7 +150,7 @@ export default function RoleForm({
             </Form>
           )}
         </Formik>
-      </Box>
+      </StyledContentWrapper>
     </Box>
   );
 }
