@@ -115,6 +115,7 @@ export default function UserProfile() {
                   <Grid item sm={12} md={6}>
                     <ReusableDropdown
                       label="Select Country"
+                      disabled
                       name="country"
                       options={allContries}
                     />

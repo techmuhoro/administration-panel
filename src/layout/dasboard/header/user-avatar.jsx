@@ -87,7 +87,7 @@ export default function UserAvatar() {
         Cookies.remove("token");
         setTimeout(() => {
           router.push("/");
-        }, 1000);
+        }, 500);
       })
       .catch((error) => {
         let errorObject = error.response?.data?.error;
@@ -132,7 +132,7 @@ export default function UserAvatar() {
                   placement === "bottom-start" ? "left top" : "left bottom",
               }}
             >
-              <Paper>
+              <Paper sx={{ marginTop: "20px" }}>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList
                     autoFocusItem={open}
