@@ -17,10 +17,23 @@ export default function DashboardLayout(props) {
         }}
       />
 
-      <Grid container sx={{ height: "100vh" }}>
+      <Grid
+        container
+        sx={{
+          height: "100vh",
+          width: "100%",
+          overflow: "hidden",
+        }}
+      >
         <Aside />
 
-        <Grid xs={12} sm={12} md={9} lg={10} sx={{ overflowY: "auto" }}>
+        <Grid
+          xs={12}
+          sm={12}
+          md={9}
+          lg={10}
+          sx={{ overflowY: "scroll", maxHeight: "100vh" }}
+        >
           <DashboardHeader />
           {props.children}
         </Grid>

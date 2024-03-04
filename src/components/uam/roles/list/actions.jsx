@@ -71,7 +71,7 @@ export default function RolesActions({ row }) {
           </MenuItem>
         </Link>
 
-        <RoleDelete row={row} />
+        {/* <RoleDelete row={row} /> */}
       </Menu>
     </>
   );

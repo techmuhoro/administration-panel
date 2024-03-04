@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Box from "@mui/material/Box";
 import MenuItem from "./menu-item";
+import { alpha } from "@mui/material/styles";
 
 export default function DropdownMenuItem({ menuItem }) {
   const [open, setOpen] = useState(false);
@@ -21,12 +22,10 @@ export default function DropdownMenuItem({ menuItem }) {
         sx={{
           px: 1,
           py: 1,
-          borderRadius: 1,
+          mb: 1,
           cursor: "pointer",
           "&:hover": {
-            background: "red",
-            background: (theme) => theme.palette.primary.main,
-            color: "white",
+            background: (theme) => alpha(theme.palette.primary.main, 0.2),
           },
         }}
         onClick={toggleOpen}
@@ -51,6 +50,7 @@ export default function DropdownMenuItem({ menuItem }) {
           overflow: "hidden",
           transition: "300ms all ease-in-out",
         }}
+        rowGap={1}
       >
         {menuItem?.links?.map((item) =>
           item.links ? (
