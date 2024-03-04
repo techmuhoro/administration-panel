@@ -49,7 +49,7 @@ export default function UsersActions({ row }) {
         </Typography>
         <Divider />
 
-        <Link href={`/dashboard/users/update/?id=${row.id}`}>
+        <Link href={`/dashboard/users/update/${row.id}`}>
           <MenuItem onClick={handleClose}>
             <Stack direction="row" alignItems={"center"} columnGap={1}>
               <EditIcon sx={{ fontSize: "1rem" }} />

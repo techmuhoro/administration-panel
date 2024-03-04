@@ -1,18 +1,11 @@
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
 import UpdateUser from "@/components/uam/users/update";
-import { redirect } from "next/navigation";
 import { BASE_URL } from "@/lib/constants";
 import { cookies } from "next/headers";
-import { getUsers, getSystemDepartments, getRole } from "../../api";
+import { getUsers, getSystemDepartments, getRole } from "../../../api";
 
-export default async function Page({ searchParams }) {
-  const { id } = searchParams;
-
-  if (id === undefined) {
-    redirect("/dashboard/users");
-  }
-
-  const Userurl = `${BASE_URL}users/${id}`;
+export default async function Page({ params }) {
+  const Userurl = `${BASE_URL}users/${params.id}`;
   const roleUrl = `${BASE_URL}roles`;
   const departmentUrl = `${BASE_URL}departments`;
   const authToken = cookies().get("token").value;
