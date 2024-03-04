@@ -1,13 +1,10 @@
-// URL-> https://adm-dash-v2.ipayprojects.com/api/departments
-// Requires Authentication
-
 import { cache } from "react";
 import { cookies } from "next/headers";
 import axios from "axios";
 
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
-import DepartmentsTbl from "./tbl/departments-tbl";
-import { columns } from "./tbl/columns";
+import { columns } from "@/components/departments/tbl/columns";
+import DepartmentsTbl from "@/components/departments/tbl/departments-tbl";
 
 const config = {
   url: `${process.env.NEXT_PUBLIC_API_BASE_URL}departments`,
@@ -36,8 +33,6 @@ async function Departments({ searchParams }) {
     page: parseInt(searchParams?.page, 10) || 1,
     ...(searchParams?.deptName && { name: searchParams.deptName }),
   };
-
-  // let endpoint = "";
 
   try {
     const authTkn = cookies().get("token").value;
