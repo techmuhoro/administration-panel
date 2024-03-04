@@ -163,7 +163,7 @@ export default function AddUserForm({
 
   if (isUpdate) {
     permissionsData = userDetails?.data?.attributes?.permissions;
-    allPermissionObjects = userDetails.data.attributes.permissions
+    allPermissionObjects = userDetails?.data?.attributes?.permissions
       .reduce((acc, permissionGroup) => {
         acc.push(permissionGroup.attributes.permissions);
         return acc;
