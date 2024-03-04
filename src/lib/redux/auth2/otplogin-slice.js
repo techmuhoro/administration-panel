@@ -72,3 +72,5 @@ export default otploginSlice.reducer;
 export const getLoginData = (state) => state.loginData.data?.data;
 export const getLoading = (state) => state.loginData.loading;
 export const getError = (state) => state.loginData.error;
+export const getUserPermissions = (state) =>
+  state.loginData.data?.data?.includes?.permissions || [];
