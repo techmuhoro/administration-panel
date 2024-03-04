@@ -126,7 +126,7 @@ export default function UserProfile() {
                       disabled
                       label="Department"
                       id="Department"
-                      defaultValue={loginData?.attributes?.Department}
+                      defaultValue={loginData?.attributes?.department}
                     />
                   </Grid>
 
