@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import axios from "axios";
-import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import Cookie from "js-cookie";
 import Stack from "@mui/material/Stack";
@@ -12,11 +11,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 
-function Delete({ item, setModalContent, setModalInitials, setModalOpen }) {
-  const closeModal = useCallback(() => {
-    setModalOpen(false);
-  }, [setModalOpen]);
-
+function Delete({ setActiveAction, setModalOpen }) {
   return (
     <>
       <Stack
@@ -25,13 +20,7 @@ function Delete({ item, setModalContent, setModalInitials, setModalOpen }) {
         columnGap={1}
         onClick={() => {
           setModalOpen(true);
-          setModalContent(
-            <DeleteContent
-              item={item}
-              setModalInitials={setModalInitials}
-              closeModal={closeModal}
-            />
-          );
+          setActiveAction("delete");
         }}
       >
         <DeleteIcon fontSize="small" />
@@ -43,7 +32,7 @@ function Delete({ item, setModalContent, setModalInitials, setModalOpen }) {
 
 export default Delete;
 
-function DeleteContent({ item, setModalInitials, closeModal }) {
+export function DeleteModalContent({ item, setModalInitials, closeModal }) {
   const setAlertMessage = useNotifyAlertCtx();
   const router = useRouter();
 
@@ -58,7 +47,7 @@ function DeleteContent({ item, setModalInitials, closeModal }) {
 
   useEffect(() => {
     setModalInitials({
-      onConfirmAction: formik.handleSubmit,
+      onConfirmAction: handleDelete,
       title: "Confirm: Are you sure you want to delete?",
       loading: false,
       confirmText: "delete",
@@ -66,45 +55,45 @@ function DeleteContent({ item, setModalInitials, closeModal }) {
     });
   }, [setModalInitials]);
 
-  const formik = useFormik({
-    initialValues: {
-      deptName: item?.attributes?.name,
-    },
-    onSubmit: async () => {
-      const deptId = item?.id;
-      config.url = `${config.url}/${deptId}`;
-      setModalInitials((prev) => {
-        return { ...prev, loading: true };
-      });
-      await axios(config)
-        .then((res) => {
-          setAlertMessage("Department Deleted", {
-            type: "success",
+  const handleDelete = async (event) => {
+    event?.preventDefault();
+
+    const deptId = item?.id;
+    config.url = `${config.url}/${deptId}`;
+    setModalInitials((prev) => {
+      return { ...prev, loading: true };
+    });
+    await axios(config)
+      .then((res) => {
+        setAlertMessage("Department Deleted", {
+          type: "success",
+          openDuration: 4000,
+        });
+        router.refresh();
+        closeModal();
+      })
+      .catch((err) => {
+        const ServerErrorMsg = err?.response?.data?.error?.message;
+        const errorMsg = ServerErrorMsg || "Department could not be deleted!";
+
+        if (err?.response?.status === 401) {
+          setAlertMessage("Log in required", {
+            type: "error",
             openDuration: 4000,
           });
-          router.refresh();
-          closeModal();
-        })
-        .catch((err) => {
-          if (err?.response?.status === 401) {
-            setAlertMessage("Log in required", {
-              type: "error",
-              openDuration: 4000,
-            });
-          } else {
-            setAlertMessage("Department could not be deleted!", {
-              type: "error",
-              openDuration: 4000,
-            });
-          }
-        })
-        .finally(() => {
-          setModalInitials((prev) => {
-            return { ...prev, loading: false };
+        } else {
+          setAlertMessage(errorMsg, {
+            type: "error",
+            openDuration: 4000,
           });
+        }
+      })
+      .finally(() => {
+        setModalInitials((prev) => {
+          return { ...prev, loading: false };
         });
-    },
-  });
+      });
+  };
 
   return (
     <Box

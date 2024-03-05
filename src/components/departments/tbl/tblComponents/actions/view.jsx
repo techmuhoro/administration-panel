@@ -1,18 +1,12 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-import DeptModal from "../dialog-modal";
-
-function View({ item, setModalContent, setModalInitials, setModalOpen }) {
-  // const closeModal = useCallback(() => {
-  //   setModalOpen(false);
-  // }, [setModalOpen]);
-
+function View({ setActiveAction, setModalOpen }) {
   return (
     <Stack
       direction="row"
@@ -20,9 +14,7 @@ function View({ item, setModalContent, setModalInitials, setModalOpen }) {
       columnGap={1}
       onClick={() => {
         setModalOpen(true);
-        setModalContent(
-          <ViewContent item={item} setModalInitials={setModalInitials} />
-        );
+        setActiveAction("view");
       }}
     >
       <VisibilityIcon fontSize="small" />
@@ -33,7 +25,7 @@ function View({ item, setModalContent, setModalInitials, setModalOpen }) {
 
 export default View;
 
-function ViewContent({ item, setModalInitials }) {
+export function ViewModalContent({ item, setModalInitials }) {
   useEffect(() => {
     setModalInitials((prev) => {
       return {

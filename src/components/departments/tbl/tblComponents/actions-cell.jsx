@@ -1,26 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
+import { useState, useCallback } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
-import ViewAction from "./actions/view";
-import UpdateAction from "./actions/update";
-import DeleteAction from "./actions/delete";
+import ViewAction, { ViewModalContent } from "./actions/view";
+import UpdateAction, { UpdateModalContent } from "./actions/update";
+import DeleteAction, { DeleteModalContent } from "./actions/delete";
 import DeptModal from "./dialog-modal";
-
-// import TransactionDelete from "../delete";
 
 const ActionsCell = ({ data: { row } }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [modalContent, setModalContent] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [activeAction, setActiveAction] = useState("");
   const [modalInitials, setModalInitials] = useState({
     onConfirmAction: null,
     title: "",
@@ -28,9 +24,10 @@ const ActionsCell = ({ data: { row } }) => {
     cancelText: "No",
     loading: false,
   });
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setModalOpen(false);
-  };
+    setActiveAction("");
+  }, [setModalOpen]);
 
   const open = Boolean(anchorEl);
 
@@ -66,28 +63,22 @@ const ActionsCell = ({ data: { row } }) => {
         <Divider />
         <MenuItem onClick={handleClose}>
           <ViewAction
-            setModalContent={setModalContent}
+            setActiveAction={setActiveAction}
             setModalOpen={setModalOpen}
-            setModalInitials={setModalInitials}
-            item={row}
           />
         </MenuItem>
 
         <MenuItem onClick={handleClose}>
           <UpdateAction
-            setModalContent={setModalContent}
+            setActiveAction={setActiveAction}
             setModalOpen={setModalOpen}
-            setModalInitials={setModalInitials}
-            item={row}
           />
         </MenuItem>
 
         <MenuItem onClick={handleClose}>
           <DeleteAction
-            setModalContent={setModalContent}
+            setActiveAction={setActiveAction}
             setModalOpen={setModalOpen}
-            setModalInitials={setModalInitials}
-            item={row}
           />
         </MenuItem>
       </Menu>
@@ -97,7 +88,25 @@ const ActionsCell = ({ data: { row } }) => {
         handleClose={handleCloseModal}
         {...modalInitials}
       >
-        {modalContent}
+        {String(activeAction).toLowerCase() === "view" ? (
+          <ViewModalContent
+            item={row}
+            setModalInitials={setModalInitials}
+            // closeModal={handleCloseModal}
+          />
+        ) : String(activeAction).toLowerCase() === "update" ? (
+          <UpdateModalContent
+            item={row}
+            setModalInitials={setModalInitials}
+            closeModal={handleCloseModal}
+          />
+        ) : String(activeAction).toLowerCase() === "delete" ? (
+          <DeleteModalContent
+            item={row}
+            setModalInitials={setModalInitials}
+            closeModal={handleCloseModal}
+          />
+        ) : null}
       </DeptModal>
     </>
   );

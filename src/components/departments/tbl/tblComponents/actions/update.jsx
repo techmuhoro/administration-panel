@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useEffect, useCallback } from "react";
+import { useId, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
@@ -20,11 +20,7 @@ const validationSchema = Yup.object({
     .required("Department name is required"),
 });
 
-function Update({ item, setModalContent, setModalInitials, setModalOpen }) {
-  const closeModal = useCallback(() => {
-    setModalOpen(false);
-  }, [setModalOpen]);
-
+function Update({ setActiveAction, setModalOpen }) {
   return (
     <Stack
       direction="row"
@@ -32,13 +28,7 @@ function Update({ item, setModalContent, setModalInitials, setModalOpen }) {
       columnGap={1}
       onClick={() => {
         setModalOpen(true);
-        setModalContent(
-          <FormContent
-            item={item}
-            setModalInitials={setModalInitials}
-            closeModal={closeModal}
-          />
-        );
+        setActiveAction("update");
       }}
     >
       <EditIcon fontSize="small" />
@@ -49,7 +39,7 @@ function Update({ item, setModalContent, setModalInitials, setModalOpen }) {
 
 export default Update;
 
-function FormContent({ item, setModalInitials, closeModal }) {
+export function UpdateModalContent({ item, setModalInitials, closeModal }) {
   const deptInputID = useId();
   const setAlertMessage = useNotifyAlertCtx();
   const router = useRouter();
@@ -103,13 +93,17 @@ function FormContent({ item, setModalInitials, closeModal }) {
           closeModal();
         })
         .catch((err) => {
+          const ServerErrorMsg = err?.response?.data?.error?.message;
+          const errorMsg =
+            ServerErrorMsg || "Changes to department could not be saved!";
+
           if (err?.response?.status === 401) {
             setAlertMessage("Log in required", {
               type: "error",
               openDuration: 4000,
             });
           } else {
-            setAlertMessage("Changes to department could not be saved!", {
+            setAlertMessage(errorMsg, {
               type: "error",
               openDuration: 4000,
             });

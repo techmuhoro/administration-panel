@@ -2,14 +2,12 @@
 
 import { useId } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import { useFormik } from "formik";
 import Cookie from "js-cookie";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
-import useTheme from "@mui/material/styles/useTheme";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -27,7 +25,6 @@ const validationSchema = Yup.object({
 
 function AddDepartment() {
   const searchParams = useSearchParams();
-  const appTheme = useTheme();
   const router = useRouter();
   const deptInputID = useId();
   const goBackUrl = searchParams.get("prev") || "/dashboard/departments";
@@ -63,7 +60,7 @@ function AddDepartment() {
           const msg =
             err?.response?.data?.error?.message ||
             "Department could not be created!";
-          console.log({ "err-MSG": msg });
+          // console.log({ "err-MSG": msg });
           if (err?.response?.status === 401) {
             setAlertMessage("Log in required", {
               type: "error",

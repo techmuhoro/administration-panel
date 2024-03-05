@@ -8,14 +8,12 @@ import DepartmentsFilter from "./tblComponents/departments-filter";
 import CreateBtn from "./tblComponents/create-btn";
 import DepartmentsExport from "./tblComponents/departments-export";
 
-
 function DepartmentsTbl({ data, columnTraits, paginationData }) {
   return (
     <DashboardContentWrapper>
       <Typography component="h1" variant="h5">
         Departments
       </Typography>
-      {/* <Stack direction="row" justifyContent="flex-end" columnGap={1} mb={1}> */}
       <Box
         sx={{
           display: "grid",
