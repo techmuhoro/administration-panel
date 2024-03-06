@@ -44,11 +44,11 @@ export default function UserProfile() {
 
     setLoading(true);
     axios
-      .put(`${BASE_URL}profile`, JSON.stringify(values), {
+      .put(`${BASE_URL}profile/`, JSON.stringify(values), {
         headers,
       })
       .then((response) => {
-        setAlertMessage("User has updated succesfully", {
+        setAlertMessage("User updated succesfully", {
           type: "success",
           openDuration: 3000,
         });

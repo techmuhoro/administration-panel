@@ -161,7 +161,13 @@ export default function UserAvatar() {
         </Popper>
       </div>
 
+      {/**
+Warning: Text content did not match. Server: "" Client: "Mary Maina"
+giving out this warning
+
+ */}
       <Typography>{loginData?.attributes?.name}</Typography>
+
       <Stack
         ref={anchorRef}
         id="composition-button"
