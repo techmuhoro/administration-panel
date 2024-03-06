@@ -228,11 +228,13 @@ export default function AddUserForm({
                   </Grid>
 
                   <Grid item sm={12} md={6}>
-                    <ReusableDropdown
-                      label="Select role"
-                      name="role"
-                      options={options}
-                    />
+                    {options === undefined ? null : (
+                      <ReusableDropdown
+                        label="Select role"
+                        name="role"
+                        options={options}
+                      />
+                    )}
                   </Grid>
 
                   <Grid item sm={12} md={6}>

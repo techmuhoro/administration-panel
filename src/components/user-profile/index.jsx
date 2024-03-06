@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Box, Typography, Grid, Container, TextField } from "@mui/material";
 import { Input, ReusableDropdown } from "@/atoms/form";
+import StyledContentWrapper from "@/atoms/wrappers/styled-content-wrapper";
 import { Formik, Form } from "formik";
 import { BASE_URL } from "@/lib/constants";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
@@ -97,7 +98,7 @@ export default function UserProfile() {
         {(form) => (
           <Container maxWidth="md">
             <Form>
-              <Box boxShadow={3} p={3}>
+              <StyledContentWrapper p={3}>
                 <Grid container spacing={1}>
                   <Grid item sm={12} md={6}>
                     <Input name="name" label="Name" />
@@ -151,7 +152,7 @@ export default function UserProfile() {
                 >
                   Update details
                 </LoadingButton>
-              </Box>
+              </StyledContentWrapper>
             </Form>
           </Container>
         )}
