@@ -17,7 +17,10 @@ import TableViewIcon from "@mui/icons-material/TableView";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import DoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
+import LoadingButton from "@/atoms/loading-button";
 
 function ExportButton({
   variant = "outlined",
@@ -250,8 +253,9 @@ function ExportDatesPrompt({
           size="small"
           sx={{ textDecoration: "underline", color: "primary.main" }}
           onClick={() => setExportFormat("")}
+          startIcon={<DoubleArrowLeftIcon />}
         >
-          {"<back"}
+          {"back"}
         </Button>
       </div>
 
@@ -314,18 +318,20 @@ function ExportDatesPrompt({
           flexDirection: "row",
         }}
       >
-        <Button
-          variant="contained"
-          sx={{ flexGrow: 1 }}
-          onClick={formikBag.handleSubmit}
-          disabled={formikBag.isSubmitting}
-        >
+        {/* <Button variant="contained">
           {formikBag.isSubmitting ? (
             <LoadingIndicator color="inherit" size={20} />
           ) : (
             "Export"
           )}
-        </Button>
+        </Button> */}
+        <LoadingButton
+          sx={{ flexGrow: 1 }}
+          onClick={formikBag.handleSubmit}
+          loading={formikBag.isSubmitting}
+        >
+          Export
+        </LoadingButton>
         <Button
           color="secondary"
           variant="outlined"

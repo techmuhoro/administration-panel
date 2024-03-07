@@ -1,28 +1,24 @@
 import { cache } from "react";
-import { cookies } from "next/headers";
-import axios from "axios";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
+import http from "@/http";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 import { columns } from "@/components/departments/tbl/columns";
-import DepartmentsTbl from "@/components/departments/tbl/departments-tbl";
+import ReusableTable from "@/atoms/reusable-table";
+import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
+import DepartmentsFilter from "@/components/departments/tbl/tblComponents/departments-filter";
+import CreateBtn from "@/components/departments/tbl/tblComponents/create-btn";
+import DepartmentsExport from "@/components/departments/tbl/tblComponents/departments-export";
 
 const config = {
   url: `${process.env.NEXT_PUBLIC_API_BASE_URL}departments`,
   method: "GET",
 };
 
-const getDepts = cache((url) => axios({ ...config, url }));
-// const getDepts = cache(async (url) => {
-//   await new Promise((resolve, reject) => {
-//     setTimeout(async () => {
-//       resolve("data");
-//     }, 7000);
-//   });
-
-// const data = await axios({ ...config, url });
-
-//   return "data";
-// });
+const getDepts = cache((url) =>
+  http({ ...config, url, includeAuthorization: true })
+);
 
 async function Departments({ searchParams }) {
   let tblData = [];
@@ -35,21 +31,13 @@ async function Departments({ searchParams }) {
   };
 
   try {
-    const authTkn = cookies().get("token").value;
-    config.headers = {
-      Authorization: `Bearer ${authTkn}`,
-    };
-
     const urlSearchQueryString = new URLSearchParams(
       searchQueryParams
     ).toString();
     const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}departments?${urlSearchQueryString}`;
-    // const endpoint = `${process.env.NEXT_PUBLIC_API_BASE_URL}departments`;
 
     const deptsResponse = await getDepts(endpoint).then((res) => res.data);
     tblData = deptsResponse?.data?.data;
-
-    // console.log(JSON.stringify(tblData, null, 2));
 
     paginationData = {
       count: deptsResponse?.data?.total || 0,
@@ -68,11 +56,30 @@ async function Departments({ searchParams }) {
   }
 
   return (
-    <DepartmentsTbl
-      data={tblData}
-      columnTraits={columns}
-      paginationData={paginationData}
-    />
+    <DashboardContentWrapper>
+      <Typography component="h1" variant="h5">
+        Departments
+      </Typography>
+      <Box
+        sx={{
+          display: "grid",
+          gridAutoFlow: "column",
+          justifyContent: "space-between",
+          mt: 2,
+          mb: 1,
+        }}
+      >
+        <Box>
+          <CreateBtn />
+        </Box>
+
+        <Box>
+          <DepartmentsFilter />
+          <DepartmentsExport />
+        </Box>
+      </Box>
+      <ReusableTable data={tblData} columns={columns} {...paginationData} />
+    </DashboardContentWrapper>
   );
 }
 

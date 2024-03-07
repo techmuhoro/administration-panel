@@ -10,7 +10,11 @@ import { ButtonProps } from "@mui/material";
  * @param {boolean} loading
  * @returns
  */
-export default function LoadingButton({ variant, loading, ...props }) {
+export default function LoadingButton({
+  variant = "contained",
+  loading,
+  ...props
+}) {
   return (
     <Button
       variant={variant}

@@ -48,10 +48,11 @@ export function DeleteModalContent({ item, setModalInitials, closeModal }) {
   useEffect(() => {
     setModalInitials({
       onConfirmAction: handleDelete,
-      title: "Confirm: Are you sure you want to delete?",
+      title: "You are about to delete!",
       loading: false,
       confirmText: "delete",
       cancelText: "cancel",
+      actionBtnColor: "warning",
     });
   }, [setModalInitials]);
 
@@ -114,7 +115,9 @@ export function DeleteModalContent({ item, setModalInitials, closeModal }) {
         >
           {item?.attributes?.name}
         </span>{" "}
-        will be deleted
+        will be deleted ⚠️.
+        <br />
+        Confirm that this is what you want to do.
       </Typography>
     </Box>
   );

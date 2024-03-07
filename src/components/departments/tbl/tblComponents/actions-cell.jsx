@@ -8,7 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
-import ViewAction, { ViewModalContent } from "./actions/view";
+// import ViewAction, { ViewModalContent } from "./actions/view";
 import UpdateAction, { UpdateModalContent } from "./actions/update";
 import DeleteAction, { DeleteModalContent } from "./actions/delete";
 import DeptModal from "./dialog-modal";
@@ -23,6 +23,7 @@ const ActionsCell = ({ data: { row } }) => {
     confirmText: "Yes",
     cancelText: "No",
     loading: false,
+    actionBtnColor: "primary",
   });
   const handleCloseModal = useCallback(() => {
     setModalOpen(false);
@@ -61,12 +62,6 @@ const ActionsCell = ({ data: { row } }) => {
           Actions
         </Typography>
         <Divider />
-        <MenuItem onClick={handleClose}>
-          <ViewAction
-            setActiveAction={setActiveAction}
-            setModalOpen={setModalOpen}
-          />
-        </MenuItem>
 
         <MenuItem onClick={handleClose}>
           <UpdateAction
@@ -88,13 +83,7 @@ const ActionsCell = ({ data: { row } }) => {
         handleClose={handleCloseModal}
         {...modalInitials}
       >
-        {String(activeAction).toLowerCase() === "view" ? (
-          <ViewModalContent
-            item={row}
-            setModalInitials={setModalInitials}
-            // closeModal={handleCloseModal}
-          />
-        ) : String(activeAction).toLowerCase() === "update" ? (
+        {String(activeAction).toLowerCase() === "update" ? (
           <UpdateModalContent
             item={row}
             setModalInitials={setModalInitials}
