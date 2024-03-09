@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import Cookie from "js-cookie";
 import Stack from "@mui/material/Stack";
@@ -10,6 +9,7 @@ import Box from "@mui/material/Box";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
+import http from "@/http";
 
 function Delete({ setActiveAction, setModalOpen }) {
   return (
@@ -64,7 +64,7 @@ export function DeleteModalContent({ item, setModalInitials, closeModal }) {
     setModalInitials((prev) => {
       return { ...prev, loading: true };
     });
-    await axios(config)
+    await http(config)
       .then((res) => {
         setAlertMessage("Department Deleted", {
           type: "success",
@@ -114,7 +114,7 @@ export function DeleteModalContent({ item, setModalInitials, closeModal }) {
           }}
         >
           {item?.attributes?.name}
-        </span>{" "}
+        </span>
         will be deleted ⚠️.
         <br />
         Confirm that this is what you want to do.

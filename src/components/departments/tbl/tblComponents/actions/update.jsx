@@ -5,7 +5,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import Cookie from "js-cookie";
-import axios from "axios";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -13,6 +12,7 @@ import TextField from "@mui/material/TextField";
 import EditIcon from "@mui/icons-material/Edit";
 
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
+import http from "@/http";
 
 const validationSchema = Yup.object({
   deptName: Yup.string("Enter name of department")
@@ -83,7 +83,7 @@ export function UpdateModalContent({ item, setModalInitials, closeModal }) {
       setModalInitials((prev) => {
         return { ...prev, loading: true };
       });
-      await axios(config)
+      await http(config)
         .then((res) => {
           setAlertMessage("Department updated Successfully", {
             type: "success",

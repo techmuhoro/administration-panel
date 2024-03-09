@@ -1,21 +1,14 @@
-import { useState } from "react";
 import { createPortal } from "react-dom";
-import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import Stack from "@mui/material/Stack";
-import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-
-import DeleteIcon from "@mui/icons-material/Delete";
+import Tooltip from "@mui/material/Tooltip";
 import ClearIcon from "@mui/icons-material/Clear";
-import { Tooltip } from "@mui/material";
+
 import LoadingButton from "@/atoms/loading-button";
 
 function DeptModal({
@@ -37,7 +30,7 @@ function DeptModal({
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         PaperProps={{
-          sx: { position: "relative", minWidth: "330px" },
+          sx: { position: "relative", minWidth: "320px" },
           ...(typeof onConfirmAction === "function" && {
             component: "form",
             onSubmit: onConfirmAction,
@@ -75,11 +68,7 @@ function DeptModal({
             <Divider />
           </>
         )}
-        <DialogContent>
-          {children}
-          {/* <DialogContentText id="alert-dialog-description" component="div">
-        </DialogContentText> */}
-        </DialogContent>
+        <DialogContent>{children}</DialogContent>
         <DialogActions>
           {typeof onConfirmAction === "function" && (
             <LoadingButton

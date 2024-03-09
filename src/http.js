@@ -78,18 +78,20 @@ http.interceptors.request.use(
 );
 
 // Add response interceptor
-http.interceptors.response.use(
-  function (response) {
-    return response;
-  },
-  function (error) {
-    let errorMessage = "";
-    if (error.response.data.statusCode == 401) {
-      errorMessage = error.response.data;
-    }
+// http.interceptors.response.use(
+//   function (response) {
+//     return response;
+//   },
+//   function (error) {
+//     let errorMessage = "";
+//     if (error?.response) {
+//       if (error.response.data.statusCode == 401) {
+//         errorMessage = error.response.data;
+//       }
+//     }
 
-    return Promise.reject(errorMessage);
-  }
-);
+//     return Promise.reject(errorMessage);
+//   }
+// );
 
 export default http;

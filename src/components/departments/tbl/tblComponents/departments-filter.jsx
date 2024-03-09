@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+
+import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -10,23 +11,46 @@ import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import Stack from "@mui/material/Stack";
+
 import { convertStringSearchParamsToObj } from "@/lib/utils";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
+import LoadingButton from "@/atoms/loading-button";
 
-function DepartmentsFilter() {
+const initialFilters = {
+  deptName: "",
+};
+
+function DepartmentsFilter({ error }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [errorState, setErrorState] = useState(error);
   const [addedFiltersCount, setAddedFiltersCount] = useState(0);
-  const popoverRefKey = useRef("kjxQl4d");
+  const [filters, setFilters] = useState(initialFilters);
   const pathname = usePathname();
+  const searchParams = useSearchParams().toString();
   const router = useRouter();
   const open = Boolean(anchorEl);
+
+  const currentUrlId = `${pathname}${searchParams ? "?" + searchParams : ""}`;
+  const [nextUrlId, setNextUrlId] = useState(currentUrlId);
+  const filtersLoading = !(nextUrlId === currentUrlId) && !errorState;
+
+  // console.log({
+  //   nextUrlId,
+  //   currentUrlId,
+  //   current_and_next_match: nextUrlId === currentUrlId,
+  //   filtersLoading,
+  // });
+
+  useEffect(() => {
+    setErrorState(error);
+  }, [error, setErrorState]);
 
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
   const handleResetFilters = () => {
-    popoverRefKey.current = Math.random().toString(36);
-    // router.replace(pathname, undefined, { shallow: true });
-    router.push(pathname);
+    router.replace(pathname);
+    setNextUrlId(pathname);
+    setFilters(initialFilters); // Re-initialize filter values to defaults
   };
   const trackAddedFilters = (filters) => {
     if (filters instanceof Array) {
@@ -47,38 +71,55 @@ function DepartmentsFilter() {
           {addedFiltersCount} Applied{" "}
           {addedFiltersCount == 1 ? "filter" : "filters"}
         </Typography>
-        <Button
+        <LoadingButton
           startIcon={<FilterAltIcon />}
           variant="outlined"
           onClick={handleClick}
+          loading={filtersLoading}
         >
           Filter
-        </Button>
+        </LoadingButton>
         <Button
           startIcon={<FilterAltOffIcon />}
           variant="outlined"
           size="small"
           onClick={handleResetFilters}
+          disabled={filtersLoading}
         >
           Clear
         </Button>
       </Stack>
+
       <FilterPopover
         open={open}
         anchorEl={anchorEl}
         handleClose={handleClose}
-        key={popoverRefKey.current}
-        reportAddedFilters={trackAddedFilters}
+        setNextUrl={setNextUrlId}
+        announceFiltersAdded={trackAddedFilters}
+        filters={filters}
+        setFilters={setFilters}
+        setErrorState={setErrorState}
       />
     </>
   );
 }
 
-function extractFilters(filterKeys = [], targetObject = {}) {
-  if (filterKeys instanceof Array) {
-    const filtered = filterKeys.reduce((pileValue, filterKey) => {
-      if (targetObject[filterKey]) {
-        pileValue[filterKey] = targetObject[filterKey];
+export default DepartmentsFilter;
+
+/**
+ * This function is a method to pluck properties __from__ `targetObject` __into__ a _new returned_ object.
+ * `keys` array should be passed containing keys to be extracted from `targetObject`.
+ *
+ * An empty object is returned if none of the keys specified in `keys` array is found on `targetObject`.
+ * @param {string[]} [keys = []]
+ * @param {Object} [targetObject = {}]
+ * @returns {Object} Returns an object
+ */
+function pluckFromObject(keys = [], targetObject = {}) {
+  if (keys instanceof Array) {
+    const filtered = keys.reduce((pileValue, key) => {
+      if (targetObject[key]) {
+        pileValue[key] = targetObject[key];
       }
       return pileValue;
     }, {});
@@ -88,70 +129,103 @@ function extractFilters(filterKeys = [], targetObject = {}) {
     return {};
   }
 }
-function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
-  const [filters, setFilters] = useState({
-    deptName: "",
-  });
+
+function FilterPopover({
+  open,
+  anchorEl,
+  handleClose,
+  announceFiltersAdded,
+  setNextUrl,
+  filters,
+  setFilters,
+  setErrorState,
+}) {
   const pathname = usePathname();
   const querySearchParams = useSearchParams();
   const router = useRouter();
-  // put any filters in the url into the input values
+
+  // Effect below transfers filters in the browser URL, to the state controlling filter inputs
   useEffect(() => {
     const filterObj = convertStringSearchParamsToObj(
       querySearchParams.toString()
     );
-    // Below method, sifts out pagination filters and use only 'data' filters
-    const siftedFilterObj = extractFilters(Object.keys(filters), filterObj);
-    setFilters((prev) => ({
-      ...prev,
-      ...siftedFilterObj,
-    }));
-    reportAddedFilters(Object.entries(siftedFilterObj));
+
+    // Below line, sifts out pagination filters(`rows` and `pages`)
+    // This is important to also get correct number of filters applied
+    const siftedFilterObj = pluckFromObject(Object.keys(filters), filterObj);
+
+    setFilters((prev) => {
+      return {
+        ...prev,
+        ...siftedFilterObj,
+      };
+    });
+    announceFiltersAdded(Object.entries(siftedFilterObj));
   }, [querySearchParams]);
-  // reusable function to handle change in all filter inputs
-  const handleFilterChange = (event) => {
-    const name = event.target.name;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: event.target.value,
-    }));
-  };
-  const applyFilters = (e) => {
-    e?.preventDefault();
-    const existingParams = convertStringSearchParamsToObj(
-      querySearchParams.toString()
-    );
-    const existingFilters = extractFilters(
-      Object.keys(filters),
-      existingParams
-    );
 
-    // const { page, rows, ...existingFilters } = existingParams;
-    // override the existing filters with the new filters
-    const newFilters = {
-      ...existingFilters,
-      ...filters,
-    };
+  // Handles changes in filter inputs and sets their state according to the name they have
+  const handleFilterChange = useCallback(
+    (event) => {
+      const name = event.target.name;
+      if (name)
+        setFilters((prev) => ({
+          ...prev,
+          [name]: event.target.value,
+        }));
+    },
+    [setFilters]
+  );
 
-    // remove empty values
-    const nonEmptyFilters = Object.entries(newFilters).reduce(
-      (accm, [key, value]) => {
-        if (value) accm[key] = value;
-        return accm;
-      },
-      {}
-    );
-    const queryParams = new URLSearchParams({
-      ...nonEmptyFilters,
-      rows: parseInt(existingParams?.rows) || DEFAULT_ROWS_PER_PAGE,
-      page: 1, // reset page to one for every new search
-    }).toString();
-    const url = `${pathname}?${queryParams}`;
-    router.push(url);
-    // reportAddedFilters(Object.entries(nonEmptyFilters));
-    handleClose();
-  };
-  const popoverId = open ? "audit-trail-filter-popover" : undefined;
+  const applyFilters = useCallback(
+    (e) => {
+      e?.preventDefault();
+
+      // 1. Derive an Object of filters from url's search string
+      const existingParams = convertStringSearchParamsToObj(
+        querySearchParams.toString()
+      );
+
+      // 2. Remove pagination filters(`rows` and `page`)
+      const existingFilters = pluckFromObject(
+        Object.keys(filters),
+        existingParams
+      );
+
+      // 3. Get updated filter values
+      const newFilters = {
+        ...existingFilters,
+        ...filters,
+      };
+
+      // 4. Remove any empty
+      const nonEmptyFilters = Object.entries(newFilters).reduce(
+        (accm, [key, value]) => {
+          if (value) accm[key] = value;
+          return accm;
+        },
+        {}
+      );
+
+      // 5. Get a new Query string from the updated and nonEmpty filters
+      const queryParams = new URLSearchParams({
+        ...nonEmptyFilters,
+        rows: parseInt(existingParams?.rows) || DEFAULT_ROWS_PER_PAGE,
+        page: 1, // reset page to one for every new filter applied
+      }).toString();
+
+      // 6. Derive a new url(pathname + searchString)
+      const nextUrl = `${pathname}${queryParams ? "?" + queryParams : ""}`;
+
+      // 7. Call router with new url + other OP
+      router.replace(nextUrl);
+      setNextUrl(nextUrl); // Sets the next url expected when router completes
+      setErrorState("");
+      handleClose(); // Close the filter dialog
+    },
+    [querySearchParams.toString(), JSON.stringify(filters)]
+  );
+
+  const popoverId = open ? "departments-filter-popover" : undefined;
   return (
     <Popover
       id={popoverId}
@@ -201,4 +275,3 @@ function FilterPopover({ open, anchorEl, handleClose, reportAddedFilters }) {
     </Popover>
   );
 }
-export default DepartmentsFilter;

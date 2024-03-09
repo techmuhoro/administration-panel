@@ -2,7 +2,6 @@
 
 import { useCallback, useState, useRef, useEffect } from "react";
 import Grid from "@mui/material/Grid";
-import LoadingIndicator from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -313,18 +312,9 @@ function ExportDatesPrompt({
         className="export-action-btns"
         style={{
           display: "flex",
-          // justifyContent: "stretch",
-          // alignItems: "stretch",
           flexDirection: "row",
         }}
       >
-        {/* <Button variant="contained">
-          {formikBag.isSubmitting ? (
-            <LoadingIndicator color="inherit" size={20} />
-          ) : (
-            "Export"
-          )}
-        </Button> */}
         <LoadingButton
           sx={{ flexGrow: 1 }}
           onClick={formikBag.handleSubmit}
