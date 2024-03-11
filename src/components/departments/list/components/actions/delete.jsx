@@ -44,20 +44,12 @@ function DeleteModalContent({ item, setModalInitials, closeModal }) {
         closeModal();
       })
       .catch((err) => {
-        const ServerErrorMsg = err?.response?.data?.error?.message;
-        const errorMsg = ServerErrorMsg || "Department could not be deleted!";
+        const errorMsg = err?.message || "Department could not be deleted!";
 
-        if (err?.response?.status === 401) {
-          setAlertMessage("Log in required", {
-            type: "error",
-            openDuration: 4000,
-          });
-        } else {
-          setAlertMessage(errorMsg, {
-            type: "error",
-            openDuration: 4000,
-          });
-        }
+        setAlertMessage(errorMsg, {
+          type: "error",
+          openDuration: 4000,
+        });
       })
       .finally(() => {
         setModalInitials((prev) => {

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const JWTAuthTokenName = "token";
 
@@ -15,41 +15,41 @@ const http = axios.create({
   timeoutErrorMessage: "Server taking too long to respond...Aborted!",
 });
 
-// http.interceptors.request.use(
-//   async (config) => {
-//     // `includeAuthorization` is a custom config. It is checked to let axios know when we need to include
-//     // Authorization header with token value read from cookie
-//     if (config?.includeAuthorization) {
-//       config.withCredentials = true;
-//       if (isServer) {
-//         const { cookies } = await import("next/headers"),
-//           token = cookies().get(`${JWTAuthTokenName}`)?.value;
+class Err extends AxiosError {
+  constructor(error) {
+    super(
+      error.message || "",
+      error?.code,
+      error?.config,
+      error?.request,
+      error?.response
+    );
+    this.name = "AxiosExtendedError";
 
-//         if (token) {
-//           config.headers["Authorization"] = `Bearer ${token}`;
-//         }
-//       } else {
-//         const Cookies = await import("js-cookie"),
-//           token = Cookies.get(`${JWTAuthTokenName}`);
-//         // const token = document.cookie.replace(
-//         //   /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
-//         //   "$1"
-//         // );
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    } else {
+      this.stack = new Error().stack;
+    }
 
-//         if (token) {
-//           config.headers["Authorization"] = `Bearer ${token}`;
-//         }
-//       }
-//     }
+    if (error?.code === "EAI_AGAIN") {
+      this.message =
+        "Connectivity problems. Try checking your internet connection";
+    } else if (error?.code === "ERR_NETWORK") {
+      this.message = "Unable to reach remote address due network problems";
+    }
 
-//     return config;
-//   },
-//   function (error) {
-//     return Promise.reject(error);
-//   }
-// );
-
-// export default http;
+    if (error.response) {
+      const statusCode = error.response.status || undefined;
+      const ServerErrorMsg = error?.response?.data?.error?.message; // Set error message to what is reported from the server
+      if (statusCode === 401) {
+        this.message = "Unauthenticated! Log in required⚠️";
+      } else {
+        this.message = ServerErrorMsg || "";
+      }
+    }
+  }
+}
 
 http.interceptors.request.use(
   async (config) => {
@@ -74,6 +74,10 @@ http.interceptors.request.use(
 
       delete config.includeAuthorization;
     }
+    if (config.data instanceof FormData) {
+      config.headers["Content-Type"] = "multipart/form-data";
+    }
+
     return config;
   },
   function (error) {
@@ -82,20 +86,21 @@ http.interceptors.request.use(
 );
 
 // Add response interceptor
-// http.interceptors.response.use(
-//   function (response) {
-//     return response;
-//   },
-//   function (error) {
-//     let errorMessage = "";
-//     if (error?.response) {
-//       if (error.response.data.statusCode == 401) {
-//         errorMessage = error.response.data;
-//       }
-//     }
+http.interceptors.response.use(
+  function (response) {
+    return response;
+  },
+  function (error) {
+    const customError = new Err(error);
 
-//     return Promise.reject(errorMessage);
-//   }
-// );
+    const statusCode = customError.response?.status;
+
+    if (statusCode === "401") {
+      // TODO: Handle Unauthenticated error(redirection, ...)
+    }
+
+    return Promise.reject(customError);
+  }
+);
 
 export default http;
