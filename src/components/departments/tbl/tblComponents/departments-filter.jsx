@@ -30,14 +30,16 @@ function DepartmentsFilter({ error }) {
   const router = useRouter();
   const open = Boolean(anchorEl);
 
-  const currentUrlId = `${pathname}${searchParams ? "?" + searchParams : ""}`;
-  const [nextUrlId, setNextUrlId] = useState(currentUrlId);
-  const filtersLoading = !(nextUrlId === currentUrlId) && !errorState;
+  const currentRelativeURL = `${pathname}${searchParams ? "?" + searchParams : ""}`;
+  const [upcomingRelativeURL, setUpcomingRelativeURL] =
+    useState(currentRelativeURL);
+  const filtersLoading =
+    !(upcomingRelativeURL === currentRelativeURL) && !errorState;
 
   // console.log({
-  //   nextUrlId,
-  //   currentUrlId,
-  //   current_and_next_match: nextUrlId === currentUrlId,
+  //   upcomingRelativeURL,
+  //   currentRelativeURL,
+  //   current_and_next_match: upcomingRelativeURL === currentRelativeURL,
   //   filtersLoading,
   // });
 
@@ -45,19 +47,49 @@ function DepartmentsFilter({ error }) {
     setErrorState(error);
   }, [error, setErrorState]);
 
-  const handleClick = (event) => setAnchorEl(event.currentTarget);
-  const handleClose = () => setAnchorEl(null);
+  const handleOpenMenu = useCallback(
+    (event) => setAnchorEl(event.currentTarget),
+    [setAnchorEl]
+  );
+  const handleClosePopup = useCallback(() => setAnchorEl(null), [setAnchorEl]);
   const handleResetFilters = () => {
-    router.replace(pathname);
-    setNextUrlId(pathname);
+    const initialUrlPath = pathname;
+    router.replace(initialUrlPath);
+    setUpcomingRelativeURL(initialUrlPath);
     setFilters(initialFilters); // Re-initialize filter values to defaults
   };
-  const trackAddedFilters = (filters) => {
-    if (filters instanceof Array) {
-      return setAddedFiltersCount(filters.length);
-    }
-    return setAddedFiltersCount(0);
-  };
+  const handleResetError = useCallback(() => {
+    setErrorState("");
+  }, [setErrorState]);
+  const handleUpcomingRelativeURL = useCallback(
+    (url) => setUpcomingRelativeURL(url),
+    [setUpcomingRelativeURL]
+  );
+  const handleUpdateFilters = useCallback(
+    (newFilters) => {
+      setFilters((prev) => {
+        return {
+          ...prev,
+          ...newFilters,
+        };
+      });
+
+      const newFiltersArr = Object.entries(newFilters);
+      setAddedFiltersCount(newFiltersArr.length);
+    },
+    [setFilters]
+  );
+  const handleFilterInputChange = useCallback(
+    (event) => {
+      const name = event.target.name;
+      if (name)
+        setFilters((prev) => ({
+          ...prev,
+          [name]: event.target.value,
+        }));
+    },
+    [setFilters]
+  );
 
   return (
     <>
@@ -74,7 +106,7 @@ function DepartmentsFilter({ error }) {
         <LoadingButton
           startIcon={<FilterAltIcon />}
           variant="outlined"
-          onClick={handleClick}
+          onClick={handleOpenMenu}
           loading={filtersLoading}
         >
           Filter
@@ -93,12 +125,12 @@ function DepartmentsFilter({ error }) {
       <FilterPopover
         open={open}
         anchorEl={anchorEl}
-        handleClose={handleClose}
-        setNextUrl={setNextUrlId}
-        announceFiltersAdded={trackAddedFilters}
+        handleClosePopup={handleClosePopup}
+        setUpcomingRelativeUrl={handleUpcomingRelativeURL}
+        handleFilterInputChange={handleFilterInputChange}
         filters={filters}
-        setFilters={setFilters}
-        setErrorState={setErrorState}
+        handleUpdateFilters={handleUpdateFilters}
+        handleResetError={handleResetError}
       />
     </>
   );
@@ -107,7 +139,7 @@ function DepartmentsFilter({ error }) {
 export default DepartmentsFilter;
 
 /**
- * This function is a method to pluck properties __from__ `targetObject` __into__ a _new returned_ object.
+ * This function is a method to pluck properties __from__ `targetObject`(non-empty) __into__ a _new returned_ object.
  * `keys` array should be passed containing keys to be extracted from `targetObject`.
  *
  * An empty object is returned if none of the keys specified in `keys` array is found on `targetObject`.
@@ -133,12 +165,12 @@ function pluckFromObject(keys = [], targetObject = {}) {
 function FilterPopover({
   open,
   anchorEl,
-  handleClose,
-  announceFiltersAdded,
-  setNextUrl,
+  handleClosePopup,
+  setUpcomingRelativeUrl,
   filters,
-  setFilters,
-  setErrorState,
+  handleUpdateFilters,
+  handleResetError,
+  handleFilterInputChange,
 }) {
   const pathname = usePathname();
   const querySearchParams = useSearchParams();
@@ -151,30 +183,11 @@ function FilterPopover({
     );
 
     // Below line, sifts out pagination filters(`rows` and `pages`)
-    // This is important to also get correct number of filters applied
+    // Is important for getting number of filters applied
     const siftedFilterObj = pluckFromObject(Object.keys(filters), filterObj);
 
-    setFilters((prev) => {
-      return {
-        ...prev,
-        ...siftedFilterObj,
-      };
-    });
-    announceFiltersAdded(Object.entries(siftedFilterObj));
+    handleUpdateFilters(siftedFilterObj);
   }, [querySearchParams]);
-
-  // Handles changes in filter inputs and sets their state according to the name they have
-  const handleFilterChange = useCallback(
-    (event) => {
-      const name = event.target.name;
-      if (name)
-        setFilters((prev) => ({
-          ...prev,
-          [name]: event.target.value,
-        }));
-    },
-    [setFilters]
-  );
 
   const applyFilters = useCallback(
     (e) => {
@@ -218,9 +231,9 @@ function FilterPopover({
 
       // 7. Call router with new url + other OP
       router.replace(nextUrl);
-      setNextUrl(nextUrl); // Sets the next url expected when router completes
-      setErrorState("");
-      handleClose(); // Close the filter dialog
+      setUpcomingRelativeUrl(nextUrl); // Sets the next url expected when router completes
+      handleResetError();
+      handleClosePopup(); // Close the filter popup
     },
     [querySearchParams.toString(), JSON.stringify(filters)]
   );
@@ -231,7 +244,7 @@ function FilterPopover({
       id={popoverId}
       open={open}
       anchorEl={anchorEl}
-      onClose={handleClose}
+      onClose={handleClosePopup}
       anchorOrigin={{
         vertical: "bottom",
         horizontal: "left",
@@ -256,7 +269,7 @@ function FilterPopover({
               size="small"
               name="deptName"
               value={filters.deptName}
-              onChange={handleFilterChange}
+              onChange={handleFilterInputChange}
             />
           </Grid>
         </Grid>
@@ -266,7 +279,11 @@ function FilterPopover({
             <Button variant="contained" color="primary" type="submit">
               Apply
             </Button>
-            <Button variant="outlined" color="primary" onClick={handleClose}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleClosePopup}
+            >
               Cancel
             </Button>
           </Stack>

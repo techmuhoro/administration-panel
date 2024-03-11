@@ -11,6 +11,28 @@ import ClearIcon from "@mui/icons-material/Clear";
 
 import LoadingButton from "@/atoms/loading-button";
 
+/**
+ * @typedef {import("@mui/material").DialogProps} ModalTypes
+ * @typedef {import("@mui/material").ButtonProps} BtnTypes
+ */
+
+/**
+ * @callback ConfirmActionCb
+ */
+
+/**
+ *
+ * @param {Object} desc - Object defining behaviour and how the modal should be displayed.
+ * @param {ModalTypes["open"]} desc.open - Controls if modal shold be opened or closed.
+ * @param {ModalTypes["onClose"]} [desc.handleClose] - Called when modal requests to close.
+ * @param {string} [desc.title] - Title to show on the dialog.
+ * @param {ConfirmActionCb} [desc.onConfirmAction] - Adds a submit button and is called when submit button is clicked.
+ * @param {BtnTypes["color"]} [desc.actionBtnColor = "primary"] - Color of the submit button. Visible when `onConfirmAction` function is passed.
+ * @param {string} [desc.confirmText] - Text to show on the submit button.
+ * @param {boolean} [desc.loading] - Shows loading UI state of the submit button. Update this prop once a submission is complete.
+ * @param {boolean} [desc.closeOnClickOutside = true] - Determines whether the modal closes when clicked on its backdrop.
+ * @returns {void}
+ */
 function DeptModal({
   open,
   handleClose,
@@ -20,13 +42,20 @@ function DeptModal({
   actionBtnColor = "primary",
   confirmText,
   loading,
+  closeOnClickOutside = true,
 }) {
   return (
     typeof window !== "undefined" &&
     createPortal(
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={(event, reason) => {
+          if (closeOnClickOutside === false) {
+            if (reason === "backdropClick" || reason === "escapeKeyDown")
+              return;
+          }
+          if (typeof handleClose === "function") handleClose(event, reason);
+        }}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         PaperProps={{

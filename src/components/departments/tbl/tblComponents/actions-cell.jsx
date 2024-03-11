@@ -3,14 +3,16 @@
 import { useState, useCallback } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-// import ViewAction, { ViewModalContent } from "./actions/view";
-import UpdateAction, { UpdateModalContent } from "./actions/update";
-import DeleteAction, { DeleteModalContent } from "./actions/delete";
+import UpdateModalContent from "./actions/update";
+import DeleteModalContent from "./actions/delete";
 import DeptModal from "./dialog-modal";
 
 const ActionsCell = ({ data: { row } }) => {
@@ -24,10 +26,11 @@ const ActionsCell = ({ data: { row } }) => {
     cancelText: "No",
     loading: false,
     actionBtnColor: "primary",
+    closeOnOutsideClick: true,
   });
   const handleCloseModal = useCallback(() => {
     setModalOpen(false);
-    setActiveAction("");
+    // setActiveAction("");
   }, [setModalOpen]);
 
   const open = Boolean(anchorEl);
@@ -35,7 +38,7 @@ const ActionsCell = ({ data: { row } }) => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleCloseActionMenu = () => {
     setAnchorEl(null);
   };
 
@@ -53,7 +56,7 @@ const ActionsCell = ({ data: { row } }) => {
       <Menu
         anchorEl={anchorEl}
         open={open}
-        onClose={handleClose}
+        onClose={handleCloseActionMenu}
         MenuListProps={{
           "aria-labelledby": "basic-button",
         }}
@@ -63,18 +66,34 @@ const ActionsCell = ({ data: { row } }) => {
         </Typography>
         <Divider />
 
-        <MenuItem onClick={handleClose}>
-          <UpdateAction
-            setActiveAction={setActiveAction}
-            setModalOpen={setModalOpen}
-          />
+        <MenuItem
+          onClick={() => {
+            handleCloseActionMenu();
+            setModalOpen(true);
+            setActiveAction("update");
+          }}
+        >
+          <Stack direction="row" alignItems="center" columnGap={1}>
+            <EditIcon fontSize="small" />
+            <Typography variant="body1" sx={{ textTransform: "capitalize" }}>
+              Update
+            </Typography>
+          </Stack>
         </MenuItem>
 
-        <MenuItem onClick={handleClose}>
-          <DeleteAction
-            setActiveAction={setActiveAction}
-            setModalOpen={setModalOpen}
-          />
+        <MenuItem
+          onClick={() => {
+            handleCloseActionMenu();
+            setModalOpen(true);
+            setActiveAction("delete");
+          }}
+        >
+          <Stack direction="row" alignItems="center" columnGap={1}>
+            <DeleteIcon fontSize="small" />
+            <Typography variant="body1" sx={{ textTransform: "capitalize" }}>
+              Delete
+            </Typography>
+          </Stack>
         </MenuItem>
       </Menu>
 

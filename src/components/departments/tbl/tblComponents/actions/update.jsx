@@ -1,15 +1,11 @@
 "use client";
 
-import { useId, useEffect } from "react";
+import { useId, useLayoutEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
-import Cookie from "js-cookie";
-import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import EditIcon from "@mui/icons-material/Edit";
 
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 import http from "@/http";
@@ -20,50 +16,19 @@ const validationSchema = Yup.object({
     .required("Department name is required"),
 });
 
-function Update({ setActiveAction, setModalOpen }) {
-  return (
-    <Stack
-      direction="row"
-      alignItems="center"
-      columnGap={1}
-      onClick={() => {
-        setModalOpen(true);
-        setActiveAction("update");
-      }}
-    >
-      <EditIcon fontSize="small" />
-      <Typography>Update</Typography>
-    </Stack>
-  );
-}
-
-export default Update;
-
-export function UpdateModalContent({ item, setModalInitials, closeModal }) {
+function UpdateModalContent({ item, setModalInitials, closeModal }) {
   const deptInputID = useId();
   const setAlertMessage = useNotifyAlertCtx();
   const router = useRouter();
 
-  const athTkn = Cookie.get("token");
-  const config = {
-    url: `${process.env.NEXT_PUBLIC_API_BASE_URL}departments`,
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${athTkn}`,
-    },
-  };
-
-  useEffect(() => {
-    setModalInitials((prev) => {
-      // Set explicitly state needed in the modal without spread(...)
-      // To purge state that is not specific to this modal
-      return {
-        onConfirmAction: formik.handleSubmit,
-        title: "Update Department",
-        loading: false,
-        confirmText: "Save changes",
-        cancelText: "cancel",
-      };
+  useLayoutEffect(() => {
+    // Set state explicitly to purge initials that may previously be set
+    setModalInitials({
+      onConfirmAction: formik.handleSubmit,
+      title: "Update Department",
+      loading: false,
+      confirmText: "Save changes",
+      cancelText: "cancel",
     });
   }, [setModalInitials]);
 
@@ -83,7 +48,11 @@ export function UpdateModalContent({ item, setModalInitials, closeModal }) {
       setModalInitials((prev) => {
         return { ...prev, loading: true };
       });
-      await http(config)
+      await http({
+        url: "/departments",
+        method: "PUT",
+        includeAuthorization: true,
+      })
         .then((res) => {
           setAlertMessage("Department updated Successfully", {
             type: "success",
@@ -144,3 +113,5 @@ export function UpdateModalContent({ item, setModalInitials, closeModal }) {
     </Box>
   );
 }
+
+export default UpdateModalContent;
