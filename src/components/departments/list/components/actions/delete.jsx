@@ -27,12 +27,11 @@ function DeleteModalContent({ item, setModalInitials, closeModal }) {
     event?.preventDefault();
 
     const deptId = item?.id;
-    config.url = `${config.url}/${deptId}`;
     setModalInitials((prev) => {
       return { ...prev, loading: true };
     });
     await http({
-      url: "/departments",
+      url: `/departments/${deptId}`,
       method: "DELETE",
       includeAuthorization: true,
     })

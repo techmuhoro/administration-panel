@@ -1,6 +1,6 @@
 "use client";
 
-import ActionsCell from "./tblComponents/actions-cell";
+import ActionsCell from "./components/actions-cell";
 
 export const columns = [
   {

@@ -3,7 +3,7 @@ import { cache } from "react";
 import http from "@/http";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 import DepartmentsList from "@/components/departments";
-import { columns } from "@/components/departments/tbl/columns";
+import { columns } from "@/components/departments/list/columns";
 
 const config = {
   url: `${process.env.NEXT_PUBLIC_API_BASE_URL}departments`,

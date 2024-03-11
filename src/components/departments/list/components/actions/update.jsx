@@ -40,18 +40,17 @@ function UpdateModalContent({ item, setModalInitials, closeModal }) {
     onSubmit: async (values) => {
       // alert(JSON.stringify(values, null, 2));
 
-      config.data = {
-        name: values.deptName,
-      };
       const deptId = item?.id;
-      config.url = `${config.url}/${deptId}`;
       setModalInitials((prev) => {
         return { ...prev, loading: true };
       });
       await http({
-        url: "/departments",
+        url: `/departments/${deptId}`,
         method: "PUT",
         includeAuthorization: true,
+        data: {
+          name: values.deptName,
+        },
       })
         .then((res) => {
           setAlertMessage("Department updated Successfully", {
@@ -62,6 +61,7 @@ function UpdateModalContent({ item, setModalInitials, closeModal }) {
           closeModal();
         })
         .catch((err) => {
+          console.log(err)
           const ServerErrorMsg = err?.response?.data?.error?.message;
           const errorMsg =
             ServerErrorMsg || "Changes to department could not be saved!";

@@ -6,9 +6,9 @@ import Box from "@mui/material/Box";
 
 import ReusableTable from "@/atoms/reusable-table";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
-import DepartmentsFilter from "./tbl/tblComponents/departments-filter";
-import CreateBtn from "./tbl/tblComponents/create-btn";
-import DepartmentsExport from "./tbl/tblComponents/departments-export";
+import DepartmentsFilter from "./list/components/departments-filter";
+import CreateBtn from "./list/components/create-btn";
+import DepartmentsExport from "./list/components/departments-export";
 import { useNotifyAlertCtx } from "../notify-alert/notify-alert-context";
 
 function Departments({ columnTraits, tblData, errorFeed, paginationData }) {

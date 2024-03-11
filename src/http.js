@@ -12,6 +12,7 @@ const http = axios.create({
     "X-powered-by": "axios",
   },
   timeout: 10000,
+  timeoutErrorMessage: "Server taking too long to respond...Aborted!",
 });
 
 // http.interceptors.request.use(
@@ -56,19 +57,22 @@ http.interceptors.request.use(
       config.withCredentials = true;
       if (isServer) {
         const { cookies } = await import("next/headers"),
-          token = cookies().get(`${JWTAuthTokenName}`)?.value;
+          token = cookies().get(JWTAuthTokenName)?.value;
 
         if (token) {
           config.headers["Authorization"] = `Bearer ${token}`;
         }
       } else {
-        const Cookies = await import("js-cookie"),
-          token = Cookies.get(`${JWTAuthTokenName}`);
+        // const Cookies = await import("js-cookie");
+        const Cookies = require("js-cookie"); // Using require since dynamic import(above) fails to import module
+        const token = Cookies.get(JWTAuthTokenName);
 
         if (token) {
           config.headers["Authorization"] = `Bearer ${token}`;
         }
       }
+
+      delete config.includeAuthorization;
     }
     return config;
   },
