@@ -71,13 +71,12 @@ function DeleteModalContent({ item, setModalInitials, closeModal }) {
         <span
           style={{
             fontWeight: 700,
-            margin: "0 8px",
             textTransform: "capitalize",
           }}
         >
           {item?.attributes?.name}
         </span>
-        will be deleted ⚠️.
+        &ensp;will be deleted&#9888;&#65039;.
         <br />
         Confirm that this is what you want to do.
       </Typography>

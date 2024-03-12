@@ -12,10 +12,15 @@ const http = axios.create({
     "X-powered-by": "axios",
   },
   timeout: 10000,
-  timeoutErrorMessage: "Server taking too long to respond...Aborted!",
+  timeoutErrorMessage: "Waiting response taking too long...Aborted!",
 });
 
+/** Error builder class */
 class Err extends AxiosError {
+  /**
+   * Create an Error
+   * @param {axiosExtendedTypes[""]} error Error object
+   */
   constructor(error) {
     super(
       error.message || "",
@@ -36,16 +41,16 @@ class Err extends AxiosError {
       this.message =
         "Connectivity problems. Try checking your internet connection";
     } else if (error?.code === "ERR_NETWORK") {
-      this.message = "Unable to reach remote address due network problems";
+      this.message = "Unable to reach remote address due network issues";
     }
 
     if (error.response) {
-      const statusCode = error.response.status || undefined;
+      const statusCode = error?.response?.status;
       const ServerErrorMsg = error?.response?.data?.error?.message; // Set error message to what is reported from the server
       if (statusCode === 401) {
-        this.message = "Unauthenticated! Log in required⚠️";
+        this.message = "Unauthenticated! Log in required\u{26A0}\u{FE0F}";
       } else {
-        this.message = ServerErrorMsg || "";
+        this.message = typeof ServerErrorMsg == "string" ? ServerErrorMsg : "";
       }
     }
   }
@@ -95,8 +100,8 @@ http.interceptors.response.use(
 
     const statusCode = customError.response?.status;
 
-    if (statusCode === "401") {
-      // TODO: Handle Unauthenticated error(redirection, ...)
+    if (statusCode === 401) {
+      // TODO: Handle Unauthenticated error
     }
 
     return Promise.reject(customError);
