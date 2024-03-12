@@ -48,7 +48,6 @@ export default function UsersActions({ row }) {
           Actions
         </Typography>
         <Divider />
-
         <Link href={`/dashboard/users/update/${row.id}`}>
           <MenuItem onClick={handleClose}>
             <Stack direction="row" alignItems={"center"} columnGap={1}>
@@ -57,8 +56,8 @@ export default function UsersActions({ row }) {
             </Stack>
           </MenuItem>
         </Link>
-        {/* to enable delete uncomment this section
-        <UserDelete row={row} />  */}
+        {/**to be enabled for user with developer role only and hr if apply */}
+        <UserDelete row={row} />
       </Menu>
     </>
   );
