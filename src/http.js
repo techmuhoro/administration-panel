@@ -19,7 +19,7 @@ const http = axios.create({
 class Err extends AxiosError {
   /**
    * Create an Error
-   * @param {axiosExtendedTypes[""]} error Error object
+   * @param {*} error
    */
   constructor(error) {
     super(
@@ -37,6 +37,10 @@ class Err extends AxiosError {
       this.stack = new Error().stack;
     }
 
+    this.#buildErrorMessage(error);
+  }
+
+  #buildErrorMessage(error) {
     if (error?.code === "EAI_AGAIN") {
       this.message =
         "Connectivity problems. Try checking your internet connection";
@@ -86,7 +90,7 @@ http.interceptors.request.use(
     return config;
   },
   function (error) {
-    return Promise.reject(error);
+    return Promise.reject(new Err(error));
   }
 );
 
