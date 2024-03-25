@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const JWTAuthTokenName = "token";
 
@@ -12,43 +12,53 @@ const http = axios.create({
     "X-powered-by": "axios",
   },
   timeout: 10000,
+  timeoutErrorMessage: "Waiting response taking too long...Aborted!",
 });
 
-// http.interceptors.request.use(
-//   async (config) => {
-//     // `includeAuthorization` is a custom config. It is checked to let axios know when we need to include
-//     // Authorization header with token value read from cookie
-//     if (config?.includeAuthorization) {
-//       config.withCredentials = true;
-//       if (isServer) {
-//         const { cookies } = await import("next/headers"),
-//           token = cookies().get(`${JWTAuthTokenName}`)?.value;
+/** Error builder class */
+class Err extends AxiosError {
+  /**
+   * Create an Error
+   * @param {*} error
+   */
+  constructor(error) {
+    super(
+      error.message || "",
+      error?.code,
+      error?.config,
+      error?.request,
+      error?.response
+    );
+    this.name = "AxiosExtendedError";
 
-//         if (token) {
-//           config.headers["Authorization"] = `Bearer ${token}`;
-//         }
-//       } else {
-//         const Cookies = await import("js-cookie"),
-//           token = Cookies.get(`${JWTAuthTokenName}`);
-//         // const token = document.cookie.replace(
-//         //   /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/,
-//         //   "$1"
-//         // );
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    } else {
+      this.stack = new Error().stack;
+    }
 
-//         if (token) {
-//           config.headers["Authorization"] = `Bearer ${token}`;
-//         }
-//       }
-//     }
+    this.#buildErrorMessage(error);
+  }
 
-//     return config;
-//   },
-//   function (error) {
-//     return Promise.reject(error);
-//   }
-// );
+  #buildErrorMessage(error) {
+    if (error?.code === "EAI_AGAIN") {
+      this.message =
+        "Connectivity problems. Try checking your internet connection";
+    } else if (error?.code === "ERR_NETWORK") {
+      this.message = "Unable to reach remote address due network issues";
+    }
 
-// export default http;
+    if (error.response) {
+      const statusCode = error?.response?.status;
+      const ServerErrorMsg = error?.response?.data?.error?.message; // Set error message to what is reported from the server
+      if (statusCode === 401) {
+        this.message = "Unauthenticated! Log in required\u{26A0}\u{FE0F}";
+      } else {
+        this.message = typeof ServerErrorMsg == "string" ? ServerErrorMsg : "";
+      }
+    }
+  }
+}
 
 http.interceptors.request.use(
   async (config) => {
@@ -56,24 +66,31 @@ http.interceptors.request.use(
       config.withCredentials = true;
       if (isServer) {
         const { cookies } = await import("next/headers"),
-          token = cookies().get(`${JWTAuthTokenName}`)?.value;
+          token = cookies().get(JWTAuthTokenName)?.value;
 
         if (token) {
           config.headers["Authorization"] = `Bearer ${token}`;
         }
       } else {
-        const Cookies = await import("js-cookie"),
-          token = Cookies.get(`${JWTAuthTokenName}`);
+        // const Cookies = await import("js-cookie");
+        const Cookies = require("js-cookie"); // Using require since dynamic import(above) fails to import module
+        const token = Cookies.get(JWTAuthTokenName);
 
         if (token) {
           config.headers["Authorization"] = `Bearer ${token}`;
         }
       }
+
+      delete config.includeAuthorization;
     }
+    if (config.data instanceof FormData) {
+      config.headers["Content-Type"] = "multipart/form-data";
+    }
+
     return config;
   },
   function (error) {
-    return Promise.reject(error);
+    return Promise.reject(new Err(error));
   }
 );
 
@@ -83,12 +100,15 @@ http.interceptors.response.use(
     return response;
   },
   function (error) {
-    let errorMessage = "";
-    if (error.response.data.statusCode == 401) {
-      errorMessage = error.response.data;
+    const customError = new Err(error);
+
+    const statusCode = customError.response?.status;
+
+    if (statusCode === 401) {
+      // TODO: Handle Unauthenticated error
     }
 
-    return Promise.reject(errorMessage);
+    return Promise.reject(customError);
   }
 );
 
