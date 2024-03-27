@@ -5,6 +5,7 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { styled } from "@mui/material/styles";
 import { AccordionProps } from "@mui/material/Accordion";
+import MuiAccordionActions from "@mui/material/AccordionActions";
 
 // styled Accordion wrappers
 /**
@@ -45,3 +46,7 @@ export const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(2),
   borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
+
+export const AccordionActions = styled(MuiAccordionActions)(
+  ({ theme }) => ({})
+);
