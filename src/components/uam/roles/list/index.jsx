@@ -12,6 +12,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { columns } from "./columns";
 
 import { styled } from "@mui/material/styles";
+import StyledContentWrapper from "@/atoms/wrappers/styled-content-wrapper";
 
 // const StyldContentWrapper = styled(Box)(() => ({
 //   backgroundColor: "white",
@@ -32,11 +33,8 @@ export default function RolesList({
         Roles
       </Typography>
 
-      <Box
+      <StyledContentWrapper
         sx={{
-          backgroundColor: "white",
-          borderRadius: "5px",
-          border: "1px solid #e5e7eb",
           px: 3,
           py: 3,
         }}
@@ -62,7 +60,7 @@ export default function RolesList({
           rowsPerPage={rowsPerPage}
           totalPages={totalPages}
         />
-      </Box>
+      </StyledContentWrapper>
     </Box>
   );
 }

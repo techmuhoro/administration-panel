@@ -7,7 +7,7 @@ import CreditCardIcon from "@mui/icons-material/CreditCard";
 import PhonelinkRingIcon from "@mui/icons-material/PhonelinkRing";
 import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import GroupIcon from "@mui/icons-material/Group";
-import ApartmentIcon from '@mui/icons-material/Apartment';
+import ApartmentIcon from "@mui/icons-material/Apartment";
 
 export const asideMenuItems = [
   {
@@ -34,6 +34,7 @@ export const asideMenuItems = [
     label: "Merchants",
     icon: <LocalMallIcon fontSize="small" />,
     to: "/dashboard/merchants",
+    active: (pathname) => pathname.startsWith("/dashboard/merchants"),
   },
   {
     key: "settlements",

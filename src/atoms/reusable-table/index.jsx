@@ -117,12 +117,14 @@ export default function ReusableTable({
           ))}
         </TableBody>
       </Table>
-      <TablePagination
-        count={count}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        rowsPerPage={rowsPerPage}
-      />
+      {paginate && (
+        <TablePagination
+          count={count}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          rowsPerPage={rowsPerPage}
+        />
+      )}
     </TableContainer>
   );
 }
