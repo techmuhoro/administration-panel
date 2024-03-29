@@ -9,6 +9,7 @@ import {
   cloneElement,
   createRef,
   Children,
+  memo,
 } from "react";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -83,8 +84,8 @@ const PopoverMenuBtn = (props) => {
   let BtnElement = null;
   const elementProps = {
     "aria-describedby": ariaDesc,
-    onClick: handleTriggerMenu,
     ...rest,
+    onClick: handleTriggerMenu,
   };
   if (buttonComponent) {
     BtnElement = isValidElement(buttonComponent)
@@ -185,4 +186,4 @@ const PopoverMenuBtn = (props) => {
   );
 };
 
-export default PopoverMenuBtn;
+export default memo(PopoverMenuBtn);

@@ -48,3 +48,28 @@ export function backendDateFormat(str) {
 
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 }
+
+
+/**
+ * This function is a method to pluck _non-empty_ properties __from__ `targetObject` __into__ new object.
+ * `keys` array should be passed containing keys to be extracted from `targetObject`.
+ *
+ * An empty object is returned if none of the keys specified in `keys` array is found on `targetObject`.
+ * @param {string[]} [keys = []]
+ * @param {Object} [targetObject = {}]
+ * @returns {Object} Returns an object
+ */
+export function pluckProperties(keys = [], targetObject = {}) {
+  if (keys instanceof Array) {
+    const filtered = keys.reduce((pileValue, key) => {
+      if (targetObject[key]) {
+        pileValue[key] = targetObject[key];
+      }
+      return pileValue;
+    }, {});
+
+    return filtered;
+  } else {
+    return {};
+  }
+}
