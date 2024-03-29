@@ -5,11 +5,7 @@ import PopoverMenuBtn from "@/atoms/PopoverMenuBtn";
 
 function ActionsCell({ rowData }) {
   return (
-    <PopoverMenuBtn
-      renderMenu={<ActionsList />}
-      component={IconButton}
-      variant="text"
-    >
+    <PopoverMenuBtn renderMenu={<ActionsList />} buttonComponent={IconButton}>
       <MoreHorizIcon />
     </PopoverMenuBtn>
   );

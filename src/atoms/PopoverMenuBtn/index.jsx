@@ -6,6 +6,9 @@ import {
   useState,
   useRef,
   createElement,
+  cloneElement,
+  createRef,
+  Children,
 } from "react";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -13,7 +16,9 @@ import Popover from "@mui/material/Popover";
 import Divider from "@mui/material/Divider";
 
 /**
- * @typedef {import("react").JSX.Element} ReactElement
+ * @typedef {import("react").JSX.Element} JSXElement
+ * @typedef {import("react").JSX.IntrinsicElements} JSXIntrinsicElements
+ * @typedef {import("react").ComponentType} ReactComponent
  * @typedef {import("@mui/material").ButtonProps} MuiBtnProps
  */
 
@@ -23,18 +28,19 @@ import Divider from "@mui/material/Divider";
  * @param {Object} props
  * @param {function} props.closeMenu - When called closes menu.
  * @param {boolean} props.menuOpen - Conveys opened status of the menu.
- * @returns {ReactElement}
+ * @returns {JSXElement}
  */
 
 /**
  * @typedef {object} BtnProps
  * @property {string} [title] - Title to show on floating menu
  * @property {string} [text] - Text to dispaly in the button
- * @property {(RenderMenuFn | ReactElement)} renderMenu - The content to show on the floating Menu.
+ * @property {(RenderMenuFn | JSXElement)} renderMenu - The content to show on the floating Menu.
  *
  * If a function is given, __object__ with _`closeMenu`_ and _`menuOpen`_ properties is passed as argument.
- * @property {ReactElement} [icon] - Icon to show on the button
+ * @property {JSXElement} [icon] - Icon to show on the button
  * @property {function} [onClose] - Function called when menu closes
+ * @property {(JSXIntrinsicElements|JSXElement|ReactComponent)} [buttonComponent] - React Component to hook as button control for the floating menu. **Note**: Should be able to hold/handle `ref`.
  *
  * @typedef {MuiBtnProps & BtnProps} PopoverMenuBtnProps
  */
@@ -42,7 +48,7 @@ import Divider from "@mui/material/Divider";
 /**
  * Renders Button with a controlled a floating menu
  * @param {PopoverMenuBtnProps} props
- * @returns {ReactElement}
+ * @returns {JSXElement}
  */
 const PopoverMenuBtn = (props) => {
   const {
@@ -50,19 +56,23 @@ const PopoverMenuBtn = (props) => {
     renderMenu,
     title,
     onClose,
+    buttonComponent,
     children,
     icon: Icon,
     ...rest
   } = props;
 
   const [menuParent, setMenuParent] = useState(null);
-  const btnRef = useRef(null);
+  const btnRef = useRef(null); // for FN cmp
+  const _btnRef = createRef(null); // for class cmp
   const menuOpen = Boolean(menuParent);
   const ariaDesc = "open-popup-menu";
 
   const handleTriggerMenu = useCallback(() => {
     if (btnRef.current) {
       setMenuParent(btnRef.current);
+    } else if (_btnRef.current) {
+      setMenuParent(_btnRef.current);
     }
   }, [setMenuParent]);
   const handleClose = useCallback(() => {
@@ -70,26 +80,63 @@ const PopoverMenuBtn = (props) => {
     if (typeof onClose === "function") onClose();
   }, [setMenuParent]);
 
+  let BtnElement = null;
+  const elementProps = {
+    "aria-describedby": ariaDesc,
+    onClick: handleTriggerMenu,
+    ...rest,
+  };
+  if (buttonComponent) {
+    BtnElement = isValidElement(buttonComponent)
+      ? (function () {
+          const childrenToDisplay =
+            text || buttonComponent?.props?.children || children;
+
+          return cloneElement(
+            buttonComponent,
+            { ...elementProps, ref: btnRef },
+            Children.map(childrenToDisplay, (child) => child)
+          );
+        })()
+      : createElement(
+          buttonComponent,
+          {
+            ...elementProps,
+            ref: buttonComponent?.prototype?.isReactComponent
+              ? _btnRef
+              : btnRef,
+          },
+          text || Children.map(children, (child) => child)
+        );
+  } else {
+    // Use MUI button as `BtnElement`
+    const MuiBtnProps = {
+      variant: "contained",
+      ...(Icon && isValidElement(Icon)
+        ? { startIcon: Icon }
+        : typeof Icon === "function"
+          ? {
+              startIcon: createElement(Icon),
+              sx: { "& .MuiButton-startIcon": { marginLeft: 0 } },
+            }
+          : null),
+      size: "small",
+    };
+
+    BtnElement = createElement(
+      Button,
+      {
+        ...MuiBtnProps,
+        ...elementProps,
+        ref: btnRef,
+      },
+      text || Children.map(children, (child) => child)
+    );
+  }
+
   return (
     <>
-      <Button
-        ref={btnRef}
-        aria-describedby={ariaDesc}
-        variant="contained"
-        onClick={handleTriggerMenu}
-        {...(Icon && isValidElement(Icon)
-          ? { startIcon: Icon }
-          : typeof Icon === "function"
-            ? {
-                startIcon: createElement(Icon),
-                sx: { "& .MuiButton-startIcon": { marginLeft: 0 } },
-              }
-            : null)}
-        size="small"
-        {...rest}
-      >
-        {text || children}
-      </Button>
+      {BtnElement}
 
       <Popover
         id={ariaDesc}
