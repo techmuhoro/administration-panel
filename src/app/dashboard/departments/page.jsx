@@ -6,7 +6,7 @@ import DepartmentsList from "@/components/departments";
 import { columns } from "@/components/departments/list/columns";
 
 const config = {
-  url: `${process.env.NEXT_PUBLIC_API_BASE_URL}departments`,
+  url: "/departments",
   method: "GET",
 };
 
@@ -41,17 +41,8 @@ async function Departments({ searchParams }) {
       rowsPerPage: deptsResponse?.data?.limit || 0,
     };
   } catch (err) {
-    let errorMsg =
-      err instanceof Error
-        ? err.message
-        : "An error occured while retrieving departments";
-
-    if (err.request) {
-      if (err?.code === "EAI_AGAIN") {
-        errorMsg =
-          "Connectivity problems. Try checking your internet connection";
-      }
-    }
+    const errorMsg =
+      err.httpMessage || "An error occured while retrieving departments";
 
     errorFeed = { error: true, msg: errorMsg };
 

@@ -4,11 +4,15 @@ import { forwardRef } from "react";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 
+/**
+ * @typedef {Object} myBtnProps
+ * @property {boolean} loading
+ */
+
 const LoadingButton = forwardRef(
   /**
    *
-   * @param {import("@mui/material").ButtonProps} props
-   * @param {boolean} loading
+   * @param {import("@mui/material").ButtonProps & myBtnProps} props
    */
   function ({ variant = "contained", loading, ...restProps }, ref) {
     return (

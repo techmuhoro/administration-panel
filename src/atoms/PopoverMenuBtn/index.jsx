@@ -157,16 +157,17 @@ const PopoverMenuBtn = (props) => {
         {title ? (
           <>
             <Typography
-              variant="h5"
+              variant="h6"
               sx={{
-                color: "primary",
+                color: "primary.main",
                 textAlign: "left",
-                textTransform: "capitalize",
+                textTransform: "uppercase",
+                fontSize: "0.875rem",
               }}
             >
               {title}
             </Typography>
-            <Divider sx={{ width: "100%", my: 2 }} />
+            <Divider sx={{ width: "100%", mt: 1, mb: 2 }} />
           </>
         ) : null}
         {isValidElement(renderMenu)

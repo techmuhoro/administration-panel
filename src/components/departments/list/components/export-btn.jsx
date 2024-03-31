@@ -10,7 +10,6 @@ import Divider from "@mui/material/Divider";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
-import DownloadIcon from "@mui/icons-material/Download";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import TableViewIcon from "@mui/icons-material/TableView";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
@@ -21,16 +20,8 @@ import DoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 import LoadingButton from "@/atoms/loading-button";
 
-function ExportButton({
-  variant = "outlined",
-  color = "primary",
-  label = "Export",
-  handleExport,
-}) {
-  const menuTriggerBtnRef = useRef(null);
-  const [anchorEl, setAnchorEl] = useState(null);
+function Export({ handleClose, handleExport }) {
   const [exportFormat, setExportFormat] = useState("");
-  const open = Boolean(anchorEl);
 
   const setExportFormatState = useCallback(
     (format) => {
@@ -39,57 +30,32 @@ function ExportButton({
     [setExportFormat]
   );
 
-  const handleMenuOpen = () => {
-    if (menuTriggerBtnRef.current) setAnchorEl(menuTriggerBtnRef.current);
-  };
-  const handleClose = () => setAnchorEl(null);
+  // const handleMenuOpen = () => {
+  //   if (menuTriggerBtnRef.current) setAnchorEl(menuTriggerBtnRef.current);
+  // };
+  // const handleClose = () => setAnchorEl(null);
 
   return (
     <Box sx={{ ml: 1, display: "inline-block" }}>
-      <Button
-        startIcon={<DownloadIcon />}
-        variant={variant}
-        color={color}
-        onClick={handleMenuOpen}
-        ref={menuTriggerBtnRef}
-        size="small"
-      >
-        {label}
-      </Button>
-
-      <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
-        open={open}
-        onClose={handleClose}
-        // onClick={handleClose}
-        // PaperProps={{
-        //   elevation: 0,
-        //   sx: exportDropDown,
-        // }}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-      >
-        {!exportFormat ? (
-          <ExportFormatPrompt
-            setFormat={setExportFormatState}
-            handleClose={handleClose}
-          />
-        ) : (
-          <ExportDatesPrompt
-            exportFormat={exportFormat}
-            setExportFormat={setExportFormatState}
-            handleClose={handleClose}
-            handleMenuOpen={handleMenuOpen}
-            handleExport={handleExport}
-          />
-        )}
-      </Menu>
+      {!exportFormat ? (
+        <ExportFormatPrompt
+          setFormat={setExportFormatState}
+          handleClose={handleClose}
+        />
+      ) : (
+        <ExportDatesPrompt
+          exportFormat={exportFormat}
+          setExportFormat={setExportFormatState}
+          handleClose={handleClose}
+          // handleMenuOpen={handleMenuOpen}
+          handleExport={handleExport}
+        />
+      )}
     </Box>
   );
 }
 
-export default ExportButton;
+// export default Export;
 
 function ExportFormatPrompt({ handleClose, setFormat }) {
   return (
@@ -155,15 +121,15 @@ function ExportDatesPrompt({
   exportFormat,
   setExportFormat,
   handleClose,
-  handleMenuOpen,
+  // handleMenuOpen,
   handleExport,
 }) {
   const setAlertMessage = useNotifyAlertCtx();
 
-  useEffect(() => {
-    // Important! This makes the Menu re-adjust its dimensions
-    handleMenuOpen();
-  }, []);
+  // useEffect(() => {
+  //   // Important! This makes the Menu re-adjust its dimensions
+  //   handleMenuOpen();
+  // }, []);
 
   const formikBag = useFormik({
     initialValues: {
