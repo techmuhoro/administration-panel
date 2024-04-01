@@ -10,6 +10,7 @@ import {
   createRef,
   Children,
   memo,
+  useEffect,
 } from "react";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -36,7 +37,7 @@ import Divider from "@mui/material/Divider";
  * @typedef {object} BtnProps
  * @property {string} [title] - Title to show on floating menu
  * @property {string} [text] - Text to dispaly in the button
- * @property {(RenderMenuFn | JSXElement)} renderMenu - The content to show on the floating Menu.
+ * @property {(RenderMenuFn | JSXElement | string)} renderMenu - The content to show on the floating Menu.
  *
  * If a function is given, __object__ with _`closeMenu`_ and _`menuOpen`_ properties is passed as argument.
  * @property {JSXElement} [icon] - Icon to show on the button
@@ -51,7 +52,7 @@ import Divider from "@mui/material/Divider";
  * @param {PopoverMenuBtnProps} props
  * @returns {JSXElement}
  */
-const PopoverMenuBtn = (props) => {
+function PopoverMenuBtn(props) {
   const {
     text,
     renderMenu,
@@ -62,6 +63,18 @@ const PopoverMenuBtn = (props) => {
     icon: Icon,
     ...rest
   } = props;
+
+  // `renderMenu` can be Component or function or string
+  if (
+    !isValidElement(renderMenu) &&
+    typeof renderMenu !== "function" &&
+    (typeof renderMenu !== "string" ||
+      (typeof renderMenu === "string" && renderMenu.length <= 0))
+  ) {
+    throw new Error(
+      `'renderMenu' prop on PopoverMenuBtn requires a component, function or string(non-empty) passed to it. Instead it is '${typeof renderMenu === "string" ? "empty string" : typeof renderMenu}'`
+    );
+  }
 
   const [menuParent, setMenuParent] = useState(null);
   const btnRef = useRef(null); // for FN cmp
@@ -80,6 +93,30 @@ const PopoverMenuBtn = (props) => {
     setMenuParent(null);
     if (typeof onClose === "function") onClose();
   }, [setMenuParent]);
+
+  // Below Logic prevents Floating Menu component from always being recreated from scratch when re-render occurs on parent
+  // It may be holding state that will be reset when recreated
+  const [renderMenuComponent, setRenderMenuComponent] = useState(null);
+  useEffect(() => {
+    const reactNode = isValidElement(renderMenu)
+      ? renderMenu
+      : typeof renderMenu === "function" /* A class/function component */
+        ? createElement(renderMenu, {
+            closeMenu: handleClose,
+            menuOpen,
+          })
+        : typeof renderMenu === "string" &&
+            renderMenu.length > 0 /* Will render as node */
+          ? renderMenu
+          : null;
+
+    setRenderMenuComponent(reactNode);
+  }, [
+    handleClose,
+    setRenderMenuComponent,
+    menuOpen,
+    JSON.stringify(renderMenu),
+  ]);
 
   let BtnElement = null;
   const elementProps = {
@@ -170,21 +207,10 @@ const PopoverMenuBtn = (props) => {
             <Divider sx={{ width: "100%", mt: 1, mb: 2 }} />
           </>
         ) : null}
-        {isValidElement(renderMenu)
-          ? renderMenu
-          : typeof renderMenu === "function" /* A class/function component */ ||
-              (renderMenu &&
-                typeof renderMenu === "string") /* Will render as node */
-            ? createElement(renderMenu, { closeMenu: handleClose, menuOpen })
-            : // eslint-disable-next-line func-names
-              (function () {
-                throw new Error(
-                  `'renderMenu' prop on PopoverMenuBtn requires a component, function or string passed to it. Instead it is '${typeof renderMenu}'`
-                );
-              })()}
+        {renderMenuComponent}
       </Popover>
     </>
   );
-};
+}
 
 export default memo(PopoverMenuBtn);

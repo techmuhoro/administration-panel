@@ -15,7 +15,6 @@ import Typography from "@mui/material/Typography";
 import DownloadIcon from "@mui/icons-material/Download";
 import Grid from "@mui/material/Grid";
 
-// import ExportButton from "./export-btn";
 import PopoverMenuBtn from "@/atoms/PopoverMenuBtn";
 import { CsvIcon, ExcelIcon, PdfIcon } from "@/assets/svgIcons";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
@@ -128,7 +127,7 @@ function Export({ handleClose, handleExport }) {
               openDuration: 4000,
               closeOnClickAway: true,
             });
-            handleClose();
+            // handleClose();
           }
         }}
       >
