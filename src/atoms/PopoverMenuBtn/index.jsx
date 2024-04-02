@@ -98,6 +98,9 @@ function PopoverMenuBtn(props) {
   // It may be holding state that will be reset when recreated
   const [renderMenuComponent, setRenderMenuComponent] = useState(null);
   useEffect(() => {
+    // If not open, no need to create/regenerate menu content
+    if (!menuOpen) return;
+
     const reactNode = isValidElement(renderMenu)
       ? renderMenu
       : typeof renderMenu === "function" /* A class/function component */
@@ -106,7 +109,7 @@ function PopoverMenuBtn(props) {
             menuOpen,
           })
         : typeof renderMenu === "string" &&
-            renderMenu.length > 0 /* Will render as node */
+            renderMenu.length > 0 /* Will render as `unstructured` node */
           ? renderMenu
           : null;
 
@@ -115,7 +118,7 @@ function PopoverMenuBtn(props) {
     handleClose,
     setRenderMenuComponent,
     menuOpen,
-    JSON.stringify(renderMenu),
+    // JSON.stringify(renderMenu), // Dep. commented out due to special error cases brought up in `stringification` of Circular Object references
   ]);
 
   let BtnElement = null;

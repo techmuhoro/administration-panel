@@ -1,5 +1,7 @@
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import IconButton from "@mui/material/IconButton";
+import MenuList from "@mui/material/MenuList";
+import MenuItem from "@mui/material/MenuItem";
 
 import PopoverMenuBtn from "@/atoms/PopoverMenuBtn";
 
@@ -15,10 +17,10 @@ export default ActionsCell;
 
 function ActionsList() {
   return (
-    <ul>
-      <li>Hello 1</li>
-      <li>Hello 2</li>
-      <li>Hello 3</li>
-    </ul>
+    <MenuList>
+      <MenuItem>Hello 1</MenuItem>
+      <MenuItem>Hello 2</MenuItem>
+      <MenuItem>Hello 3</MenuItem>
+    </MenuList>
   );
 }

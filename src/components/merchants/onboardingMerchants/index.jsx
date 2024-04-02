@@ -7,7 +7,8 @@ import ReusableTable from "@/atoms/reusable-table";
 import { columns } from "./list/columns";
 import { sampleMerchants } from "../temporarySampleData";
 
-function OnboardingMerchants() {
+function OnboardingMerchants({ tblData, paginationData }) {
+  console.log({ OnboardingMerchants: tblData });
   return (
     <>
       <Box
@@ -21,12 +22,15 @@ function OnboardingMerchants() {
       >
         <Box>
           <Box component="span" sx={{ mr: 1, display: "inline-block" }}>
-            <PopoverMenuBtn renderMenu={<Filters />}>Filter</PopoverMenuBtn>
+            <PopoverMenuBtn renderMenu={<Filters />} variant="outlined">
+              Filter
+            </PopoverMenuBtn>
           </Box>
 
           <Box component="span" sx={{ display: "inline-block" }}>
-          <PopoverMenuBtn renderMenu={<Export />}>Export</PopoverMenuBtn>
-            
+            <PopoverMenuBtn renderMenu={<Export />} variant="outlined">
+              Export
+            </PopoverMenuBtn>
           </Box>
         </Box>
       </Box>
@@ -34,7 +38,7 @@ function OnboardingMerchants() {
       <ReusableTable
         data={sampleMerchants}
         columns={columns}
-        // {...paginationData}
+        {...paginationData}
       />
     </>
   );

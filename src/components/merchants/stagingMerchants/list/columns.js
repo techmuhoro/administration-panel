@@ -4,16 +4,34 @@ import ActionsCell from "./components/actions-cell";
 
 export const columns = [
   {
-    assessor: "name",
-    label: "Name",
+    assessor: "attributes.businessInformation.businessName",
+    label: "Business",
   },
   {
-    assessor: "createdAt",
-    label: "Date Created",
+    assessor: "",
+    label: "Town",
+    cell: ({ row, value }) => {
+      return `${row.attributes?.businessInformation?.city || "_ _"}, ${row.attributes?.businessInformation?.country || "_ _"}`;
+    },
+  },
+  {
+    assessor: "attributes.businessInformation.postalAddress",
+    label: "Postal Code",
+  },
+  {
+    assessor: "attributes.businessInformation.website",
+    label: "Website",
+  },
+  {
+    assessor: "attributes.accountHolder.firstName",
+    label: "Account Holder",
+    cell: ({ row, value }) => {
+      return `${row.attributes?.accountHolder?.firstName || "_ _"} ${row?.attributes?.accountHolder?.lastName || "_ _"}`;
+    },
   },
   {
     assessor: "",
     label: "Actions",
-    cell: (rowData) => <ActionsCell data={rowData} />,
+    cell: ({ row: rowData }) => <ActionsCell data={rowData} />,
   },
 ];
