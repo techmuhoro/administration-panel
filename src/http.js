@@ -54,8 +54,11 @@ class Err extends AxiosError {
       const ServerErrorMsg = error?.response?.data?.error?.message; // Set error message to what is reported from the server
       if (statusCode === 401) {
         this.httpMessage = "Unauthenticated! Log in required\u{26A0}\u{FE0F}";
+      } else if (statusCode === 404) {
+        this.httpMessage = "Requested resource was not found on the server";
       } else {
-        this.httpMessage = typeof ServerErrorMsg == "string" ? ServerErrorMsg : "";
+        this.httpMessage =
+          typeof ServerErrorMsg == "string" ? ServerErrorMsg : "";
       }
     }
   }

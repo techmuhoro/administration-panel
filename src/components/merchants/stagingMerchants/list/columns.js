@@ -11,7 +11,7 @@ export const columns = [
     assessor: "",
     label: "Town",
     cell: ({ row, value }) => {
-      return `${row.attributes?.businessInformation?.city || "_ _"}, ${row.attributes?.businessInformation?.country || "_ _"}`;
+      return `${row.attributes?.businessInformation?.city || "_ _\xa0"}, ${row.attributes?.businessInformation?.country || "_ _"}`;
     },
   },
   {
@@ -26,7 +26,7 @@ export const columns = [
     assessor: "attributes.accountHolder.firstName",
     label: "Account Holder",
     cell: ({ row, value }) => {
-      return `${row.attributes?.accountHolder?.firstName || "_ _"} ${row?.attributes?.accountHolder?.lastName || "_ _"}`;
+      return `${row.attributes?.accountHolder?.firstName || "_ _"} ${row?.attributes?.accountHolder?.lastName || "\xa0\xa0_ _"}`;
     },
   },
   {

@@ -35,11 +35,7 @@ function ApprovedMerchants({ tblData, paginationData }) {
         </Box>
       </Box>
 
-      <ReusableTable
-        data={sampleMerchants}
-        columns={columns}
-        {...paginationData}
-      />
+      <ReusableTable data={tblData} columns={columns} {...paginationData} />
     </>
   );
 }
