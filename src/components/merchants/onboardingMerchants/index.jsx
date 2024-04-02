@@ -8,7 +8,7 @@ import { columns } from "./list/columns";
 import { sampleMerchants } from "../temporarySampleData";
 
 function OnboardingMerchants({ tblData, paginationData }) {
-  console.log({ OnboardingMerchants: tblData });
+  // console.log({ OnboardingMerchants: tblData });
   return (
     <>
       <Box
@@ -35,11 +35,7 @@ function OnboardingMerchants({ tblData, paginationData }) {
         </Box>
       </Box>
 
-      <ReusableTable
-        data={sampleMerchants}
-        columns={columns}
-        {...paginationData}
-      />
+      <ReusableTable data={tblData} columns={columns} {...paginationData} />
     </>
   );
 }

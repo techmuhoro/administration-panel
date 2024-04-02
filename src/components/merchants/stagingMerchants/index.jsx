@@ -10,7 +10,7 @@ import { columns } from "./list/columns";
 import PopoverMenuBtn from "@/atoms/PopoverMenuBtn";
 
 function StagingMerchants({ tblData, paginationData }) {
-  console.log({ StagingMerchants: tblData });
+  // console.log({ StagingMerchants: tblData });
   return (
     <>
       <Box

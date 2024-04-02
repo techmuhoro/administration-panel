@@ -8,7 +8,6 @@ import { columns } from "./list/columns";
 import PopoverMenuBtn from "@/atoms/PopoverMenuBtn";
 
 function ApprovedMerchants({ tblData, paginationData }) {
-  console.log({ ApprovedMerchants: tblData });
   return (
     <>
       <Box
