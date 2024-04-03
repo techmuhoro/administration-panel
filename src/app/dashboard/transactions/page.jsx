@@ -1,51 +1,28 @@
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
-import TransactionsList from "@/components/transactions/list";
-import { convertToNumber, filterObject } from "@/lib/utils";
-import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
-import { getTransactions, getTransactionsCount } from "@/demo-db/transactions";
-import { withAuth } from "@/app/auth/with-auth";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
 
-const filtersWhiteList = ["customer", "transaction_id", "amount", "category"];
-const breadcrumbItems = [
-  { label: "Transactions", to: "/dashbaord/transactions" },
-  { label: "Listing" },
-];
+import TabContext from "@mui/lab/TabContext";
 
 export default async function Page({ searchParams }) {
-  withAuth();
-  const { page, rows, ...filters } = searchParams;
-  const currentPage = convertToNumber(page) ? convertToNumber(page) : 1;
-  const rowsPerPage = convertToNumber(rows)
-    ? convertToNumber(rows)
-    : DEFAULT_ROWS_PER_PAGE;
-
-  const where = filterObject(filters, filtersWhiteList);
-
-  /** Similar to make a network request */
-  const transactionsPromise = getTransactions({
-    take: rowsPerPage,
-    skip: (currentPage - 1) * rowsPerPage,
-    where,
-  });
-
-  const countPromise = getTransactionsCount(where);
-
-  const [count, transactions] = await Promise.all([
-    countPromise,
-    transactionsPromise,
-  ]);
-
-  const totalPages = Number(count) / rowsPerPage;
-
   return (
-    <DashboardContentWrapper breadcrumbItems={breadcrumbItems}>
-      <TransactionsList
-        data={transactions}
-        currentPage={currentPage}
-        rowsPerPage={rowsPerPage}
-        totalPages={totalPages}
-        count={count}
-      />
+    <DashboardContentWrapper>
+      <Box sx={{ width: "100%", typography: "body1" }}>
+        <TabContext>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <TabList onChange={handleChange} aria-label="lab API tabs example">
+              <Tab label="Item One" value="1" />
+              <Tab label="Item Two" value="2" />
+              <Tab label="Item Three" value="3" />
+            </TabList>
+          </Box>
+          <TabPanel value="1">Item One</TabPanel>
+          <TabPanel value="2">Item Two</TabPanel>
+          <TabPanel value="3">Item Three</TabPanel>
+        </TabContext>
+      </Box>
     </DashboardContentWrapper>
   );
 }
