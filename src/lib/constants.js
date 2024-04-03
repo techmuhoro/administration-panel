@@ -1,5 +1,12 @@
 export const DEFAULT_ROWS_PER_PAGE = 10;
 
+export const DEFAULT_PAGINATION_DATA = {
+  count: 0,
+  currentPage: 0,
+  totalPages: 0,
+  rowsPerPage: DEFAULT_ROWS_PER_PAGE,
+};
+
 export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const ERROR_MSG_LOOKUP = {

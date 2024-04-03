@@ -64,7 +64,7 @@ export default function PermissionsFilter() {
 
 function FilterPopover({ open, anchorEl, handleClose, handleClearFilters }) {
   const [filters, setFilters] = useState({
-    group: "",
+    parentName: "",
     name: "",
   });
 
@@ -139,8 +139,8 @@ function FilterPopover({ open, anchorEl, handleClose, handleClearFilters }) {
             <TextField
               label="Group"
               size="small"
-              value={filters.group}
-              onChange={handleFilterChange("group")}
+              value={filters.parentName}
+              onChange={handleFilterChange("parentName")}
             />
           </Grid>
 
