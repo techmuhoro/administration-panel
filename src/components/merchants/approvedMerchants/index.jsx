@@ -7,7 +7,7 @@ import { sampleMerchants } from "../temporarySampleData";
 import { columns } from "./list/columns";
 import PopoverMenuBtn from "@/atoms/PopoverMenuBtn";
 
-function ApprovedMerchants({ tblData, paginationData }) {
+function ApprovedMerchants({ tblPayload, paginationData }) {
   return (
     <>
       <Box
@@ -34,7 +34,11 @@ function ApprovedMerchants({ tblData, paginationData }) {
         </Box>
       </Box>
 
-      <ReusableTable data={tblData} columns={columns} {...paginationData} />
+      <ReusableTable
+        data={tblPayload?.data}
+        columns={columns}
+        {...paginationData}
+      />
     </>
   );
 }

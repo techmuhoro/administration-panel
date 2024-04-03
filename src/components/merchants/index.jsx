@@ -37,26 +37,26 @@ const tabNames = [
 /**
  *
  * @param {Object} props
- * @param {Object} props.tblData - Data to display in table
+ * @param {Object} props.tblPayload - Payload Containing table Data
  * @param {string} props.errorFeed - Error message, if any, that occured while getting merchants
  * @param {Pagination} props.paginationData - Data to paginate in the table
  * @returns
  */
-function Merchants({ tblData, errorFeed, paginationData }) {
+function Merchants({ tblPayload, errorFeed, paginationData }) {
   const [activeTab, setActiveTab] = useState(tabNames[0]);
   const router = useRouter();
   const pathname = usePathname();
   const urlQuery = useSearchParams();
+  const urlQueryStr = urlQuery.toString();
   const setAlertMessage = useNotifyAlertCtx();
 
   const url = useMemo(
-    () =>
-      `${pathname}${urlQuery.toString().length ? "?" + urlQuery.toString() : ""}`,
-    [pathname, urlQuery.toString]
+    () => `${pathname}${urlQueryStr.length ? "?" + urlQueryStr : ""}`,
+    [pathname, urlQueryStr]
   );
 
   useLayoutEffect(() => {
-    const initialUrlQuery = new URLSearchParams(urlQuery.toString());
+    const initialUrlQuery = new URLSearchParams(urlQueryStr);
     const urlTab = String(initialUrlQuery.get("tab")).toLowerCase();
     const changedTabIdx = tabNames.indexOf(urlTab);
 
@@ -71,21 +71,66 @@ function Merchants({ tblData, errorFeed, paginationData }) {
     }
   }, [errorFeed]);
 
-  /** Return Query string with new entry added to existing. Includes Question mark */
   const createQS = useCallback(
-    (name, value) => {
-      const newUrlQuery = new URLSearchParams(urlQuery.toString());
-      newUrlQuery.set(name, value);
+    /**
+     * Builds query string and returns it. A Question mark is prepended.
+     * @param {string} [queryString] The URL query string to add new entry.
+     * @param {Object[]} entries New entries to add to url Query string
+     * @param {string} entries[].name The name of the query string field to add, i.e &__name__=_value_
+     * @param {string} entries[].value The value for `name` in query string, i.e &_name_=__value__
+     * @returns {string}
+     */
+    (queryString, entries = [{ name: "", value }]) => {
+      try {
+        const newUrlQuery = new URLSearchParams(queryString || undefined);
+        entries.forEach((entry) => {
+          const hasName = !!entry.name || entry.name === 0;
+          const hasValue = !!entry.value || entry.value === 0;
+          if (hasName && hasValue) {
+            newUrlQuery.set(entry.name, entry.value);
+          }
+        });
 
-      const newQueryStr = `${newUrlQuery?.toString()?.length ? "?" + newUrlQuery.toString() : ""}`;
+        const newQueryStr = `${newUrlQuery?.toString()?.length ? "?" + newUrlQuery.toString() : ""}`;
 
-      return newQueryStr;
+        return newQueryStr;
+      } catch (error) {
+        return "";
+      }
     },
-    [urlQuery]
+    []
   );
 
   const handleTabChange = (event, newValue) => {
-    const qs = createQS("tab", newValue);
+    const reinstateTabPagination = (function () {
+      try {
+        const savedTabPg = JSON.parse(
+          sessionStorage.getItem(newValue + "-pagination") // Get pagination filters persisted for a specific Tab
+        );
+        return savedTabPg;
+      } catch (error) {
+        return null;
+      }
+    })();
+
+    let qs = "";
+    if (reinstateTabPagination) {
+      const queryStrings = [
+        { name: "tab", value: newValue }, // Necessary for changing tab
+        {
+          name: "page",
+          value: reinstateTabPagination.page,
+        },
+        {
+          name: "rows",
+          value: reinstateTabPagination.rows,
+        },
+      ];
+      qs = createQS(urlQueryStr, [...queryStrings]);
+    } else {
+      qs = createQS(undefined, [{ name: "tab", value: newValue }]);
+    }
+
     const newUrl = pathname + qs;
 
     router.push(newUrl);
@@ -110,19 +155,22 @@ function Merchants({ tblData, errorFeed, paginationData }) {
 
           <TabPanel value="staging-merchants">
             <StagingMerchants
-              tblData={tblData}
+              tabId="staging-merchants" // used to remember pagiantion config tab
+              tblPayload={tblPayload}
               paginationData={paginationData}
             />
           </TabPanel>
           <TabPanel value="onboarding-merchants">
             <OnboardingMerchants
-              tblData={tblData}
+              tabId="onboarding-merchants"
+              tblPayload={tblPayload}
               paginationData={paginationData}
             />
           </TabPanel>
           <TabPanel value="approved-merchants">
             <ApprovedMerchants
-              tblData={tblData}
+              tabId="approved-merchants"
+              tblPayload={tblPayload}
               paginationData={paginationData}
             />
           </TabPanel>

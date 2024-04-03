@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import Box from "@mui/material/Box";
 
 import Filters from "./list/components/filters";
@@ -8,9 +10,44 @@ import ReusableTable from "@/atoms/reusable-table";
 import { sampleMerchants } from "../temporarySampleData";
 import { columns } from "./list/columns";
 import PopoverMenuBtn from "@/atoms/PopoverMenuBtn";
+import { pluckProperties, convertStringSearchParamsToObj } from "@/lib/utils";
 
-function StagingMerchants({ tblData, paginationData }) {
-  // console.log({ StagingMerchants: tblData });
+function StagingMerchants({ tblPayload, paginationData, tabId }) {
+  const pathname = usePathname();
+  const urlQuery = useSearchParams();
+  const urlQueryStr = urlQuery.toString();
+
+  const url = `${pathname}${`${urlQuery?.toString()?.length ? "?" + urlQuery.toString() : ""}`}`;
+
+  useEffect(() => {
+    const urlQueryObj = convertStringSearchParamsToObj(urlQueryStr);
+    const tblPgConfig = pluckProperties(["rows", "page"], urlQueryObj);
+
+    const storeName = tabId + "-pagination"; // Name convention
+    if (tblPgConfig.rows >= 0 || tblPgConfig.page >= 0) {
+      try {
+        let stgPagination = JSON.parse(sessionStorage.getItem(storeName));
+        if (
+          typeof stgPagination !== "object" &&
+          typeof stgPagination !== "undefined" // Will allow undefined
+        )
+          throw new Error("Unusable store");
+
+        stgPagination = {
+          ...(stgPagination || null),
+          ...(tblPgConfig.rows >= 0 && { rows: tblPgConfig.rows }),
+          ...(tblPgConfig.page >= 0 && { page: tblPgConfig.page }),
+        };
+
+        sessionStorage.setItem(storeName, JSON.stringify(stgPagination));
+      } catch (error) {
+        console.warn("skipping persisting pagination config: ", error?.message);
+      }
+    } else if (tblPayload.designation === tabId) {
+      sessionStorage.removeItem(storeName);
+    }
+  }, [url, urlQueryStr]);
+
   return (
     <>
       <Box
@@ -37,7 +74,11 @@ function StagingMerchants({ tblData, paginationData }) {
         </Box>
       </Box>
 
-      <ReusableTable data={tblData} columns={columns} {...paginationData} />
+      <ReusableTable
+        data={tblPayload?.data}
+        columns={columns}
+        {...paginationData}
+      />
     </>
   );
 }

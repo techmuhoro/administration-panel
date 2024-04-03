@@ -1,3 +1,5 @@
+import { cookies } from "next/headers";
+
 import MerchantsList from "@/components/merchants";
 import http from "@/http";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
@@ -14,7 +16,11 @@ const mapToApiName = {
 };
 
 async function Merchants({ searchParams }) {
-  let tblData = [];
+  const cookieStore = cookies();
+  const countryOfMerchants =
+    searchParams.ac || cookieStore.get("ac")?.value || "KE";
+
+  let tblPayload = { data: [], designation: "" };
   let paginationData = {
     count: 0,
     currentPage: 0,
@@ -26,9 +32,11 @@ async function Merchants({ searchParams }) {
   const searchQueryParams = {
     limit: parseInt(searchParams?.rows, 10) || DEFAULT_ROWS_PER_PAGE,
     page: parseInt(searchParams?.page, 10) || 1,
-    ...(searchParams?.ac && { country: searchParams.ac }),
-    ...(searchParams?.tab && { ms: mapToApiName[searchParams.tab] }),
+    ms: mapToApiName[searchParams?.tab] || mapToApiName["staging-merchants"],
+    country: countryOfMerchants,
   };
+  const calcTotalPages = (perPageDataCount, dataCount) =>
+    Math.ceil(dataCount / perPageDataCount);
 
   try {
     const merchantsResponse = await http({
@@ -39,12 +47,24 @@ async function Merchants({ searchParams }) {
       return res.data;
     });
 
-    tblData = merchantsResponse?.data?.data;
+    const tabDataDesignation = Object.keys(mapToApiName).find(
+      (tabname) => mapToApiName[tabname] === searchQueryParams.ms
+    );
+    tblPayload = {
+      data: merchantsResponse?.data?.data,
+      designation: tabDataDesignation,
+    };
+
+    // console.log({ tblPayload });
+
+    const dataCount = parseInt(merchantsResponse?.data?.total) || 0;
+    const perPageDataCount = parseInt(merchantsResponse?.data?.limit) || 0;
+
     paginationData = {
-      count: merchantsResponse?.data?.total || 0,
+      count: dataCount,
       currentPage: merchantsResponse?.data?.current_page || 0,
-      totalPages: merchantsResponse?.data?.total || 0,
-      rowsPerPage: merchantsResponse?.data?.limit || 0,
+      totalPages: calcTotalPages(perPageDataCount, dataCount),
+      rowsPerPage: perPageDataCount,
     };
   } catch (error) {
     errorFeed =
@@ -53,7 +73,7 @@ async function Merchants({ searchParams }) {
 
   return (
     <MerchantsList
-      tblData={tblData}
+    tblPayload={tblPayload}
       errorFeed={errorFeed}
       paginationData={paginationData}
     />
