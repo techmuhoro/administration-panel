@@ -7,7 +7,6 @@ import Stack from "@mui/material/Stack";
 import TransactionsFilter from "./filter";
 import TransactionsExport from "./export";
 import { columns } from "./columns";
-import StyledContentWrapper from "@/atoms/wrappers/styled-content-wrapper";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
@@ -73,25 +72,14 @@ export default function TransactionsList({
             />
           </TabPanel>
           <TabPanel value="billing">
-            <StyledContentWrapper sx={{ p: 3 }}>
-              <Stack
-                direction="row"
-                justifyContent={"flex-end"}
-                columnGap={1}
-                mb={1}
-              >
-                <TransactionsFilter />
-                <TransactionsExport />
-              </Stack>
-              <BillingTable
-                columns={columns}
-                data={data}
-                count={count}
-                currentPage={currentPage}
-                rowsPerPage={rowsPerPage}
-                totalPages={totalPages}
-              />
-            </StyledContentWrapper>
+            <BillingTable
+              columns={columns}
+              data={data}
+              count={count}
+              currentPage={currentPage}
+              rowsPerPage={rowsPerPage}
+              totalPages={totalPages}
+            />
           </TabPanel>
           <TabPanel value="settlement">
             <SettlementTable
