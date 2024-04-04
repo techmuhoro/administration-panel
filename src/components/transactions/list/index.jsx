@@ -3,9 +3,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
-import TransactionsFilter from "./filter";
-import TransactionsExport from "./export";
 import { columns } from "./columns";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
@@ -26,6 +23,7 @@ export default function TransactionsList({
   const [value, setValue] = useState("payin");
   const router = useRouter();
 
+  console.log(router, "router");
   useEffect(() => {
     //window.location.reload();
   });
