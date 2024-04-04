@@ -20,17 +20,18 @@ export default function TransactionsList({
   rowsPerPage,
   totalPages,
 }) {
-  const [value, setValue] = useState("payin");
+  const [tab, setTap] = useState();
   const router = useRouter();
 
   console.log(router, "router");
   useEffect(() => {
+    setTap("payin");
     //window.location.reload();
-  });
+  }, [tab]);
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
-    router.push(`transactions?${newValue}`);
+    setTap(newValue);
+    router.push(`transactions?tab=${newValue}`);
   };
 
   return (
@@ -40,7 +41,7 @@ export default function TransactionsList({
       </Typography>
 
       <Box sx={{ width: "100%", typography: "body1" }}>
-        <TabContext value={value}>
+        <TabContext value={tab}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList onChange={handleChange} aria-label="lab API tabs example">
               <Tab label="PayIn" value="payin" />
