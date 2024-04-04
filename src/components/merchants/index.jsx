@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -15,7 +9,6 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 
-import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
 import StagingMerchants from "./stagingMerchants";
 import OnboardingMerchants from "./onboardingMerchants";
 import ApprovedMerchants from "./approvedMerchants";
@@ -107,7 +100,7 @@ function Merchants({ tblPayload, errorFeed, paginationData }) {
   );
 
   return (
-    <DashboardContentWrapper>
+    <>
       <Typography variant="h5">Merchants</Typography>
 
       <Box sx={{ width: "100%", typography: "body1" }}>
@@ -117,36 +110,36 @@ function Merchants({ tblPayload, errorFeed, paginationData }) {
               onChange={handleTabChange}
               aria-label="merchant listing tabs"
             >
-              <Tab label="Staging" value="staging-merchants" />
-              <Tab label="Onboarding" value="onboarding-merchants" />
-              <Tab label="Approved" value="approved-merchants" />
+              <Tab label="Staging" value={tabNames[0]} />
+              <Tab label="Onboarding" value={tabNames[1]} />
+              <Tab label="Approved" value={tabNames[2]} />
             </TabList>
           </Box>
 
-          <TabPanel value="staging-merchants">
+          <TabPanel value={tabNames[0]}>
             <StagingMerchants
-              tabId="staging-merchants" // used to remember tbl pagination config
+              tabId={tabNames[0]} // used to remember tbl pagination config
               tblPayload={tblPayload}
               paginationData={paginationData}
             />
           </TabPanel>
-          <TabPanel value="onboarding-merchants">
+          <TabPanel value={tabNames[1]}>
             <OnboardingMerchants
-              tabId="onboarding-merchants"
+              tabId={tabNames[1]}
               tblPayload={tblPayload}
               paginationData={paginationData}
             />
           </TabPanel>
-          <TabPanel value="approved-merchants">
+          <TabPanel value={tabNames[2]}>
             <ApprovedMerchants
-              tabId="approved-merchants"
+              tabId={tabNames[2]}
               tblPayload={tblPayload}
               paginationData={paginationData}
             />
           </TabPanel>
         </TabContext>
       </Box>
-    </DashboardContentWrapper>
+    </>
   );
 }
 

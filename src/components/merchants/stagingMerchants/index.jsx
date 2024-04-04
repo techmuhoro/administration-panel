@@ -15,6 +15,7 @@ import {
   convertStringSearchParamsToObj,
   createQS,
 } from "@/lib/utils";
+import StyledContentWrapper from "@/atoms/wrappers/styled-content-wrapper";
 
 function StagingMerchants({ tblPayload, paginationData, tabId }) {
   const pathname = usePathname();
@@ -24,6 +25,9 @@ function StagingMerchants({ tblPayload, paginationData, tabId }) {
   const url = `${pathname}${urlQueryStr}`;
 
   useEffect(() => {
+    // Only run operations on specific tab
+    if (tblPayload.designation !== tabId) return;
+
     const urlQueryObj = convertStringSearchParamsToObj(urlQueryStr);
     const tblPgConfig = pluckProperties(["rows", "page"], urlQueryObj);
 
@@ -47,13 +51,13 @@ function StagingMerchants({ tblPayload, paginationData, tabId }) {
       } catch (error) {
         console.warn("skipping persisting pagination config: ", error?.message);
       }
-    } else if (tblPayload.designation === tabId) {
+    } else {
       sessionStorage.removeItem(storeName);
     }
   }, [url, urlQueryStr]);
 
   return (
-    <>
+    <StyledContentWrapper sx={{ px: 4, py: 2 }}>
       <Box
         sx={{
           display: "grid",
@@ -87,7 +91,7 @@ function StagingMerchants({ tblPayload, paginationData, tabId }) {
         columns={columns}
         {...paginationData}
       />
-    </>
+    </StyledContentWrapper>
   );
 }
 

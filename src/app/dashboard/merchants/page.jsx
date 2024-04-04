@@ -2,7 +2,11 @@ import { cookies } from "next/headers";
 
 import MerchantsList from "@/components/merchants";
 import http from "@/http";
-import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
+import {
+  DEFAULT_PAGINATION_DATA,
+  DEFAULT_ROWS_PER_PAGE,
+} from "@/lib/constants";
+import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
 
 const reqConfig = {
   method: "GET",
@@ -20,13 +24,8 @@ async function Merchants({ searchParams }) {
   const countryOfMerchants =
     searchParams.ac || cookieStore.get("ac")?.value || "KE";
 
-  let tblPayload = { data: [], designation: "" };
-  let paginationData = {
-    count: 0,
-    currentPage: 0,
-    totalPages: 0,
-    rowsPerPage: 0,
-  };
+  let tblPayload = { data: [], designation: "" }; // Format changed so data is designated for a specific tab
+  let paginationData = DEFAULT_PAGINATION_DATA;
   let errorFeed = "";
 
   const searchQueryParams = {
@@ -55,10 +54,9 @@ async function Merchants({ searchParams }) {
       designation: tabDataDesignation,
     };
 
-    // console.log({ tblPayload });
-
     const dataCount = parseInt(merchantsResponse?.data?.total) || 0;
-    const perPageDataCount = parseInt(merchantsResponse?.data?.limit) || 0;
+    const perPageDataCount =
+      parseInt(merchantsResponse?.data?.limit) || DEFAULT_ROWS_PER_PAGE;
 
     paginationData = {
       count: dataCount,
@@ -72,11 +70,13 @@ async function Merchants({ searchParams }) {
   }
 
   return (
-    <MerchantsList
-    tblPayload={tblPayload}
-      errorFeed={errorFeed}
-      paginationData={paginationData}
-    />
+    <DashboardContentWrapper>
+      <MerchantsList
+        tblPayload={tblPayload}
+        errorFeed={errorFeed}
+        paginationData={paginationData}
+      />
+    </DashboardContentWrapper>
   );
 }
 
