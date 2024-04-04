@@ -20,6 +20,7 @@ import StagingMerchants from "./stagingMerchants";
 import OnboardingMerchants from "./onboardingMerchants";
 import ApprovedMerchants from "./approvedMerchants";
 import { useNotifyAlertCtx } from "../notify-alert/notify-alert-context";
+import { createQS } from "@/lib/utils";
 
 const tabNames = [
   "staging-merchants",
@@ -39,21 +40,17 @@ const tabNames = [
  * @param {Object} props
  * @param {Object} props.tblPayload - Payload Containing table Data
  * @param {string} props.errorFeed - Error message, if any, that occured while getting merchants
- * @param {Pagination} props.paginationData - Data to paginate in the table
- * @returns
+ * @param {Pagination} props.paginationData - Pagination config to paginate table
  */
 function Merchants({ tblPayload, errorFeed, paginationData }) {
   const [activeTab, setActiveTab] = useState(tabNames[0]);
   const router = useRouter();
   const pathname = usePathname();
   const urlQuery = useSearchParams();
-  const urlQueryStr = urlQuery.toString();
   const setAlertMessage = useNotifyAlertCtx();
 
-  const url = useMemo(
-    () => `${pathname}${urlQueryStr.length ? "?" + urlQueryStr : ""}`,
-    [pathname, urlQueryStr]
-  );
+  const urlQueryStr = createQS(urlQuery); // Conditionally includes '?'
+  const url = `${pathname}${urlQueryStr}`;
 
   useLayoutEffect(() => {
     const initialUrlQuery = new URLSearchParams(urlQueryStr);
@@ -64,81 +61,54 @@ function Merchants({ tblPayload, errorFeed, paginationData }) {
       changedTabIdx !== -1 ? tabNames[changedTabIdx] : tabNames[0];
 
     setActiveTab(validTab);
-  }, [url]);
+  }, [url, urlQueryStr, tabNames]);
   useEffect(() => {
     if (!!errorFeed) {
       setAlertMessage(errorFeed, { type: "error", openDuration: 4000 });
     }
   }, [errorFeed]);
 
-  const createQS = useCallback(
-    /**
-     * Builds query string and returns it. A Question mark is prepended.
-     * @param {string} [queryString] The URL query string to add new entry.
-     * @param {Object[]} entries New entries to add to url Query string
-     * @param {string} entries[].name The name of the query string field to add, i.e &__name__=_value_
-     * @param {string} entries[].value The value for `name` in query string, i.e &_name_=__value__
-     * @returns {string}
-     */
-    (queryString, entries = [{ name: "", value }]) => {
-      try {
-        const newUrlQuery = new URLSearchParams(queryString || undefined);
-        entries.forEach((entry) => {
-          const hasName = !!entry.name || entry.name === 0;
-          const hasValue = !!entry.value || entry.value === 0;
-          if (hasName && hasValue) {
-            newUrlQuery.set(entry.name, entry.value);
-          }
-        });
+  const handleTabChange = useCallback(
+    (event, activeTabName) => {
+      const restoreTabPgConfig = (function () {
+        try {
+          const savedTabPg = JSON.parse(
+            sessionStorage.getItem(activeTabName + "-pagination") // Get tbl pagination config for a specific Tab
+          );
+          return savedTabPg;
+        } catch (error) {
+          return null;
+        }
+      })();
 
-        const newQueryStr = `${newUrlQuery?.toString()?.length ? "?" + newUrlQuery.toString() : ""}`;
-
-        return newQueryStr;
-      } catch (error) {
-        return "";
+      let qs = "";
+      if (restoreTabPgConfig) {
+        const queryStrings = [
+          { name: "tab", value: activeTabName }, // Necessary for changing tab
+          {
+            name: "page",
+            value: restoreTabPgConfig.page,
+          },
+          {
+            name: "rows",
+            value: restoreTabPgConfig.rows,
+          },
+        ];
+        qs = createQS(undefined, [...queryStrings]);
+      } else {
+        qs = createQS(undefined, [{ name: "tab", value: activeTabName }]);
       }
+
+      const newUrl = pathname + qs;
+
+      router.push(newUrl);
     },
-    []
+    [router]
   );
-
-  const handleTabChange = (event, newValue) => {
-    const reinstateTabPagination = (function () {
-      try {
-        const savedTabPg = JSON.parse(
-          sessionStorage.getItem(newValue + "-pagination") // Get pagination filters persisted for a specific Tab
-        );
-        return savedTabPg;
-      } catch (error) {
-        return null;
-      }
-    })();
-
-    let qs = "";
-    if (reinstateTabPagination) {
-      const queryStrings = [
-        { name: "tab", value: newValue }, // Necessary for changing tab
-        {
-          name: "page",
-          value: reinstateTabPagination.page,
-        },
-        {
-          name: "rows",
-          value: reinstateTabPagination.rows,
-        },
-      ];
-      qs = createQS(urlQueryStr, [...queryStrings]);
-    } else {
-      qs = createQS(undefined, [{ name: "tab", value: newValue }]);
-    }
-
-    const newUrl = pathname + qs;
-
-    router.push(newUrl);
-  };
 
   return (
     <DashboardContentWrapper>
-      <Typography variant="h5">Merchantssss...</Typography>
+      <Typography variant="h5">Merchants</Typography>
 
       <Box sx={{ width: "100%", typography: "body1" }}>
         <TabContext value={activeTab}>
@@ -155,7 +125,7 @@ function Merchants({ tblPayload, errorFeed, paginationData }) {
 
           <TabPanel value="staging-merchants">
             <StagingMerchants
-              tabId="staging-merchants" // used to remember pagiantion config tab
+              tabId="staging-merchants" // used to remember tbl pagination config
               tblPayload={tblPayload}
               paginationData={paginationData}
             />

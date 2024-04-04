@@ -1,11 +1,5 @@
-import PopoverMenuBtn from "@/atoms/PopoverMenuBtn";
-
 function Filters() {
-  return (
-    <PopoverMenuBtn renderMenu={<h3>Filters</h3>} text="Noe filtex">
-      Filter Now
-    </PopoverMenuBtn>
-  );
+  return "Filters coming soon";
 }
 
 export default Filters;

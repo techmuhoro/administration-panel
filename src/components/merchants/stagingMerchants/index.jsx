@@ -10,14 +10,18 @@ import ReusableTable from "@/atoms/reusable-table";
 import { sampleMerchants } from "../temporarySampleData";
 import { columns } from "./list/columns";
 import PopoverMenuBtn from "@/atoms/PopoverMenuBtn";
-import { pluckProperties, convertStringSearchParamsToObj } from "@/lib/utils";
+import {
+  pluckProperties,
+  convertStringSearchParamsToObj,
+  createQS,
+} from "@/lib/utils";
 
 function StagingMerchants({ tblPayload, paginationData, tabId }) {
   const pathname = usePathname();
   const urlQuery = useSearchParams();
-  const urlQueryStr = urlQuery.toString();
 
-  const url = `${pathname}${`${urlQuery?.toString()?.length ? "?" + urlQuery.toString() : ""}`}`;
+  const urlQueryStr = createQS(urlQuery); // Conditionally includes '?'
+  const url = `${pathname}${urlQueryStr}`;
 
   useEffect(() => {
     const urlQueryObj = convertStringSearchParamsToObj(urlQueryStr);
@@ -55,21 +59,25 @@ function StagingMerchants({ tblPayload, paginationData, tabId }) {
           display: "grid",
           gridAutoFlow: "column",
           justifyContent: "end",
-          mt: 2,
+          mt: 1,
           mb: 1,
         }}
       >
         <Box>
           <Box component="span" sx={{ mr: 1, display: "inline-block" }}>
-            <PopoverMenuBtn renderMenu="Filter coming soon" variant="outlined">
-              Filter
-            </PopoverMenuBtn>
+            <PopoverMenuBtn
+              renderMenu={Filters}
+              variant="outlined"
+              text="Filter"
+            />
           </Box>
 
           <Box component="span" sx={{ display: "inline-block" }}>
-            <PopoverMenuBtn renderMenu="Exports coming soon" variant="outlined">
-              Export
-            </PopoverMenuBtn>
+            <PopoverMenuBtn
+              renderMenu={Export}
+              variant="outlined"
+              text="Export"
+            />
           </Box>
         </Box>
       </Box>
