@@ -4,7 +4,6 @@ import TransactionsFilter from "./filter";
 import { Stack } from "@mui/system";
 import { columns } from "./columns";
 export default function SettlementTable({
-  columns,
   data,
   count,
   currentPage,
