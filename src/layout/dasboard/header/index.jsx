@@ -4,6 +4,7 @@ import Stack from "@mui/material/Stack";
 import UserAvatar from "./user-avatar";
 import Notifications from "./notifications";
 import MobileMenuIcon from "./mobile-menu-icon";
+import GlobalCountry from "./global-country";
 
 export default function DashboardHeader() {
   return (
@@ -24,11 +25,7 @@ export default function DashboardHeader() {
     >
       <Stack direction="row" alignItems="center" columnGap={2}>
         <MobileMenuIcon />
-        <select style={{ border: "none", background: "transparent" }}>
-          <option value="ke">KE</option>
-          <option value="tz">TZ</option>
-          <option value="ug">UG</option>
-        </select>
+        <GlobalCountry />
       </Stack>
 
       <Stack
