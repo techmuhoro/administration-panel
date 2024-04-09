@@ -166,7 +166,7 @@ Warning: Text content did not match. Server: "" Client: "Mary Maina"
 giving out this warning
 
  */}
-      <Typography>{loginData?.attributes?.name}</Typography>
+      {/* <Typography component={"p"}>{loginData?.attributes?.name}</Typography> */}
 
       <Stack
         ref={anchorRef}

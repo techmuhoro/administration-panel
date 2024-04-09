@@ -6,12 +6,11 @@ import RoleForm from "../form";
 import { useRouter } from "next/navigation";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 import Cookie from "js-cookie";
+import http from "@/http";
 
 export default function RolesAdd({ departments, permissions }) {
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const setAlertMessage = useNotifyAlertCtx();
-  const token = Cookie.get("token");
 
   async function handleSubmit(values, { setSubmitting }) {
     const truthyPermissions =
@@ -22,43 +21,30 @@ export default function RolesAdd({ departments, permissions }) {
       department: values?.department || "",
       permissions: truthyPermissions,
     };
-    const url = `${BASE_URL}roles`;
 
-    const response = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    try {
+      const response = await http({
+        method: "POST",
+        url: "/roles",
+        data: payload,
+        includeAuthorization: true,
+      }).then((res) => res.data);
 
-    const data = await response.json();
-
-    setSubmitting(false);
-
-    if (data.statusCode == 200) {
       setAlertMessage("Role has been created successfully", {
         type: "success",
         openDuration: 3000,
       });
 
-      return router.push("/dashboard/roles");
-    } else if (data.statusCode == 406) {
-      // handle form error
-
-      // use formik setField errors to set Errors
-      setAlertMessage("Kindly reactify errors in your form!", {
+      router.push("/dashboard/roles");
+    } catch (error) {
+      let msg = error?.message || "Error! Could not create role";
+      setAlertMessage(msg, {
         type: "error",
         openDuration: 3000,
+        closeOnClickAway: true,
       });
-    } else {
-      const error = data.error.message || "Error! could not create role";
-
-      setAlertMessage(error, {
-        type: "error",
-        openDuration: 3000,
-      });
+    } finally {
+      setSubmitting(false);
     }
   }
 

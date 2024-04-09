@@ -67,18 +67,23 @@ http.interceptors.request.use(
       if (isServer) {
         const { cookies } = await import("next/headers"),
           token = cookies().get(JWTAuthTokenName)?.value;
+        const gc = cookies().get("global-country")?.value || "KE";
 
         if (token) {
           config.headers["Authorization"] = `Bearer ${token}`;
         }
+        config.params = { ...(config.params && config.params), gc }; // global country
       } else {
         // const Cookies = await import("js-cookie");
         const Cookies = require("js-cookie"); // Using require since dynamic import(above) fails to import module
         const token = Cookies.get(JWTAuthTokenName);
+        const gc = Cookies.get("global-country") || "KE";
 
         if (token) {
           config.headers["Authorization"] = `Bearer ${token}`;
         }
+
+        config.params = { ...(config.params && config.params), gc }; // global country
       }
 
       delete config.includeAuthorization;
