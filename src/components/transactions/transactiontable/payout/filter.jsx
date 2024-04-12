@@ -1,10 +1,10 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import { Select, FormControl, MenuItem } from "@mui/material";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import Popover from "@mui/material/Popover";
@@ -13,6 +13,9 @@ import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import Stack from "@mui/material/Stack";
 import { convertStringSearchParamsToObj, filterObject } from "@/lib/utils";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
+
+import { getLoginData } from "@/lib/redux/auth2/otplogin-slice";
+import { useSelector } from "react-redux";
 
 export default function TransactionsFilter() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -55,7 +58,7 @@ function FilterPopover({ open, anchorEl, handleClose }) {
   const [filters, setFilters] = useState({
     vid: "",
     country: "",
-    op: "pay-out",
+    op: "pay-in",
   });
   const pathname = usePathname();
   const querySearchParams = useSearchParams();
@@ -112,6 +115,20 @@ function FilterPopover({ open, anchorEl, handleClose }) {
   };
 
   const popoverId = open ? "transaction-filter-popover" : undefined;
+
+  const loginData = useSelector(getLoginData);
+  let Contries = loginData?.includes?.opCountries;
+
+  let operationContries = Contries?.filter(
+    (item) => item.attributes.opStatus === 1
+  );
+
+  let allCountries = operationContries?.map((item) => ({
+    label: item.attributes.name,
+    value: item.attributes.iso,
+  }));
+
+  console.log(allCountries, "this are all contries");
   return (
     <Popover
       id={popoverId}
@@ -142,12 +159,35 @@ function FilterPopover({ open, anchorEl, handleClose }) {
             />
           </Grid>
           <Grid sm={12} md={5.5}>
-            <TextField
-              label="country"
-              size="small"
-              value={filters.country}
-              onChange={handleFilterChange("country")}
-            />
+            <form>
+              <FormControl>
+                <Box>
+                  <Grid container spacing={2}>
+                    <Grid item xs={8}>
+                      <Select
+                        labelId="demo-select-small-label"
+                        id="demo-select-small"
+                        required
+                        label="Select country"
+                        size="medium"
+                        name="country"
+                        value={filters.country}
+                        style={{ width: "235px", height: "40px" }}
+                        onChange={handleFilterChange("country")}
+                      >
+                        {allCountries.map((item) => {
+                          return (
+                            <MenuItem key={item.value} value={item.value}>
+                              {item.label}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </FormControl>
+            </form>
           </Grid>
         </Grid>
 

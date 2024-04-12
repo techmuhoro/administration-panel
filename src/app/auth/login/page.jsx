@@ -80,10 +80,8 @@ function Login() {
             type: "error",
           });
         } else if (error.response.status === 403) {
-          setAlert({
-            message: error.response.data.error.message,
-            type: "error",
-          });
+          //riderect to reset password page
+          router.replace(error.response.data.error.message);
         } else {
           setAlert({
             message: "Something went wrong. Kindly contact support",
