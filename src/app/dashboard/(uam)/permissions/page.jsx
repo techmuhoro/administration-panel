@@ -1,60 +1,65 @@
 import PermissionsList from "@/components/uam/permissions/list";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
-import { convertToNumber, filterObject } from "@/lib/utils";
-import { DEFAULT_ROWS_PER_PAGE, BASE_URL } from "@/lib/constants";
-import { cookies } from "next/headers";
+import { filterObject } from "@/lib/utils";
+import {
+  DEFAULT_ROWS_PER_PAGE,
+  DEFAULT_PAGINATION_DATA,
+} from "@/lib/constants";
+import http from "@/http";
 
-async function getPermissions(url, token) {
-  console.log(url);
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
+const reqConfig = {
+  method: "GET",
+  url: "/permissions",
+};
 
-  const data = await response.json();
-
-  return {
-    data,
-    error: !response.status.toString().startsWith("2"), // boolean of whether the was an error or not,
-  };
-}
-
-const filtersWhiteList = ["name", "parentName", "slug"];
+const filtersWhiteList = ["name", "parentName", "slug", "group"];
 
 export default async function Page({ searchParams }) {
   const { page, rows, ...filters } = searchParams;
-  const currentPage = convertToNumber(page) ? convertToNumber(page) : 1;
-  const rowsPerPage = convertToNumber(rows)
-    ? convertToNumber(rows)
-    : DEFAULT_ROWS_PER_PAGE;
+
+  let tblData = [];
+  let paginationData = DEFAULT_PAGINATION_DATA;
+  let errorFeed = "";
 
   const applicableFilters = filterObject(filters, filtersWhiteList);
 
-  const queryString = new URLSearchParams({
+  let urlQuery = {
     ...applicableFilters,
-    page: currentPage,
-    limit: rowsPerPage,
-  }).toString();
+    page: parseInt(searchParams?.page, 10) || 1,
+    limit: parseInt(searchParams?.rows, 10) || DEFAULT_ROWS_PER_PAGE,
+  };
 
-  const url = `${BASE_URL}permissions?${queryString}`;
-  const authToken = cookies().get("token").value;
+  try {
+    const response = await http({
+      ...reqConfig,
+      includeAuthorization: true,
+      params: {
+        ...urlQuery,
+      },
+    }).then((res) => res.data);
 
-  const { data } = await getPermissions(url, authToken);
+    tblData = response?.data?.data || [];
 
-  const permissions = data?.data?.data || [];
-  const count = data?.data?.total || -1;
-  const totalPages = count > 0 ? Math.ceil(Number(count) / rowsPerPage) : 1;
+    const count = parseInt(response?.data?.total, 10) || 0;
+    const rowsPerPage = response?.data?.limit || DEFAULT_ROWS_PER_PAGE;
+
+    paginationData = {
+      count,
+      rowsPerPage,
+      currentPage: response?.data?.current_page || 0,
+      totalPages: Math.ceil(count / rowsPerPage) || 0,
+    };
+  } catch (error) {
+    errorFeed =
+      error?.httpMessage || "An error occured while getting permissions";
+  }
 
   return (
     <DashboardContentWrapper>
       <PermissionsList
-        data={permissions}
-        currentPage={currentPage}
-        rowsPerPage={rowsPerPage}
-        totalPages={totalPages}
-        count={count}
+        tblData={tblData}
+        paginationData={paginationData}
+        errorFeed={errorFeed}
       />
     </DashboardContentWrapper>
   );

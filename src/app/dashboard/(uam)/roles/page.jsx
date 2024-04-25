@@ -1,58 +1,65 @@
 import { cookies } from "next/headers";
 import RolesList from "@/components/uam/roles/list";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
-import { BASE_URL, DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
+import {
+  DEFAULT_PAGINATION_DATA,
+  DEFAULT_ROWS_PER_PAGE,
+} from "@/lib/constants";
 import { convertToNumber, filterObject } from "@/lib/utils";
+import http from "@/http";
 
-async function getRoles(url, token) {
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await response.json();
-
-  return {
-    data,
-    error: !response.status.toString().startsWith("2"), // boolean of whether the was an error or not,
-  };
-}
+const reqConfig = {
+  method: "GET",
+  url: "/roles",
+};
 
 const filtersWhiteList = ["role", "department", "description", "createdBy"];
 
 export default async function Page({ searchParams }) {
   const { page, rows, ...filters } = searchParams;
-  const currentPage = convertToNumber(page) ? convertToNumber(page) : 1;
-  const rowsPerPage = convertToNumber(rows)
-    ? convertToNumber(rows)
-    : DEFAULT_ROWS_PER_PAGE;
+
+  let tblData = [];
+  let paginationData = DEFAULT_PAGINATION_DATA;
+  let errorFeed = "";
 
   const applicableFilters = filterObject(filters, filtersWhiteList);
 
-  const queryString = new URLSearchParams({
+  let urlQuery = {
     ...applicableFilters,
-    page: currentPage,
-    limit: rowsPerPage,
-  }).toString();
+    page: parseInt(searchParams?.page, 10) || 1,
+    limit: parseInt(searchParams?.rows, 10) || DEFAULT_ROWS_PER_PAGE,
+  };
 
-  const url = `${BASE_URL}roles?${queryString}`;
-  const authToken = cookies().get("token").value;
+  try {
+    const response = await http({
+      ...reqConfig,
+      includeAuthorization: true,
+      params: {
+        ...urlQuery,
+      },
+    }).then((res) => res.data);
 
-  const { data } = await getRoles(url, authToken);
+    tblData = response?.data?.data || [];
 
-  const roles = data?.data?.data || [];
-  const count = data?.data?.total || -1;
-  const totalPages = count > 0 ? Math.ceil(Number(count) / rowsPerPage) : 1;
+    const count = parseInt(response?.data?.total, 10) || 0;
+    const rowsPerPage = response?.data?.limit || DEFAULT_ROWS_PER_PAGE;
+
+    paginationData = {
+      count,
+      rowsPerPage,
+      currentPage: response?.data?.current_page || 0,
+      totalPages: Math.ceil(count / rowsPerPage) || 0,
+    };
+  } catch (error) {
+    errorFeed = error?.httpMessage || "An error occured while getting roles";
+  }
 
   return (
     <DashboardContentWrapper breadcrumbOmit={["uam"]}>
       <RolesList
-        data={roles}
-        currentPage={currentPage}
-        rowsPerPage={rowsPerPage}
-        totalPages={totalPages}
-        count={count}
+        tblData={tblData}
+        paginationData={paginationData}
+        errorFeed={errorFeed}
       />
     </DashboardContentWrapper>
   );

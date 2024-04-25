@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -9,14 +12,22 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import PermissionsFilter from "./filter";
 import PermissionsExport from "./export";
+import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 
 export default function PermissionsList({
-  data,
-  count,
-  currentPage,
-  rowsPerPage,
-  totalPages,
+  tblData,
+  paginationData,
+  errorFeed,
 }) {
+  const setAlertMessage = useNotifyAlertCtx();
+
+  // toast the error Feed
+  useEffect(() => {
+    if (!!errorFeed) {
+      setAlertMessage(errorFeed, { type: "error", openDuration: 4000 });
+    }
+  }, [errorFeed, setAlertMessage]);
+
   return (
     <Box>
       <Typography component="h1" variant="h5" mb={1}>
@@ -47,11 +58,11 @@ export default function PermissionsList({
 
         <ReusableTable
           columns={columns}
-          data={data}
-          count={count}
-          currentPage={currentPage}
-          rowsPerPage={rowsPerPage}
-          totalPages={totalPages}
+          data={tblData}
+          count={paginationData.count}
+          currentPage={paginationData.currentPage}
+          rowsPerPage={paginationData.rowsPerPage}
+          totalPages={paginationData.totalPages}
         />
       </Box>
     </Box>
