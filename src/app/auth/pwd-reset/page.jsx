@@ -70,12 +70,12 @@ function ResetPassword() {
           });
         } else if (error.response.status === 401) {
           setAlert({
-            message: error.response.data.error,
+            message: error.response.data.error.message,
             type: "error",
           });
         } else if (error.response.status === 403) {
           setAlert({
-            message: error.response.data.error,
+            message: error.response.data.error.message,
             type: "error",
           });
         } else {
