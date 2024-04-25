@@ -1,6 +1,6 @@
 "use client";
 
-import ActionsCell from "./components/actions-cell";
+import DetailsCell from "./components/details-cell";
 
 export const columns = [
   {
@@ -31,7 +31,7 @@ export const columns = [
   },
   {
     assessor: "",
-    label: "Actions",
-    cell: ({ row: rowData }) => <ActionsCell data={rowData} />,
+    label: "Details",
+    cell: ({ row: rowData }) => <DetailsCell data={rowData} />,
   },
 ];
