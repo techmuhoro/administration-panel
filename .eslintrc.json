@@ -1,0 +1,21 @@
+{
+  "extends": ["airbnb", "next/core-web-vitals", "prettier"],
+
+  "rules": {
+    "react/jsx-filename-extension": [
+      "warn",
+      {
+        "extensions": ["ts", "tsx"]     
+      }
+    ],
+    "react/jsx-no-duplicate-props": [0, { "ignoreCase": false }]
+  },
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [["@", "./src"]],
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  }
+}
