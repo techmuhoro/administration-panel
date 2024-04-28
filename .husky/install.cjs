@@ -1,71 +1,116 @@
-const { spawn } = require("child_process");
+const spawn = require("child_process").spawnSync;
+const chalk = require("chalk");
+const { Buffer } = require("node:buffer");
 
 if (process.env.NODE_ENV === "production" || process.env.CI === "true") {
   process.exit(0);
 }
 
-function huskyDetection() {
-  const detectionPromise = new Promise((resolve, reject) => {
-    const detectHusky = spawn("npm", ["list", "husky"], { shell: true });
+class Err extends Error {
+  constructor(message, code) {
+    super(message);
+    this.name = "custom_error";
+    this.code = code;
+  }
+}
 
-    detectHusky.stdout?.on("data", function (data) {
-      console.log("stdout: " + data);
-    });
-    detectHusky.on("data", function (data) {
-      console.log("stderr: " + data);
-    });
-    detectHusky.on("exit", (code) => {
-      if (code !== 0) {
-        reject(new Err(`exited with code ${code}`, code));
-      }
-      resolve(null);
-    });
-  });
-  return detectionPromise;
+function huskyDetection() {
+  const detectHusky = spawn("npm", ["list", "husky"], { shell: true });
+
+  if (detectHusky.error) {
+    const processError = detectHusky.error;
+
+    throw new Err(processError.message, 1);
+  }
+
+  if (detectHusky.stderr.length) {
+    const errorOut =
+      detectHusky.stderr instanceof Buffer
+        ? detectHusky.stderr.toString()
+        : detectHusky.stderr;
+
+    console.log("stderr: " + chalk.red(errorOut));
+  }
+
+  if (detectHusky.stdout.length) {
+    const out =
+      detectHusky.stdout instanceof Buffer
+        ? detectHusky.stdout.toString()
+        : detectHusky.stdout;
+
+    console.log("stdout: " + chalk.blue(out));
+  }
+
+  if (Number.isFinite(detectHusky.status)) {
+    const code = detectHusky.status ?? 0;
+
+    if (code !== 0) {
+      throw new Err(`exited with code ${code}`, code);
+    }
+  }
 }
 function huskyInstall() {
-  const installPromise = new Promise((resolve, reject) => {
-    const install = spawn("npm", ["install", "--save-dev", "husky"]);
+  const installation = spawn("npm", ["install", "--save-dev", "husky"]);
 
-    install.stdout?.on("data", function (data) {
-      console.log("stdout: " + data);
-    });
-    install.on("data", function (data) {
-      console.log("stderr: " + data);
-    });
-    install.on("close", (code) => {
-      if (code !== 0) {
-        reject(new Err(`exited with code ${code}`, code));
-      }
+  if (installation.error) {
+    const processError = installation.error;
 
-      console.log(`(code: ${code}) "Husky added 🥂"`);
-      resolve(null);
-    });
-  });
+    throw new Err(processError.message, 1);
+  }
 
-  return installPromise;
+  // LOG OUTPUT FOR THIS COMMAND CLUTTERS TERMINAL
+  // if (installation.stderr.length) {
+  //   const errorOut =
+  //     installation.stderr instanceof Buffer
+  //       ? installation.stderr.toString()
+  //       : installation.stderr;
+
+  //   console.log("stderr: " + chalk.red(errorOut));
+  // }
+
+  // if (installation.stdout.length) {
+  //   const out =
+  //     installation.stdout instanceof Buffer
+  //       ? installation.stdout.toString()
+  //       : installation.stdout;
+
+  //   console.log("stdout: " + chalk.blue(out));
+  // }
+
+  if (Number.isFinite(installation.status)) {
+    const code = installation.status ?? 0;
+
+    if (code !== 0) {
+      throw new Err(`exited with code ${code}`, code);
+    }
+    console.log(`(code: ${code}) ${chalk.green("Husky added 🥂")}`);
+  }
 }
 
-async function huskyPrepare() {
+function prepareHuskyEnv() {
   try {
-    await huskyDetection();
+    huskyDetection();
     process.exitCode = 0;
     return true;
   } catch (error) {
     if (error instanceof Error) {
       try {
         const exitCode = error.code;
-        if (exitCode !== 0) {
-          console.log("Husky not found ❌ Installing...");
-          await huskyInstall();
-          process.exitCode = 0;
-          return true;
-        }
-      } catch (error) {
-        process.exitCode = error?.code ?? 126;
-        console.error(
-          `Husky could not be installed 🔴 (exitcode: ${process.exitCode})`
+        if (exitCode === 0) return false; // `return` since Husky detection `error`ed but exit code indicates success
+
+        console.log(
+          chalk.red("Husky not found ❌.") + chalk.blue(" Installing...")
         );
+
+        huskyInstall();
+
+        process.exitCode = 0;
+        return true;
+      } catch (error) {
+        const msg = error instanceof Error ? error.message : "";
+        const fullMsg = `Husky installation exited with code ${process.exitCode} 🔴${msg.length ? ": " + msg : ""})`;
+
+        throw new Err(fullMsg, error?.code ?? 126);
       }
     }
   }
@@ -74,56 +119,60 @@ async function huskyPrepare() {
 }
 
 function huskyInit() {
-  const initPromise = new Promise((resolve, reject) => {
-    const initialize = spawn("husky", [".husky"]);
+  const initialize = spawn("husky", [".husky"]);
 
-    initialize.stdout?.on("data", function (data) {
-      console.log("stdout: " + data);
-    });
-    initialize.on("data", function (data) {
-      console.log("stderr: " + data);
-    });
-    initialize.on("close", (code) => {
-      if (code !== 0) {
-        reject({ message: `exited with code ${code}`, code });
-      }
-      console.log(`(code: ${code}) Husky Initialized ✔️`);
-      resolve(null);
-      // console.log(`child process exited with code ${code}`);
-    });
-  });
+  if (initialize.error) {
+    const processError = initialize.error;
 
-  return initPromise;
+    throw new Err(processError.message, 1);
+  }
+
+  if (initialize.stderr.length) {
+    const errorOut =
+      initialize.stderr instanceof Buffer
+        ? initialize.stderr.toString()
+        : initialize.stderr;
+
+    console.log("stderr: " + chalk.red(errorOut));
+  }
+
+  if (initialize.stdout.length) {
+    const out =
+      initialize.stdout instanceof Buffer
+        ? initialize.stdout.toString()
+        : initialize.stdout;
+
+    console.log({ out });
+
+    console.log("stdout: " + chalk.blue(out));
+  }
+
+  if (Number.isFinite(initialize.status)) {
+    const code = initialize.status ?? 0;
+
+    if (code !== 0) {
+      throw new Err(`exited with code ${code}`, code);
+    }
+  }
 }
 
-huskyPrepare()
-  .then((ready) => {
-    if (ready) {
-      huskyInit().then(
-        () => console.log("done"),
-        (error) => {
-          const msgBit = error instanceof Error ? error.message : "";
-          const msg = "Husky initialization failed!" + " " + msgBit;
-          process.exitCode = 1;
-
-          throw new Error(msg);
-        }
-      );
-    } else {
-      process.exitCode = 1;
-      throw new Error("Husky installation could not complete");
-    }
-  })
-  .catch((error) => {
-    const msg = error instanceof Error ? error.message : "";
-    if (msg) console.log(msg);
-    process.exit();
-  });
-
-class Err extends Error {
-  constructor(message, code) {
-    super(message);
-    this.name = "custom_error";
-    this.code = code;
+try {
+  prepareHuskyEnv();
+  huskyInit();
+  console.log(
+    chalk.bgWhite(chalk.black("done")) +
+      chalk.green(": Husky has been set up ✔")
+  );
+} catch (error) {
+  console.log(
+    "'catch block': possibly thrown by 'prepareHuskyEnv'/'huskyInit' FN inside global module scope"
+  );
+  if (error instanceof Error) {
+    console.log(chalk.red(error.message));
+  } else {
+    console.log(
+      "husky Install script exited with code: ",
+      process.exitCode === 0 ? 1 : process.exitCode
+    );
   }
 }

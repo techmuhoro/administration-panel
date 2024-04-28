@@ -4,11 +4,20 @@
   "rules": {
     "react/jsx-filename-extension": [
       "warn",
-      {
-        "extensions": ["ts", "tsx"]     
-      }
+      { "allow": "as-needed", "extensions": [".jsx", ".tsx"] }
     ],
-    "react/jsx-no-duplicate-props": [0, { "ignoreCase": false }]
+    "react/jsx-no-duplicate-props": [0, { "ignoreCase": false }],
+    "import/extensions": [
+      2,
+      "ignorePackages",
+      {
+        "js": "never",
+        "mjs": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ]
   },
   "settings": {
     "import/resolver": {
