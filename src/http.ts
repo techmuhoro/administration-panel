@@ -109,7 +109,9 @@ http.interceptors.request.use(
             Authorization: `Bearer ${token}`
           };
         }
-        if (gc) configAmmends.params = { ...configAmmends.params, gc }; // global country
+
+        // Add global country to params
+        if (gc) configAmmends.params = { ...configAmmends.params, gc };
       } else {
         const Cookies = (await import("js-cookie")).default;
         const token = Cookies.get(JWTAuthTokenName);
@@ -122,7 +124,8 @@ http.interceptors.request.use(
           };
         }
 
-        if (gc) configAmmends.params = { ...configAmmends.params, gc }; // Add global country to params
+        // Add global country to params
+        if (gc) configAmmends.params = { ...configAmmends.params, gc };
       }
 
       delete configObj.includeAuthorization;

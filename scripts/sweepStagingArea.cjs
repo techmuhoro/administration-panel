@@ -20,11 +20,12 @@ try {
 
   const names = JSON.parse(fileNames);
 
-  if (!(names instanceof Array)) throw new Error("List(Array) of filenames expected");
+  if (!(names instanceof Array))
+    throw new Error("List(Array) of filenames expected");
   if (names.length < 1) process.exit(0);
 
   const gaTaskRef = spawnSync("git", ["add", ...names]);
-  if (gaTaskRef.stderr) {
+  if (gaTaskRef.stderr.toString()) {
     throw new Error(gaTaskRef.stderr.toString());
   }
   if (gaTaskRef.status) {
@@ -41,7 +42,7 @@ try {
     "--no-edit",
     "--no-verify"
   ]);
-  if (gcTaskRef.stderr) {
+  if (gcTaskRef.stderr.toString()) {
     throw new Error(gcTaskRef.stderr.toString());
   }
   if (gcTaskRef.status) {
@@ -61,6 +62,7 @@ try {
     }
   });
 } catch (error) {
+  console.log(error);
   if (error instanceof Error && error.message) {
     console.log(chalk.red(error.message));
   }
