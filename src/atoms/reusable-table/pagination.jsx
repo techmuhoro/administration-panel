@@ -25,7 +25,6 @@ export default function TablePagination({
   totalPages,
   rowsPerPage,
 }) {
-  console.log("currentPage", currentPage);
   const params = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();

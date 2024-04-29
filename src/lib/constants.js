@@ -16,3 +16,9 @@ export const ERROR_MSG_LOOKUP = {
   406: "There is an error in your form",
   500: "An internal server error occurred. Kindly contact Admin.",
 };
+
+export const MERCHANT_STATUS_API_NAME = {
+  "approved-merchants": "approved",
+  "staging-merchants": "staging",
+  "onboarding-merchants": "on-boarding",
+};
