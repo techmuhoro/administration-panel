@@ -5,7 +5,7 @@ const fs = require("node:fs");
 const buildNextLintCmd = (filenames) => {
   fs.writeFile(".jgdsxeqg.bak.json", JSON.stringify(filenames), (err) => {
     if (err) {
-      console.error(err);
+      // console.error(err);
     } else {
       // file written successfully
     }
@@ -19,8 +19,7 @@ const buildNextLintCmd = (filenames) => {
 module.exports = {
   "*.{js,jsx,ts,tsx}": [
     buildNextLintCmd,
-    "prettier --ignore-path .gitignore --write",
-    "node scripts/redressStaging.cjs"
+    "prettier --ignore-path .gitignore --write"
   ],
   "*/**/*.{json,css,md}": ["prettier --ignore-path .gitignore --write"]
 };

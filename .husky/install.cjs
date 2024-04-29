@@ -83,7 +83,7 @@ function huskyInstall() {
     if (code !== 0) {
       throw new Err(`exited with code ${code}`, code);
     }
-    console.log(`(code: ${code}) ${chalk.green("Husky added 🥂")}`);
+    console.log(`(code: ${code}) ${chalk.green("✔ Husky added 🥂")}`);
   }
 }
 
@@ -99,7 +99,7 @@ function prepareHuskyEnv() {
         if (exitCode === 0) return false; // `return` since Husky detection `error`ed but exit code indicates success
 
         console.log(
-          chalk.red("Husky not found ❌.") + chalk.blue(" Installing...")
+          chalk.red("✖ Husky not found.") + chalk.blue(" Installing...")
         );
 
         huskyInstall();
@@ -108,7 +108,7 @@ function prepareHuskyEnv() {
         return true;
       } catch (error) {
         const msg = error instanceof Error ? error.message : "";
-        const fullMsg = `Husky installation exited with code ${process.exitCode} 🔴${msg.length ? ": " + msg : ""})`;
+        const fullMsg = `Husky installation exited with code ${process.exitCode} !${msg.length ? ": " + msg : ""})`;
 
         throw new Err(fullMsg, error?.code ?? 126);
       }
@@ -164,11 +164,8 @@ try {
       chalk.green(": Husky has been set up ✔")
   );
 } catch (error) {
-  console.log(
-    "'catch block': possibly thrown by 'prepareHuskyEnv'/'huskyInit' FN inside global module scope"
-  );
   if (error instanceof Error) {
-    console.log(chalk.red(error.message));
+    console.log(chalk.red("✖ " + error.message));
   } else {
     console.log(
       "husky Install script exited with code: ",
