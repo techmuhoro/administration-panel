@@ -16,7 +16,7 @@ const reqConfig = {
 const mapToApiName = {
   "approved-merchants": "approved",
   "staging-merchants": "staging",
-  "onboarding-merchants": "onboarding",
+  "onboarding-merchants": "on-boarding",
 };
 
 async function Merchants({ searchParams }) {
