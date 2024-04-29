@@ -1,13 +1,14 @@
-import axios, {
-  AxiosError,
-  AxiosResponse,
-  InternalAxiosRequestConfig
+import axios, { AxiosError } from "axios";
+import type {
+  AxiosRequestConfig as ReqCfg,
+  InternalAxiosRequestConfig as InternalReqCfg,
+  AxiosResponse
 } from "axios";
 
 declare module "axios" {
   export interface AxiosRequestConfig {
     /**
-     * If `true`, authentication credentials is addedto the request. Defaults to `false`.
+     * If `true`, authentication credentials is added to the request. Defaults to `false`.
      */
     includeAuthorization?: boolean;
   }
@@ -16,7 +17,7 @@ declare module "axios" {
 interface ErrStructure<T = unknown, D = any> {
   message?: string;
   code?: string;
-  config?: InternalAxiosRequestConfig<D>;
+  config?: InternalReqCfg<D>;
   request?: any;
   response?: AxiosResponse<T, D>;
 }
@@ -92,39 +93,49 @@ export class Err extends AxiosError {
 http.interceptors.request.use(
   async (config) => {
     const configObj = { ...config };
+    const configAmmends: ReqCfg = {};
 
-    if (configObj?.includeAuthorization) {
-      configObj.withCredentials = true;
+    if (config?.includeAuthorization) {
+      configAmmends.withCredentials = true;
+
       if (isServer) {
         const { cookies } = await import("next/headers");
         const token = cookies().get(JWTAuthTokenName)?.value;
         const gc = cookies().get("global-country")?.value || "KE";
 
         if (token) {
-          configObj.headers.Authorization = `Bearer ${token}`;
+          configAmmends.headers = {
+            ...configAmmends.headers,
+            Authorization: `Bearer ${token}`
+          };
         }
-        if (gc) configObj.params.gc = gc; // global country
-        // configObj.params = { ...(configObj.params && configObj.params), gc };
+        if (gc) configAmmends.params = { ...configAmmends.params,gc }; // global country
+        // configAmmends.params = { ...(configAmmends.params && configAmmends.params), gc };
       } else {
         const Cookies = (await import("js-cookie")).default;
-        // const Cookies = require("js-cookie"); // Using require since dynamic import(above) fails to import module
         const token = Cookies.get(JWTAuthTokenName);
         const gc = Cookies.get("global-country") || "KE";
 
         if (token) {
-          configObj.headers.Authorization = `Bearer ${token}`;
+          configAmmends.headers = {
+            ...configAmmends.headers,
+            Authorization: `Bearer ${token}`
+          };
         }
 
-        if (gc) configObj.params.gc = gc; // global country
+        if (gc) configAmmends.params = { ...configAmmends.params,gc }; // global country
       }
 
       delete configObj.includeAuthorization;
     }
-    if (configObj.data instanceof FormData) {
-      configObj.headers["Content-Type"] = "multipart/form-data";
+    if (config.data instanceof FormData) {
+      configAmmends.headers = {
+        ...configAmmends.headers,
+        "Content-Type": "multipart/form-data"
+      };
     }
 
-    return configObj;
+    return { ...configObj, ...configAmmends } as InternalReqCfg;
   },
   (error) => Promise.reject(new Err(error))
 );
