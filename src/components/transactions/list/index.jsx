@@ -51,7 +51,7 @@ export default function TransactionsList({
 
   useEffect(() => {
     setTap(activeTabs);
-  });
+  }, [setTap, activeTabs]);
 
   const handleChange = (event, newValue) => {
     const queryParams = new URLSearchParams(window.location.search);
