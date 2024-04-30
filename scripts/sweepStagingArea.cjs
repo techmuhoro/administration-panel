@@ -3,7 +3,7 @@ const path = require("node:path");
 const spawnSync = require("node:child_process").spawnSync;
 const fs = require("node:fs");
 
-const trackingFile = ".jgdsxeqg.bak.json";
+const trackingFile = ".jgdsxeqg.bak";
 const pcHookPath = path.resolve(process.cwd(), ".husky", "post-commit"); // post-commit git-hook path name
 const pcBackupPath = path.resolve(pcHookPath, "../post-commit.bak"); // post-commit git-hook backup path name
 
@@ -13,7 +13,7 @@ try {
   } catch (error) {
     // If file with filenames is missing, exit as success otherwise raise an exception
     if (error instanceof Error && error.code !== "ENOENT") {
-      throw error;
+      throw error; // Do not wrap in another new Error();
     }
     process.exit(0);
   }
@@ -24,7 +24,11 @@ try {
     throw new Error("List(Array) of filenames expected");
   if (names.length < 1) process.exit(0);
 
-  const gaTaskRef = spawnSync("git", ["add", ...names]);
+  const relativeNamePaths = names.map((name) =>
+    path.relative(process.cwd(), name)
+  );
+
+  const gaTaskRef = spawnSync("git", ["add", ...relativeNamePaths]);
   if (gaTaskRef.stderr.toString()) {
     throw new Error(gaTaskRef.stderr.toString());
   }

@@ -95,7 +95,7 @@ http.interceptors.request.use(
     const configObj = { ...config };
     const configAmmends: ReqCfg = {};
 
-    if (config?.includeAuthorization) {
+    if (configObj?.includeAuthorization) {
       configAmmends.withCredentials = true;
 
       if (isServer) {
@@ -130,7 +130,7 @@ http.interceptors.request.use(
 
       delete configObj.includeAuthorization;
     }
-    if (config.data instanceof FormData) {
+    if (configObj.data instanceof FormData) {
       configAmmends.headers = {
         ...configAmmends.headers,
         "Content-Type": "multipart/form-data"

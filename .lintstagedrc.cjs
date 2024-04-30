@@ -3,7 +3,7 @@ const fs = require("node:fs");
 
 // filename: .redressStash.bak.json
 const buildNextLintCmd = (filenames) => {
-  fs.writeFile(".jgdsxeqg.bak.json", JSON.stringify(filenames), (err) => {
+  fs.writeFile(".jgdsxeqg.bak", JSON.stringify(filenames), (err) => {
     if (err) {
       // console.error(err);
     } else {
