@@ -1,6 +1,6 @@
 {
   "extends": ["airbnb", "next/core-web-vitals", "prettier"],
-
+  "plugins": ["check-file"],
   "rules": {
     "react/jsx-filename-extension": [
       "warn",
@@ -16,6 +16,18 @@
         "jsx": "never",
         "ts": "never",
         "tsx": "never"
+      }
+    ],
+    "check-file/folder-naming-convention": [
+      2,
+      {
+        "src/components/**/": "KEBAB_CASE"
+      }
+    ],
+    "check-file/filename-naming-convention": [
+      2,
+      {
+        "src/components/**/*.{js,jsx,ts,tsx}": "KEBAB_CASE"
       }
     ]
   },

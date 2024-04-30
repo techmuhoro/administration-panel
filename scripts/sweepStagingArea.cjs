@@ -22,7 +22,12 @@ try {
 
   if (!(names instanceof Array))
     throw new Error("List(Array) of filenames expected");
-  if (names.length < 1) process.exit(0);
+  if (names.length < 1) {
+    try {
+      fs.unlinkSync(trackingFile); // if file is not found, it fails silently
+    } catch (error) {}
+    process.exit(0);
+  }
 
   const relativeNamePaths = names.map((name) =>
     path.relative(process.cwd(), name)

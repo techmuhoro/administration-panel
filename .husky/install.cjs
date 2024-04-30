@@ -161,7 +161,7 @@ try {
   huskyInit();
   console.log(
     chalk.bgWhite(chalk.black("done")) +
-      chalk.green(": Husky has been set up ✔")
+      chalk.green("   ✔ Husky has been set up")
   );
 } catch (error) {
   if (error instanceof Error) {
@@ -173,3 +173,4 @@ try {
     );
   }
 }
+
