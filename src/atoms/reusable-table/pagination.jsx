@@ -29,6 +29,8 @@ export default function TablePagination({
   const pathname = usePathname();
   const router = useRouter();
 
+  totalPages = Math.ceil(totalPages);
+
   function handleRowsPerPageChange(value) {
     // maintain the existing query params
     const existingParams = convertStringSearchParamsToObj(params.toString());
