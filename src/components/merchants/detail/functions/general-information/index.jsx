@@ -26,12 +26,12 @@ export default function GeneralInformation({
       <AccordionSummary aria-controls="panel1-content" id="panel1-header">
         <Stack direction="row" columnGap={2}>
           <Typography>General Information</Typography>
-          <Chip
+          {/* <Chip
             label="100% complete"
             color="success"
             variant="outlined"
             size="small"
-          />
+          /> */}
         </Stack>
       </AccordionSummary>
       <AccordionDetails>

@@ -77,7 +77,6 @@ export default function TransactionsList({
     );
   };
 
-  console.log(formData, "formdat");
   return (
     <Box>
       <Typography component="h1" variant="h5">

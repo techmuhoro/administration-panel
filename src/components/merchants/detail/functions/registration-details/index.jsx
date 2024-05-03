@@ -17,12 +17,12 @@ export default function RegistrationDetails({
       <AccordionSummary aria-controls="panel2-content" id="panel2-header">
         <Stack direction="row" columnGap={2}>
           <Typography>Registration Details</Typography>
-          <Chip
+          {/* <Chip
             label="55% complete"
             color="primary"
             variant="outlined"
             size="small"
-          />
+          /> */}
         </Stack>
       </AccordionSummary>
       <AccordionDetails>

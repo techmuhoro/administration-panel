@@ -25,7 +25,7 @@ export default async function Page({ params }) {
   const user = userData.data;
 
   return (
-    <DashboardContentWrapper>
+    <DashboardContentWrapper breadcrumbOmit={["update"]}>
       <UpdateUser data={roles} derp={departments} userData={user} />
     </DashboardContentWrapper>
   );

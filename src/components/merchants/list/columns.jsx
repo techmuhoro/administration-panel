@@ -4,6 +4,10 @@ import DetailsCell from "./details-cell";
 
 export const columns = [
   {
+    assessor: "autoincrement()",
+    label: "S/N",
+  },
+  {
     assessor: "attributes.businessInformation.businessName",
     label: "Business",
   },

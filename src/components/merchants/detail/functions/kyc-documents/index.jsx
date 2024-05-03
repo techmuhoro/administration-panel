@@ -15,12 +15,12 @@ export default function KYCDocuments({ expanded, handleExpandedChange }) {
       <AccordionSummary aria-controls="panel3-content" id="panel3-header">
         <Stack direction="row" columnGap={2}>
           <Typography>KYC Documents</Typography>
-          <Chip
+          {/* <Chip
             label="12% complete"
             color="error"
             variant="outlined"
             size="small"
-          />
+          /> */}
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
