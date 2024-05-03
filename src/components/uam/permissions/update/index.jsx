@@ -18,6 +18,7 @@ import { BASE_URL, ERROR_MSG_LOOKUP } from "@/lib/constants";
 import Cookies from "js-cookie";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 import { usePathname, useRouter } from "next/navigation";
+import http from "@/http";
 
 export default function PermissionUpdate({ permission }) {
   const setAlertMessage = useNotifyAlertCtx();
@@ -28,8 +29,6 @@ export default function PermissionUpdate({ permission }) {
 
   const openModal = () => setOpen(true);
   const closeModal = () => setOpen(false);
-
-  console.log("permission", permission);
 
   const style = {
     position: "absolute",
@@ -62,49 +61,25 @@ export default function PermissionUpdate({ permission }) {
       payload.parentDescription = values.parentDescription;
     }
 
-    console.log(payload);
-
     try {
-      const url = `${BASE_URL}permissions/${permission?.id}`;
-
-      // make request
-      const response = await fetch(url, {
+      // Make request
+      await http({
+        url: `/permissions/${permission?.id}`,
         method: "PUT",
-        body: JSON.stringify(payload),
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-      });
+        data: payload,
+        includeAuthorization: true,
+      }).then((res) => res.data);
 
-      const data = await response.json();
+      let msg = "Permission updated successfully!";
+      setAlertMessage(msg);
 
-      setSubmitting(false);
+      router.refresh();
 
-      console.log(data);
-      console.log(response.status);
-
-      if (response.status == 200) {
-        let msg = data?.data?.message || "Permission updated successfully!";
-        setAlertMessage(msg);
-        router.refresh();
-        closeModal();
-      } else if (response.status == 401) {
-        let msg = ERROR_MSG_LOOKUP[401];
-        setAlertMessage(msg);
-        router.push(`/?&next=${pathname}`);
-      } else if ([403, 404, 406, 500].includes(response.status)) {
-        let msg = data?.error?.message || ERROR_MSG_LOOKUP[response.status];
-
-        setAlertMessage(msg);
-
-        // handle form error
-      } else {
-        setAlertMessage("An error occured! Contact system admin for support.");
-      }
+      closeModal();
     } catch (e) {
       setAlertMessage("An error occured! Contact system admin for support");
+    } finally {
+      setSubmitting(false);
     }
   };
 

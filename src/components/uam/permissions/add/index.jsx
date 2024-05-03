@@ -14,12 +14,11 @@ import { useRouter, usePathname } from "next/navigation";
 import { Formik, Form } from "formik";
 import PermissionForm from "../form";
 import { BASE_URL } from "@/lib/constants";
+import http from "@/http";
 
 export default function PermissionsAdd({ categories }) {
   const setAlertMessage = useNotifyAlertCtx();
   const router = useRouter();
-  const pathname = usePathname();
-  const authToken = Cookies.get("token");
 
   const handleSumnit = async (values, { setSubmitting }) => {
     const permissions = values.permissions
@@ -43,50 +42,20 @@ export default function PermissionsAdd({ categories }) {
       permissions,
     };
 
-    const url = `${BASE_URL}permissions`;
     try {
-      const response = await fetch(url, {
+      await http({
+        url: "/permissions",
         method: "POST",
-        body: JSON.stringify(payload),
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          "Content-Type": "application/json",
-        },
-      });
+        data: payload,
+        includeAuthorization: true,
+      }).then((res) => res.data);
 
-      const data = await response.json();
+      let msg = "Permission create successfully";
+      setAlertMessage(msg, { type: "success", openDuration: 3000 });
 
-      // success
-      if (response.status == 200) {
-        let msg = data?.data?.message || "Permission create successfully";
-        setAlertMessage(msg, { type: "success", openDuration: 3000 });
-        router.push("/dashboard/permissions");
-      }
-      // unathenticated
-      else if (response.status == 401) {
-        router.push(`/?next=${pathname}`);
-      }
-      // unauthorized
-      else if (response.status == 403) {
-        let msg =
-          data?.error?.message ||
-          "You do not have permission to perform this action";
-        setAlertMessage(msg, { type: "error", openDuration: 3000 });
-      }
-      // form error
-      else if (response.status == 406) {
-        let msg = "Your form contains errors";
-        setAlertMessage(msg, { type: "error", openDuration: 3000 });
-        // setError with setField errors
-      } else if (response.status.toString().startsWith("5")) {
-        let msg = "An Internal server error occured";
-        setAlertMessage(msg, { type: "error", openDuration: 3000 });
-      } else {
-        let msg = "An error occurred! Contact Admin for support";
-        setAlertMessage(msg, { type: "error", openDuration: 3000 });
-      }
+      router.push("/dashboard/permissions");
     } catch (error) {
-      let msg = "An error occurred! Contact Admin for support.";
+      let msg = error?.httpMessage || "Error! Could not add permission(s)";
       setAlertMessage(msg, { type: "error", openDuration: 3000 });
     } finally {
       setSubmitting(false);

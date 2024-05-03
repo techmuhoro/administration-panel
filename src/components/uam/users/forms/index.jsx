@@ -17,25 +17,20 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { getLoginData } from "../../../../lib/redux/auth2/otplogin-slice";
 import { useSelector } from "react-redux";
+import http from "@/http";
 
 export default function AddUserForm({
   rolesData,
   departmentData,
   userDetails,
+  handleSubmit,
   isUpdate,
 }) {
-  const setAlertMessage = useNotifyAlertCtx();
-  const [loading, setLoading] = useState(false);
-  const token = Cookie.get("token");
-  const router = useRouter();
-
   const loginData = useSelector(getLoginData);
 
-  let Contries = loginData?.includes?.opCountries;
+  let contries = loginData?.includes?.opCountries;
 
-  console.log(Contries);
-
-  let operationContries = Contries?.filter(
+  let operationContries = contries?.filter(
     (item) => item.attributes.opStatus === 1
   );
 
@@ -51,120 +46,26 @@ export default function AddUserForm({
   }
 
   //console.log(userDetails,'user-details')
-  const options = rolesData?.data?.map((item) => {
-    return {
-      value: item.id,
-      label: item.attributes.name,
-    };
-  });
-  const derpetmentOptions = departmentData.data.map((item) => {
+  const options = rolesData?.map((item) => {
     return {
       value: item.id,
       label: item.attributes.name,
     };
   });
 
-  const handleAddUser = (values) => {
-    let headers = {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+  const derpetmentOptions = departmentData.map((item) => {
+    return {
+      value: item.id,
+      label: item.attributes.name,
     };
-
-    setLoading(true);
-    axios
-      .post(`${BASE_URL}users`, JSON.stringify(values), { headers })
-      .then((response) => {
-        setAlertMessage("User has been created successfully", {
-          type: "success",
-          openDuration: 3000,
-        });
-        setLoading(false);
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-      })
-      .catch((error) => {
-        let errorObject = error.response?.data?.error;
-        console.log(error);
-        let errorKey = [
-          "email",
-          "user",
-          "name",
-          "phone",
-          "country",
-          "department",
-          "role",
-        ];
-        errorKey.forEach((key) => {
-          if (errorObject.hasOwnProperty(key)) {
-            setAlertMessage(errorObject[key], {
-              type: "error",
-              openDuration: 3000,
-            });
-          }
-        });
-        setLoading(false);
-      });
-  };
-
-  const handleUpdateUser = (values) => {
-    console.log(values, "update users");
-    let headers = {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    };
-
-    setLoading(true);
-    axios
-      .put(`${BASE_URL}users/${userDetails.data.id}`, JSON.stringify(values), {
-        headers,
-      })
-      .then((response) => {
-        setAlertMessage("User has updated succesfully", {
-          type: "success",
-          openDuration: 3000,
-        });
-        setLoading(false);
-        setTimeout(() => {
-          router.refresh();
-        }, 2000);
-      })
-      .catch((error) => {
-        let errorObject = error.response?.data?.error;
-        console.log(error);
-        let errorKey = [
-          "email",
-          "message",
-          "status",
-          "user",
-          "name",
-          "phone",
-          "country",
-          "department",
-          "role",
-        ];
-        errorKey.forEach((key) => {
-          if (errorObject?.hasOwnProperty(key)) {
-            setAlertMessage(errorObject[key], {
-              type: "error",
-              openDuration: 3000,
-            });
-          }
-        });
-        setLoading(false);
-      });
-  };
-
-  // console.log(derpetmentOptions, "option field");
-  // console.log(options, "role optiona");
-  //console.log(userDetails);
+  });
 
   let permissionsData = [];
   let allPermissionObjects = [];
 
   if (isUpdate) {
-    permissionsData = userDetails?.data?.attributes?.permissions;
-    allPermissionObjects = userDetails?.data?.attributes?.permissions
+    permissionsData = userDetails?.attributes?.permissions || [];
+    allPermissionObjects = userDetails?.attributes?.permissions
       .reduce((acc, permissionGroup) => {
         acc.push(permissionGroup.attributes.permissions);
         return acc;
@@ -173,13 +74,13 @@ export default function AddUserForm({
   }
 
   let initialValue = {
-    name: isUpdate ? userDetails.data.attributes.name : "",
-    email: isUpdate ? userDetails.data.attributes.email : "",
-    status: isUpdate ? userDetails.data.attributes.status : "",
-    phone: isUpdate ? userDetails.data.attributes.phone : "",
-    country: isUpdate ? userDetails.data.attributes.country : "",
-    department: isUpdate ? userDetails.data.attributes.departmentId : "",
-    role: isUpdate ? userDetails.data.attributes.roleId : "",
+    name: isUpdate ? userDetails?.attributes?.name : "",
+    email: isUpdate ? userDetails?.attributes?.email : "",
+    status: isUpdate ? userDetails?.attributes?.status : "",
+    phone: isUpdate ? userDetails?.attributes?.phone : "",
+    country: isUpdate ? userDetails?.attributes?.country : "",
+    department: isUpdate ? userDetails?.attributes?.departmentId : "",
+    role: isUpdate ? userDetails?.attributes?.roleId : "",
     permissions: isUpdate ? allPermissionObjects : "",
   };
 
@@ -191,6 +92,7 @@ export default function AddUserForm({
     country: Yup.string().required("Required"),
     role: Yup.string().required("Required"),
   });
+
   return (
     <Box>
       <Typography component="h6" variant="h5" mb={1}>
@@ -199,7 +101,7 @@ export default function AddUserForm({
       <Formik
         initialValues={initialValue}
         validationSchema={validationSchema}
-        onSubmit={isUpdate ? handleUpdateUser : handleAddUser}
+        onSubmit={handleSubmit}
       >
         {(form) => (
           <Container maxWidth="md">
@@ -314,9 +216,9 @@ export default function AddUserForm({
                 ))}
 
                 <LoadingButton
-                  variant="outlined"
+                  variant="contained"
                   sx={{ marginTop: "10px" }}
-                  loading={loading}
+                  loading={form.isSubmitting}
                   type="submit"
                 >
                   {isUpdate ? "Update user" : "Add user"}
