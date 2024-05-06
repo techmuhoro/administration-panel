@@ -1,18 +1,21 @@
 import PermissionsAdd from "@/components/uam/permissions/add";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
-import { BASE_URL } from "@/lib/constants";
-import Box from "@mui/material/Box";
-import { getSystemPermissions } from "@/app/dashboard/(uam)/api";
-
-import { cookies } from "next/headers";
+import http from "@/http";
 
 export default async function Page() {
-  const token = cookies().get("token").value;
-  const url = `${BASE_URL}permissions/system/`;
+  let categories = [];
+  let errorFeed = "";
 
-  const { data } = await getSystemPermissions(url, token);
+  try {
+    const response = await http({
+      url: "/permissions/system/",
+      includeAuthorization: true,
+    }).then((res) => res.data);
 
-  const categories = data?.data || [];
+    categories = response?.data || [];
+  } catch (error) {
+    errorFeed = error?.httpMessage || "Error! Could not fetch permissions";
+  }
 
   return (
     <DashboardContentWrapper>

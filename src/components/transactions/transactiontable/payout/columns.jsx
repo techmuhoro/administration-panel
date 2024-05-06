@@ -2,6 +2,10 @@
 //import TransactionDetails from "./details";
 export const columns = [
   {
+    assessor: "autoincrement()",
+    label: "S/N",
+  },
+  {
     assessor: "attributes.channelType",
     label: "Channel Type",
   },

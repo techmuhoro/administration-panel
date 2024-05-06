@@ -5,18 +5,13 @@ import http from "@/http";
 import {
   DEFAULT_PAGINATION_DATA,
   DEFAULT_ROWS_PER_PAGE,
+  MERCHANT_STATUS_API_NAME,
 } from "@/lib/constants";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
 
 const reqConfig = {
   method: "GET",
   url: "/merchants",
-};
-
-const mapToApiName = {
-  "approved-merchants": "approved",
-  "staging-merchants": "staging",
-  "onboarding-merchants": "onboarding",
 };
 
 async function Merchants({ searchParams }) {
@@ -31,7 +26,9 @@ async function Merchants({ searchParams }) {
   const searchQueryParams = {
     limit: parseInt(searchParams?.rows, 10) || DEFAULT_ROWS_PER_PAGE,
     page: parseInt(searchParams?.page, 10) || 1,
-    ms: mapToApiName[searchParams?.tab] || mapToApiName["staging-merchants"],
+    ms:
+      MERCHANT_STATUS_API_NAME[searchParams?.tab] ||
+      MERCHANT_STATUS_API_NAME["staging-merchants"],
     country: countryOfMerchants,
   };
   const calcTotalPages = (perPageDataCount, dataCount) =>
@@ -46,9 +43,10 @@ async function Merchants({ searchParams }) {
       return res.data;
     });
 
-    const tabDataDesignation = Object.keys(mapToApiName).find(
-      (tabname) => mapToApiName[tabname] === searchQueryParams.ms
+    const tabDataDesignation = Object.keys(MERCHANT_STATUS_API_NAME).find(
+      (tabname) => MERCHANT_STATUS_API_NAME[tabname] === searchQueryParams.ms
     );
+
     tblPayload = {
       data: merchantsResponse?.data?.data,
       designation: tabDataDesignation,

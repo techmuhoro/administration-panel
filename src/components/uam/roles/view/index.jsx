@@ -1,14 +1,24 @@
 "use client";
+import { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import Tooltip from "@mui/material/Tooltip";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
+import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 
 import CheckIcon from "@mui/icons-material/Check";
 
-export default function RoleView({ role }) {
+export default function RoleView({ role, errorFeed }) {
+  const setAlertMessage = useNotifyAlertCtx();
+
+  useEffect(() => {
+    if (!!errorFeed) {
+      setAlertMessage(errorFeed, { type: "error", openDuration: 4000 });
+    }
+  }, [errorFeed, setAlertMessage]);
+
   const assignedPermissions = [];
   for (let category of role?.attributes?.defaultPermissions) {
     // flatten the permissions of category

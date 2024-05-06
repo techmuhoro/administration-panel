@@ -23,7 +23,7 @@ export default function RolesAdd({ departments, permissions }) {
     };
 
     try {
-      const response = await http({
+      await http({
         method: "POST",
         url: "/roles",
         data: payload,

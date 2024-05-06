@@ -14,12 +14,12 @@ export default function BankDetails({ expanded, handleExpandedChange }) {
       <AccordionSummary aria-controls="panel5-content" id="panel5-header">
         <Stack direction="row" columnGap={2}>
           <Typography>Bank Details</Typography>
-          <Chip
+          {/* <Chip
             label="0% complete"
             color="error"
             variant="outlined"
             size="small"
-          />
+          /> */}
         </Stack>
       </AccordionSummary>
       <AccordionDetails>

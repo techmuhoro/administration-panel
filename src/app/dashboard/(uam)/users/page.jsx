@@ -3,79 +3,61 @@ import UsersList from "@/components/uam/users/list";
 import { BASE_URL, DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 import { convertToNumber, filterObject } from "@/lib/utils";
 import { cookies } from "next/headers";
-
-async function getUsers(url, token) {
-  try {
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch: ${response.status} ${response.statusText}`
-      );
-    }
-
-    const data = await response.json();
-
-    return {
-      data,
-      error: false, // return response with ok no error
-    };
-  } catch (error) {
-    // Handle network errors
-    return {
-      data: null,
-      error: true,
-      errorMessage: error.message,
-    };
-  }
-}
+import http from "@/http";
+import { DEFAULT_PAGINATION_DATA } from "@/lib/constants";
 
 const filtersWhiteList = ["name", "email", "phone", "role"];
 
+const reqConfig = {
+  method: "GET",
+  url: "/users",
+};
+
 export default async function Page({ searchParams }) {
   const { page, rows, ...filters } = searchParams;
-  const currentPage = convertToNumber(page) ? convertToNumber(page) : 1;
-  const rowsPerPage = convertToNumber(rows)
-    ? convertToNumber(rows)
-    : DEFAULT_ROWS_PER_PAGE;
+
+  let tblData = [];
+  let paginationData = DEFAULT_PAGINATION_DATA;
+  let errorFeed = "";
 
   const applicableFilters = filterObject(filters, filtersWhiteList);
 
-  const queryString = new URLSearchParams({
+  let urlQuery = {
     ...applicableFilters,
-    page: currentPage,
-    limit: rowsPerPage,
-  }).toString();
-
-  const url = `${BASE_URL}users?${queryString}`;
-  const authToken = cookies().get("token").value;
-
-  //NOTE: We've only passed api path, since baseURL is already configured when using `http` axios instance
-  const { data, errorMessage, error } = await getUsers(url, authToken);
-
-  const users = data?.data?.data || [];
-  const count = data?.data?.total || -1;
-  const totalPages = count > 0 ? Number(count) / rowsPerPage : 1;
-
-  let errors = {
-    errorMessage: errorMessage,
-    error: error,
+    page: parseInt(searchParams?.page, 10) || 1,
+    limit: parseInt(searchParams?.rows, 10) || DEFAULT_ROWS_PER_PAGE,
   };
+
+  try {
+    let response = await http({
+      ...reqConfig,
+      includeAuthorization: true,
+      params: {
+        ...urlQuery,
+      },
+    }).then((res) => res.data);
+
+    tblData = response?.data?.data || [];
+
+    const count = parseInt(response?.data?.total, 10) || 0;
+    const rowsPerPage = response?.data?.limit || DEFAULT_ROWS_PER_PAGE;
+
+    paginationData = {
+      count,
+      rowsPerPage,
+      currentPage: response?.data?.current_page || 0,
+      totalPages: Math.ceil(count / rowsPerPage) || 0,
+    };
+  } catch (error) {
+    errorFeed = error?.httpMessage || "An error occured while getting roles";
+  }
 
   return (
     <DashboardContentWrapper breadcrumbOmit={["uam"]}>
       <UsersList
-        errorDetails={errors}
-        data={users}
-        currentPage={currentPage}
-        rowsPerPage={rowsPerPage}
-        totalPages={totalPages}
-        count={count}
+        tblData={tblData}
+        paginationData={paginationData}
+        errorFeed={errorFeed}
       />
     </DashboardContentWrapper>
   );

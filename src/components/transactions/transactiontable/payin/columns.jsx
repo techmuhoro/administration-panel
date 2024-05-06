@@ -2,7 +2,7 @@
 //import TransactionDetails from "./details";
 export const columns = [
   {
-    assessor: "id",
+    assessor: "autoincrement()",
     label: "S/N",
   },
 

@@ -16,25 +16,36 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 
-export default function GeneralInformation({ expanded, handleExpandedChange }) {
+export default function GeneralInformation({
+  expanded,
+  handleExpandedChange,
+  data,
+}) {
   return (
     <Accordion expanded={expanded} onChange={handleExpandedChange}>
       <AccordionSummary aria-controls="panel1-content" id="panel1-header">
         <Stack direction="row" columnGap={2}>
           <Typography>General Information</Typography>
-          <Chip
+          {/* <Chip
             label="100% complete"
             color="success"
             variant="outlined"
             size="small"
-          />
+          /> */}
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
         <Box>
           <Grid container rowSpacing={2} columnSpacing={1}>
             <Grid xs={12} md={6}>
-              <TextField fullWidth label="Merchant Name" id="merchant-name" />
+              <TextField
+                fullWidth
+                label="Merchant Name"
+                id="merchant-name"
+                value={
+                  data?.attributes?.businessInformation?.businessName || ""
+                }
+              />
             </Grid>
 
             <Grid xs={12} md={6}>
@@ -42,7 +53,13 @@ export default function GeneralInformation({ expanded, handleExpandedChange }) {
             </Grid>
 
             <Grid xs={12} md={6}>
-              <TextField type="email" fullWidth label="Email" id="email" />
+              <TextField
+                type="email"
+                fullWidth
+                label="Email"
+                id="email"
+                value={data?.attributes?.accountHolder?.email || ""}
+              />
             </Grid>
 
             <Grid xs={12} md={6}>

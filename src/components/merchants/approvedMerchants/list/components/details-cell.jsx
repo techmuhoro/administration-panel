@@ -1,13 +1,23 @@
-import { usePathname, useRouter } from "next/navigation";
+"use client";
+
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import InfoIcon from "@mui/icons-material/Info";
+import { MERCHANT_STATUS_API_NAME } from "@/lib/constants";
 
 function DetailsCell({ data }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const merchantID = data?.id;
+  const currentTab = searchParams.get("tab") || "";
+
+  // * Merchant status
+  const merchantStatus =
+    MERCHANT_STATUS_API_NAME[currentTab] ||
+    MERCHANT_STATUS_API_NAME["staging-merchants"];
 
   return (
     // <PopoverMenuBtn
@@ -37,7 +47,9 @@ function DetailsCell({ data }) {
         variant="text"
         startIcon={<InfoIcon />}
         size="small"
-        onClick={() => router.push(`${pathname}/detail/${merchantID}`)}
+        onClick={() => {
+          router.push(`${pathname}/detail/${merchantID}?ms=${merchantStatus}`);
+        }}
       >
         open
       </Button>

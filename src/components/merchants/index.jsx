@@ -14,6 +14,7 @@ import OnboardingMerchants from "./onboardingMerchants";
 import ApprovedMerchants from "./approvedMerchants";
 import { useNotifyAlertCtx } from "../notify-alert/notify-alert-context";
 import { createQS } from "@/lib/utils";
+import AllMerchants from "./list";
 
 const tabNames = [
   "staging-merchants",
@@ -117,25 +118,40 @@ function Merchants({ tblPayload, errorFeed, paginationData }) {
           </Box>
 
           <TabPanel value={tabNames[0]}>
-            <StagingMerchants
+            <AllMerchants
               tabId={tabNames[0]} // used to remember tbl pagination config
               tblPayload={tblPayload}
               paginationData={paginationData}
             />
+            {/* <StagingMerchants
+              tabId={tabNames[0]} // used to remember tbl pagination config
+              tblPayload={tblPayload}
+              paginationData={paginationData}
+            /> */}
           </TabPanel>
           <TabPanel value={tabNames[1]}>
-            <OnboardingMerchants
+            <AllMerchants
+              tabId={tabNames[1]} // used to remember tbl pagination config
+              tblPayload={tblPayload}
+              paginationData={paginationData}
+            />
+            {/* <OnboardingMerchants
               tabId={tabNames[1]}
               tblPayload={tblPayload}
               paginationData={paginationData}
-            />
+            /> */}
           </TabPanel>
           <TabPanel value={tabNames[2]}>
-            <ApprovedMerchants
-              tabId={tabNames[2]}
+            <AllMerchants
+              tabId={tabNames[2]} // used to remember tbl pagination config
               tblPayload={tblPayload}
               paginationData={paginationData}
             />
+            {/* <ApprovedMerchants
+              tabId={tabNames[2]}
+              tblPayload={tblPayload}
+              paginationData={paginationData}
+            /> */}
           </TabPanel>
         </TabContext>
       </Box>

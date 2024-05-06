@@ -2,44 +2,29 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import ReusableTable from "@/atoms/reusable-table";
+import Typography from "@mui/material/Typography";
 import { Box, Stack, Button } from "@mui/material";
-import { columns } from "../list/columns";
+import { columns } from "./columns";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 import AddNew from "@/atoms/button/add-new";
 import UserFilter from "./filter";
 import StyledContentWrapper from "@/atoms/wrappers/styled-content-wrapper";
 
-export default function UsersList({
-  errorDetails,
-  data,
-  count,
-  currentPage,
-  rowsPerPage,
-  totalPages,
-}) {
+export default function UsersList({ tblData, paginationData, errorFeed }) {
   const setAlertMessage = useNotifyAlertCtx();
 
   useEffect(() => {
-    if (errorDetails && errorDetails.error) {
-      setAlertMessage(errorDetails.errorMessage, {
-        type: "error",
-        closeOnClickAway: true,
-        openDuration: 4000,
-      });
+    if (!!errorFeed) {
+      setAlertMessage(errorFeed, { type: "error", openDuration: 4000 });
     }
-  }, [errorDetails, setAlertMessage]);
+  }, [errorFeed, setAlertMessage]);
 
   return (
     <Box>
-      <Box
-        sx={{
-          backgroundColor: "white",
-          borderRadius: "5px",
-          border: "1px solid #e5e7eb",
-          px: 3,
-          py: 3,
-        }}
-      >
+      <Typography component="h1" variant="h5" mb={1}>
+        Users
+      </Typography>
+      <StyledContentWrapper sx={{ p: 3 }}>
         {/** Actions buttons */}
         <Stack direction={"row"} mb={1}>
           <Link href={"/dashboard/users/add"}>
@@ -52,17 +37,15 @@ export default function UsersList({
         </Stack>
 
         {/** Actions buttons */}
-        <StyledContentWrapper sx={{ p: 3 }}>
-          <ReusableTable
-            columns={columns}
-            data={data}
-            count={count}
-            currentPage={currentPage}
-            rowsPerPage={rowsPerPage}
-            totalPages={totalPages}
-          />
-        </StyledContentWrapper>
-      </Box>
+        <ReusableTable
+          columns={columns}
+          data={tblData}
+          count={paginationData.count}
+          currentPage={paginationData.currentPage}
+          rowsPerPage={paginationData.rowsPerPage}
+          totalPages={paginationData.totalPages}
+        />
+      </StyledContentWrapper>
     </Box>
   );
 }
