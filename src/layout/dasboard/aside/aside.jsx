@@ -21,6 +21,7 @@ export default function LargeAside() {
           background: "red",
         },
       }}
+      className="dashboard-scrollbar"
     >
       <BaseAside />
     </Grid>

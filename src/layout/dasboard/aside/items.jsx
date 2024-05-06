@@ -8,6 +8,7 @@ import PhonelinkRingIcon from "@mui/icons-material/PhonelinkRing";
 import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import GroupIcon from "@mui/icons-material/Group";
 import ApartmentIcon from "@mui/icons-material/Apartment";
+import LockIcon from "@mui/icons-material/Lock";
 
 export const asideMenuItems = [
   {
@@ -57,17 +58,30 @@ export const asideMenuItems = [
     to: "/dashboard/pdqs",
   },
 
+  // {
+  //   key: "reports",
+  //   label: "Reports",
+  //   icon: <AutoGraphIcon fontSize="small" />,
+  //   to: "/dashboard/reports",
+  // },
+
   {
-    key: "reports",
-    label: "Reports",
-    icon: <AutoGraphIcon fontSize="small" />,
-    to: "/dashboard/reports",
+    key: "access-control-audit-trail",
+    label: "Audit Trail",
+    icon: <LockIcon fontSize="small" />,
+    to: "/dashboard/settings/audit-trail",
   },
 
   {
     key: "access-control",
     label: "Access control",
     icon: <GroupIcon fontSize="small" />,
+    active: (pathname) =>
+      [
+        "/dashboard/users",
+        "/dashboard/roles",
+        "/dashboard/permissions",
+      ].includes(pathname),
 
     links: [
       {
@@ -87,11 +101,6 @@ export const asideMenuItems = [
         label: "Permission",
         to: "/dashboard/permissions",
         active: (pathname) => pathname.startsWith("/dashboard/permissions"),
-      },
-      {
-        key: "access-control-audit-trail",
-        label: "Audit Trail",
-        to: "/dashboard/settings/audit-trail",
       },
     ],
   },
