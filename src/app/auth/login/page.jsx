@@ -82,6 +82,7 @@ function Login() {
           });
         } else if (error.response.status === 403) {
           //riderect to reset password page
+          router.replace(error.response.data.error.message);
         } else {
           setAlert({
             message: "Something went wrong. Kindly contact support",
