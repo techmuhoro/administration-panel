@@ -36,12 +36,6 @@ export const asideMenuItems = [
     to: "/dashboard/merchants",
     active: (pathname) => pathname.startsWith("/dashboard/merchants"),
   },
-  {
-    key: "settlements",
-    label: "Settlements",
-    icon: <PaymentsIcon fontSize="small" />,
-    to: "/dashboard/settlements",
-  },
 
   {
     key: "card-review",
