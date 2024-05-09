@@ -4,6 +4,11 @@ import Aside from "@/layout/dasboard/aside/aside";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import DashboardHeader from "@/layout/dasboard/header";
 
+export const metadata = {
+  title: "Admin Panel",
+  description: "eLipa / iPay Administration portal",
+};
+
 export default function DashboardLayout(props) {
   return (
     <>
