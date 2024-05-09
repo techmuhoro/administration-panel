@@ -83,7 +83,7 @@ function huskyInstall() {
     if (code !== 0) {
       throw new Err(`exited with code ${code}`, code);
     }
-    console.log(`(code: ${code}) ${chalk.green("✔ Husky added 🥂")}`);
+    console.log(`(code: ${code}) ${chalk.green("✔ Husky added")}`);
   }
 }
 
