@@ -38,6 +38,8 @@ const http = axios.create({
 
 /** Error builder class */
 export class Err extends AxiosError {
+  httpMessage = "";
+
   constructor(error: ErrStructure) {
     super(
       error.message || "",
@@ -59,10 +61,10 @@ export class Err extends AxiosError {
 
   #buildErrorMessage(error: ErrStructure) {
     if (error?.code === "EAI_AGAIN") {
-      this.message =
+      this.httpMessage =
         "Connectivity problems. Try checking your internet connection";
     } else if (error?.code === "ERR_NETWORK") {
-      this.message = "Unable to reach remote address due network issues";
+      this.httpMessage = "Unable to reach remote address due network issues";
     }
 
     if (error.response) {
@@ -74,15 +76,14 @@ export class Err extends AxiosError {
         serverResponse !== null &&
         "error" in serverResponse
       ) {
-        type ServerError = { message?: unknown };
-        const serverError = serverResponse.error as ServerError;
+        const serverError = serverResponse.error as { message?: unknown };
         const ServerErrorMsg =
           typeof serverError.message === "string" ? serverError.message : ""; // Set error message to what is reported from the server
 
         if (statusCode === 401) {
-          this.message = "Unauthenticated! Log in required\u{26A0}\u{FE0F}";
+          this.httpMessage = "Unauthenticated! Log in required\u{26A0}\u{FE0F}";
         } else {
-          this.message =
+          this.httpMessage =
             typeof ServerErrorMsg === "string" ? ServerErrorMsg : "";
         }
       }

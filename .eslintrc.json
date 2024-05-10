@@ -1,12 +1,29 @@
 {
-  "extends": ["airbnb", "next/core-web-vitals", "prettier"],
-  "plugins": ["check-file"],
+  "extends": [
+    "airbnb",
+    "next/core-web-vitals",
+    "prettier"
+  ],
+  "plugins": [
+    "check-file"
+  ],
   "rules": {
     "react/jsx-filename-extension": [
       "warn",
-      { "allow": "as-needed", "extensions": [".jsx", ".tsx"] }
+      {
+        "allow": "as-needed",
+        "extensions": [
+          ".jsx",
+          ".tsx"
+        ]
+      }
     ],
-    "react/jsx-no-duplicate-props": [0, { "ignoreCase": false }],
+    "react/jsx-no-duplicate-props": [
+      0,
+      {
+        "ignoreCase": false
+      }
+    ],
     "import/extensions": [
       2,
       "ignorePackages",
@@ -21,21 +38,33 @@
     "check-file/folder-naming-convention": [
       2,
       {
-        "src/components/**/": "KEBAB_CASE"
+        "src/components/**/": "KEBAB_CASE",
+        "src/app/**/": "NEXT_JS_APP_ROUTER_CASE"
       }
     ],
     "check-file/filename-naming-convention": [
       2,
       {
-        "src/components/**/*.{js,jsx,ts,tsx}": "KEBAB_CASE"
+        "src/components/**/*.{js,jsx,ts,tsx}": "KEBAB_CASE",
+        "src/app/**/*.{js,jsx,ts,tsx}": "KEBAB_CASE"
       }
     ]
   },
   "settings": {
     "import/resolver": {
       "alias": {
-        "map": [["@", "./src"]],
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        "map": [
+          [
+            "@",
+            "./src"
+          ]
+        ],
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
       }
     }
   }
