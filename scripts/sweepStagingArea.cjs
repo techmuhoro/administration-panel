@@ -29,11 +29,11 @@ try {
     process.exit(0);
   }
 
-  const relativeNamePaths = names.map((name) =>
-    path.relative(process.cwd(), name)
-  );
+  // const relativeNamePaths = names.map((name) =>
+  //   path.relative(process.cwd(), name)
+  // );
 
-  const gaTaskRef = spawnSync("git", ["add", ...relativeNamePaths]);
+  const gaTaskRef = spawnSync("git", ["add", ...names]);
   if (gaTaskRef.stderr.toString()) {
     throw new Error(gaTaskRef.stderr.toString());
   }

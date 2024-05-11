@@ -1,24 +1,23 @@
 const path = require("path");
-const fs = require("node:fs");
 
-const buildNextLintCmd = (filenames) => {
-  fs.writeFile(".jgdsxeqg.bak", JSON.stringify(filenames), (err) => {
-    if (err) {
-      // console.error(err);
-    } else {
-      // file written successfully
-    }
-  });
-
-  return `next lint --fix --file ${filenames
+const buildNextLintCmd = (filenames) =>
+  `next lint --fix --file ${filenames
     .map((f) => path.relative(process.cwd(), f))
     .join(" --file ")}`;
+
+const modifiedFiles = (filenames) => {
+  const relativePaths = filenames.map((filename) =>
+    path.relative(process.cwd(), filename)
+  );
+
+  return `node scripts/modifedFiles.cjs --path ${relativePaths.join("  --path ")}`;
 };
 
 module.exports = {
   "*.{js,jsx,ts,tsx}": [
     buildNextLintCmd,
-    "prettier --ignore-path .gitignore --write"
+    "prettier --ignore-path .gitignore --write",
+    modifiedFiles
   ],
   "*/**/*.{json,css,md}": ["prettier --ignore-path .gitignore --write"]
 };
