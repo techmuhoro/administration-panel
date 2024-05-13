@@ -85,7 +85,7 @@ function ForgotPassword() {
                 id="email"
                 name="email"
                 label="Email"
-                type="password"
+                type="text"
               />
               <LoadingButton variant="blue" type="submit" loading={loading}>
                 Submit
