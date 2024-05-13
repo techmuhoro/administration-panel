@@ -7,7 +7,12 @@ import { asideMenuItems } from "./items";
 import MenuItem from "./menu-item";
 import DropdownMenuItem from "./dropdown-menu-item";
 
-export default function Aside() {
+/**
+ *
+ * @param {Function} closeMobileDrawer Passed by the mobile drawer. Close the drawer when a link item is closed
+ * @returns
+ */
+export default function Aside({ closeMobileDrawer = () => {} }) {
   return (
     <Box sx={{ height: "100%" }}>
       {/**Aside header */}
@@ -48,9 +53,17 @@ export default function Aside() {
       <Stack rowGap={1.5} sx={{}}>
         {asideMenuItems.map((item) =>
           item.links ? (
-            <DropdownMenuItem key={item.key} menuItem={item} />
+            <DropdownMenuItem
+              key={item.key}
+              menuItem={item}
+              closeMobileDrawer={closeMobileDrawer}
+            />
           ) : (
-            <MenuItem key={item.key} menuItem={item} />
+            <MenuItem
+              key={item.key}
+              menuItem={item}
+              closeMobileDrawer={closeMobileDrawer}
+            />
           )
         )}
       </Stack>
