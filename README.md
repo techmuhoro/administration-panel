@@ -1,1 +1,1 @@
-# new-admindash-panel
+# eLipa Internal Admin Panel

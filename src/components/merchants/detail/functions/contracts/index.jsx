@@ -14,12 +14,12 @@ export default function Contracts({ expanded, handleExpandedChange }) {
       <AccordionSummary aria-controls="panel4-content" id="panel4-header">
         <Stack direction="row" columnGap={2}>
           <Typography>Contracts</Typography>
-          <Chip
+          {/* <Chip
             label="0% complete"
             color="error"
             variant="outlined"
             size="small"
-          />
+          /> */}
         </Stack>
       </AccordionSummary>
       <AccordionDetails>

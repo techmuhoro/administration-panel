@@ -51,7 +51,7 @@ export default function TransactionsList({
 
   useEffect(() => {
     setTap(activeTabs);
-  });
+  }, [setTap, activeTabs]);
 
   const handleChange = (event, newValue) => {
     const queryParams = new URLSearchParams(window.location.search);
@@ -77,7 +77,6 @@ export default function TransactionsList({
     );
   };
 
-  console.log(formData, "formdat");
   return (
     <Box>
       <Typography component="h1" variant="h5">

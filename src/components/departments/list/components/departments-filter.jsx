@@ -7,56 +7,56 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
-import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import Stack from "@mui/material/Stack";
 
-import { convertStringSearchParamsToObj } from "@/lib/utils";
+import { convertStringSearchParamsToObj, pluckProperties } from "@/lib/utils";
 import { DEFAULT_ROWS_PER_PAGE } from "@/lib/constants";
 import LoadingButton from "@/atoms/loading-button";
+import PopoverMenuBtn from "@/atoms/PopoverMenuBtn";
 
 const initialFilters = {
   deptName: "",
 };
 
 function DepartmentsFilter({ error }) {
-  const [anchorEl, setAnchorEl] = useState(null);
   const [errorState, setErrorState] = useState(error);
   const [addedFiltersCount, setAddedFiltersCount] = useState(0);
-  const [filters, setFilters] = useState(initialFilters);
   const pathname = usePathname();
   const searchParams = useSearchParams().toString();
   const router = useRouter();
-  const open = Boolean(anchorEl);
+  const queryParams = useSearchParams();
 
   const currentRelativeURL = `${pathname}${searchParams ? "?" + searchParams : ""}`;
   const [upcomingRelativeURL, setUpcomingRelativeURL] =
     useState(currentRelativeURL);
   const filtersLoading =
-    !(upcomingRelativeURL === currentRelativeURL) && !errorState;
-
-  // console.log({
-  //   upcomingRelativeURL,
-  //   currentRelativeURL,
-  //   current_and_next_match: upcomingRelativeURL === currentRelativeURL,
-  //   filtersLoading,
-  // });
+    !(upcomingRelativeURL === currentRelativeURL) && !errorState.error;
 
   useEffect(() => {
     setErrorState(error);
   }, [error, setErrorState]);
 
-  const handleOpenMenu = useCallback(
-    (event) => setAnchorEl(event.currentTarget),
-    [setAnchorEl]
-  );
-  const handleClosePopup = useCallback(() => setAnchorEl(null), [setAnchorEl]);
+  useEffect(() => {
+    const filterObj = convertStringSearchParamsToObj(queryParams.toString());
+
+    // Below code, will sift out pagination filters(`rows` and `pages`)
+    // Is important to get data filters in use on this component
+    const siftedFilterObj = pluckProperties(
+      Object.keys(initialFilters),
+      filterObj
+    );
+
+    const filtersApplied = Object.entries(siftedFilterObj);
+
+    if (filtersApplied) setAddedFiltersCount(filtersApplied?.length || 0); // A Note: [] is truthy
+  }, [queryParams, setAddedFiltersCount]);
+
   const handleResetFilters = () => {
     const initialUrlPath = pathname;
     router.replace(initialUrlPath);
     setUpcomingRelativeURL(initialUrlPath);
-    setFilters(initialFilters); // Re-initialize filter values to defaults
   };
   const handleResetError = useCallback(() => {
     setErrorState("");
@@ -64,31 +64,6 @@ function DepartmentsFilter({ error }) {
   const handleUpcomingRelativeURL = useCallback(
     (url) => setUpcomingRelativeURL(url),
     [setUpcomingRelativeURL]
-  );
-  const handleUpdateFilters = useCallback(
-    (newFilters) => {
-      setFilters((prev) => {
-        return {
-          ...prev,
-          ...newFilters,
-        };
-      });
-
-      const newFiltersArr = Object.entries(newFilters);
-      setAddedFiltersCount(newFiltersArr.length);
-    },
-    [setFilters]
-  );
-  const handleFilterInputChange = useCallback(
-    (event) => {
-      const name = event.target.name;
-      if (name)
-        setFilters((prev) => ({
-          ...prev,
-          [name]: event.target.value,
-        }));
-    },
-    [setFilters]
   );
 
   return (
@@ -103,14 +78,24 @@ function DepartmentsFilter({ error }) {
           {addedFiltersCount} Applied{" "}
           {addedFiltersCount == 1 ? "filter" : "filters"}
         </Typography>
-        <LoadingButton
-          startIcon={<FilterAltIcon />}
+
+        <PopoverMenuBtn
           variant="outlined"
-          onClick={handleOpenMenu}
+          renderMenu={({ closeMenu }) => {
+            return (
+              <FilterPopover
+                closePopup={closeMenu}
+                upcomingRelativeUrl={handleUpcomingRelativeURL}
+                initialFilters={initialFilters}
+                resetError={handleResetError}
+              />
+            );
+          }}
+          buttonComponent={<LoadingButton startIcon={<FilterAltIcon />} />}
           loading={filtersLoading}
         >
           Filter
-        </LoadingButton>
+        </PopoverMenuBtn>
         <Button
           startIcon={<FilterAltOffIcon />}
           variant="outlined"
@@ -121,57 +106,19 @@ function DepartmentsFilter({ error }) {
           Clear
         </Button>
       </Stack>
-
-      <FilterPopover
-        open={open}
-        anchorEl={anchorEl}
-        handleClosePopup={handleClosePopup}
-        setUpcomingRelativeUrl={handleUpcomingRelativeURL}
-        handleFilterInputChange={handleFilterInputChange}
-        filters={filters}
-        handleUpdateFilters={handleUpdateFilters}
-        handleResetError={handleResetError}
-      />
     </>
   );
 }
 
 export default DepartmentsFilter;
 
-/**
- * This function is a method to pluck properties __from__ `targetObject`(non-empty) __into__ a _new returned_ object.
- * `keys` array should be passed containing keys to be extracted from `targetObject`.
- *
- * An empty object is returned if none of the keys specified in `keys` array is found on `targetObject`.
- * @param {string[]} [keys = []]
- * @param {Object} [targetObject = {}]
- * @returns {Object} Returns an object
- */
-function pluckFromObject(keys = [], targetObject = {}) {
-  if (keys instanceof Array) {
-    const filtered = keys.reduce((pileValue, key) => {
-      if (targetObject[key]) {
-        pileValue[key] = targetObject[key];
-      }
-      return pileValue;
-    }, {});
-
-    return filtered;
-  } else {
-    return {};
-  }
-}
-
 function FilterPopover({
-  open,
-  anchorEl,
-  handleClosePopup,
-  setUpcomingRelativeUrl,
-  filters,
-  handleUpdateFilters,
-  handleResetError,
-  handleFilterInputChange,
+  closePopup,
+  upcomingRelativeUrl,
+  initialFilters,
+  resetError,
 }) {
+  const [filters, setFilters] = useState(initialFilters);
   const pathname = usePathname();
   const querySearchParams = useSearchParams();
   const router = useRouter();
@@ -182,12 +129,36 @@ function FilterPopover({
       querySearchParams.toString()
     );
 
-    // Below line, sifts out pagination filters(`rows` and `pages`)
-    // Is important for getting number of filters applied
-    const siftedFilterObj = pluckFromObject(Object.keys(filters), filterObj);
+    // Below code, will sift out pagination filters(`rows` and `pages`)
+    // Is important to get data filters in use on this component
+    const siftedFilterObj = pluckProperties(Object.keys(filters), filterObj);
 
     handleUpdateFilters(siftedFilterObj);
   }, [querySearchParams]);
+
+  const handleUpdateFilters = useCallback(
+    (newFilters) => {
+      setFilters((prev) => {
+        return {
+          ...prev,
+          ...newFilters,
+        };
+      });
+    },
+    [setFilters]
+  );
+
+  const handleFilterInputChange = useCallback(
+    (event) => {
+      const name = event.target.name;
+      if (name)
+        setFilters((prev) => ({
+          ...prev,
+          [name]: event.target.value,
+        }));
+    },
+    [setFilters]
+  );
 
   const applyFilters = useCallback(
     (e) => {
@@ -199,7 +170,7 @@ function FilterPopover({
       );
 
       // 2. Remove pagination filters(`rows` and `page`)
-      const existingFilters = pluckFromObject(
+      const existingFilters = pluckProperties(
         Object.keys(filters),
         existingParams
       );
@@ -231,64 +202,44 @@ function FilterPopover({
 
       // 7. Call router with new url + other OP
       router.replace(nextUrl);
-      setUpcomingRelativeUrl(nextUrl); // Sets the next url expected when router completes
-      handleResetError();
-      handleClosePopup(); // Close the filter popup
+      upcomingRelativeUrl(nextUrl); // Sets the next url expected when router completes
+      resetError();
+      closePopup(); // Close the filter popup
     },
     [querySearchParams.toString(), JSON.stringify(filters)]
   );
 
-  const popoverId = open ? "departments-filter-popover" : undefined;
   return (
-    <Popover
-      id={popoverId}
-      open={open}
-      anchorEl={anchorEl}
-      onClose={handleClosePopup}
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "left",
-      }}
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "center",
-      }}
+    <Box
+      sx={{ width: "500px", py: 3, px: 4 }}
+      component="form"
+      onSubmit={applyFilters}
     >
-      <Box
-        sx={{ width: "500px", py: 3, px: 4 }}
-        component="form"
-        onSubmit={applyFilters}
-      >
-        <Typography sx={{ mb: 2 }} color="primary" variant="h6" component="p">
-          Filter by
-        </Typography>
-        <Grid container rowGap={1} sx={{ mb: 2 }}>
-          <Grid sm={12} md={5}>
-            <TextField
-              label="Dept. Name"
-              size="small"
-              name="deptName"
-              value={filters.deptName}
-              onChange={handleFilterInputChange}
-            />
-          </Grid>
+      <Typography sx={{ mb: 2 }} color="primary" variant="h6" component="p">
+        Filter by
+      </Typography>
+      <Grid container rowGap={1} sx={{ mb: 2 }}>
+        <Grid sm={12} md={5}>
+          <TextField
+            label="Dept. Name"
+            size="small"
+            name="deptName"
+            value={filters.deptName}
+            onChange={handleFilterInputChange}
+          />
         </Grid>
-        <Stack direction={"row"}>
-          <Button color="secondary">Clear Filters</Button>
-          <Stack direction={"row"} spacing={1} sx={{ ml: "auto" }}>
-            <Button variant="contained" color="primary" type="submit">
-              Apply
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleClosePopup}
-            >
-              Cancel
-            </Button>
-          </Stack>
+      </Grid>
+      <Stack direction={"row"}>
+        <Button color="secondary">Clear Filters</Button>
+        <Stack direction={"row"} spacing={1} sx={{ ml: "auto" }}>
+          <Button variant="text" color="primary" onClick={closePopup}>
+            Cancel
+          </Button>
+          <Button variant="contained" color="primary" type="submit">
+            Apply
+          </Button>
         </Stack>
-      </Box>
-    </Popover>
+      </Stack>
+    </Box>
   );
 }

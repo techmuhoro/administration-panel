@@ -4,6 +4,10 @@ import UsersActions from "./actions";
 
 export const columns = [
   {
+    assessor: "autoincrement()",
+    label: "S/N",
+  },
+  {
     assessor: "attributes.name",
     label: "Full Name",
   },

@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect } from "react";
 import ReusableTable from "@/atoms/reusable-table";
 import RolesFilter from "./filter";
 import RolesExport from "./export";
@@ -13,20 +16,17 @@ import { columns } from "./columns";
 
 import { styled } from "@mui/material/styles";
 import StyledContentWrapper from "@/atoms/wrappers/styled-content-wrapper";
+import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 
-// const StyldContentWrapper = styled(Box)(() => ({
-//   backgroundColor: "white",
-//   borderRadius: "5px",
-//   border: "1px solid #e5e7eb",
-// }));
+export default function RolesList({ tblData, paginationData, errorFeed }) {
+  const setAlertMessage = useNotifyAlertCtx();
 
-export default function RolesList({
-  data,
-  count,
-  currentPage,
-  rowsPerPage,
-  totalPages,
-}) {
+  useEffect(() => {
+    if (!!errorFeed) {
+      setAlertMessage(errorFeed, { type: "error", openDuration: 4000 });
+    }
+  }, [errorFeed, setAlertMessage]);
+
   return (
     <Box>
       <Typography component="h1" variant="h5" mb={1}>
@@ -54,11 +54,11 @@ export default function RolesList({
 
         <ReusableTable
           columns={columns}
-          data={data}
-          count={count}
-          currentPage={currentPage}
-          rowsPerPage={rowsPerPage}
-          totalPages={totalPages}
+          data={tblData}
+          count={paginationData.count}
+          currentPage={paginationData.currentPage}
+          rowsPerPage={paginationData.rowsPerPage}
+          totalPages={paginationData.totalPages}
         />
       </StyledContentWrapper>
     </Box>

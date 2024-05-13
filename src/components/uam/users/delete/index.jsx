@@ -17,6 +17,7 @@ import Cookies from "js-cookie";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 
 import DeleteIcon from "@mui/icons-material/Delete";
+import http from "@/http";
 
 export default function UserDelete({ row }) {
   const [open, setOpen] = useState(false);
@@ -34,42 +35,32 @@ export default function UserDelete({ row }) {
     setOpen(false);
   };
 
-  const handleDeleteUser = () => {
-    let headers = {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    };
-
+  const handleDeleteUser = async () => {
     setLoading(true);
-    axios
-      .delete(`${BASE_URL}users/${row.id}`, { headers })
-      .then((response) => {
-        setAlertMessage("User has been deleted successfully", {
-          type: "success",
-          openDuration: 3000,
-        });
-        setLoading(false);
-
-        setTimeout(() => {
-          setOpen(false);
-          router.refresh();
-        }, 2000);
-      })
-      .catch((error) => {
-        let errorObject = error.response?.data?.error;
-        console.log(error);
-        let errorKey = ["message"];
-        errorKey.forEach((key) => {
-          if (errorObject.hasOwnProperty(key)) {
-            setAlertMessage(errorObject[key], {
-              type: "error",
-              openDuration: 3000,
-            });
-          }
-        });
-        setLoading(false);
-        router.refresh();
+    try {
+      await http({
+        url: `/users/${row.id}`,
+        method: "DELETE",
+        includeAuthorization: true,
       });
+
+      setAlertMessage("User has been deleted successfully", {
+        type: "success",
+        openDuration: 3000,
+      });
+
+      router.refresh();
+    } catch (error) {
+      let msg = error?.httpMessage || "Error! Could not delete user";
+      setAlertMessage(msg, {
+        type: "error",
+        openDuration: 3000,
+      });
+
+      router.refresh();
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

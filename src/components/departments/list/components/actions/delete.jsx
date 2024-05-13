@@ -44,7 +44,7 @@ function DeleteModalContent({ item, setModalInitials, closeModal }) {
         closeModal();
       })
       .catch((err) => {
-        const errorMsg = err?.message || "Department could not be deleted!";
+        const errorMsg = err?.httpMessage || "Department could not be deleted!";
 
         setAlertMessage(errorMsg, {
           type: "error",

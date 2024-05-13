@@ -15,6 +15,7 @@ import { BASE_URL } from "@/lib/constants";
 import Cookies from "js-cookie";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
 import { useRouter, usePathname } from "next/navigation";
+import http from "@/http";
 
 export default function RoleDelete({ row }) {
   const [open, setOpen] = useState(false);
@@ -33,68 +34,22 @@ export default function RoleDelete({ row }) {
   };
 
   async function deleteRole() {
-    const url = `${BASE_URL}roles/${row.id}`;
-
     setLoading(true);
     try {
-      const response = await fetch(url, {
+      // send the request
+      await http({
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
+        url: `/roles/${row.id}`,
+        includeAuthorization: true,
+      }).then((res) => res.data);
+
+      setAlertMessage("Role Deleted successfully", {
+        openDuration: 3000,
+        type: "success",
       });
 
-      const data = await response.json();
-
-      // handle the response
-      // success
-      if (response.status == 200) {
-        setAlertMessage("Role Deleted successfully", {
-          openDuration: 3000,
-          type: "success",
-        });
-
-        handleClose();
-        return router.refresh();
-      }
-      // unauthenticated
-      else if (response.status == 401) {
-        return router.push(`/?next=${pathname}`);
-      }
-      // unathorized
-      else if (response.status == 403) {
-        setAlertMessage(
-          data?.error?.message ||
-            "You do not have the permission to perform this action",
-          {
-            openDuration: 3000,
-            type: "info",
-          }
-        );
-      }
-      // internal server error
-      else if (response.status.toString().startsWith("5")) {
-        setAlertMessage(
-          data?.error?.message || "An internal server error occurred",
-          {
-            openDuration: 3000,
-            type: "error",
-          }
-        );
-      }
-      // default
-      else {
-        setAlertMessage(
-          data?.error?.message ||
-            "An error occurred! Kindly contact system admin.",
-          {
-            openDuration: 3000,
-            type: "error",
-          }
-        );
-      }
+      handleClose();
+      return router.refresh();
     } catch (error) {
       setAlertMessage("An error occurred. Kindly contact system admin", {
         openDuration: 3000,
