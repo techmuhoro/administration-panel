@@ -69,6 +69,7 @@ function Login() {
         }
       })
       .catch((error) => {
+        console.log(error);
         if (error.response === undefined) {
           setAlert({
             type: "error",
@@ -80,7 +81,7 @@ function Login() {
             type: "error",
           });
         } else if (error.response.status === 403) {
-          //riderect to reset password page
+          //redirect to reset password page
           router.replace(error.response.data.error.message);
         } else {
           setAlert({
