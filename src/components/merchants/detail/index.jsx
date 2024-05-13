@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 
 // material
@@ -8,14 +9,13 @@ import Typography from "@mui/material/Typography";
 import StyledContentWrapper from "@/atoms/wrappers/styled-content-wrapper";
 
 // accordions
-import GeneralInformation from "./functions/general-information";
-import RegistrationDetails from "./functions/registration-details";
-import KYCDocuments from "./functions/kyc-documents";
+import AccountHolder from "./functions/account-holder";
+import BusinessInformation from "./functions/business-infomartion";
+import BusinessLocation from "./functions/business-location";
 import BankDetails from "./functions/bank-details";
-import Contracts from "./functions/contracts";
 // assests
 
-export default function MerchantsDetail({ data, errorFeed }) {
+export default function MerchantsDetail({ data }) {
   const [expanded, setExpanded] = useState("");
 
   const handleChange = (panel) => (event, newExpanded) => {
@@ -34,7 +34,31 @@ export default function MerchantsDetail({ data, errorFeed }) {
         <StyledContentWrapper sx={{ p: 3 }}>
           <>
             {/** Each of the component below returns an accordion */}
-            <GeneralInformation
+            <AccountHolder
+              expanded={expanded === "account-holder"}
+              handleExpandedChange={handleChange("account-holder")}
+              data={data?.accountHolderInformation}
+            />
+
+            <BusinessInformation
+              expanded={expanded === "business-information"}
+              handleExpandedChange={handleChange("business-information")}
+              data={data?.businessInformation}
+            />
+
+            <BusinessLocation
+              expanded={expanded === "business-location"}
+              handleExpandedChange={handleChange("business-location")}
+              data={data?.businessInformation}
+            />
+
+            <BankDetails
+              expanded={expanded === "bank-details"}
+              handleExpandedChange={handleChange("bank-details")}
+              data={data?.businessInformation}
+            />
+
+            {/* <GeneralInformation
               expanded={expanded === "general"}
               handleExpandedChange={handleChange("general")}
               data={data}
@@ -58,7 +82,7 @@ export default function MerchantsDetail({ data, errorFeed }) {
             <Contracts
               expanded={expanded === "contracts"}
               handleExpandedChange={handleChange("contracts")}
-            />
+            /> */}
           </>
         </StyledContentWrapper>
       </Box>

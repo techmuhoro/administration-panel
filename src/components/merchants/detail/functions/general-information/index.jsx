@@ -2,10 +2,9 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  AccordionActions,
+  AccordionActions
 } from "@/components/merchants/detail/ui";
 import Stack from "@mui/material/Stack";
-import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -19,7 +18,7 @@ import Grid from "@mui/material/Unstable_Grid2/Grid2";
 export default function GeneralInformation({
   expanded,
   handleExpandedChange,
-  data,
+  data
 }) {
   return (
     <Accordion expanded={expanded} onChange={handleExpandedChange}>

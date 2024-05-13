@@ -112,7 +112,7 @@ http.interceptors.request.use(
         }
 
         // Add global country to params
-        if (gc) configAmmends.params = { ...configAmmends.params, gc };
+        if (gc) configAmmends.params = { ...configAmmends.params, country: gc };
       } else {
         const Cookies = (await import("js-cookie")).default;
         const token = Cookies.get(JWTAuthTokenName);
@@ -126,7 +126,7 @@ http.interceptors.request.use(
         }
 
         // Add global country to params
-        if (gc) configAmmends.params = { ...configAmmends.params, gc };
+        if (gc) configAmmends.params = { ...configAmmends.params, country: gc };
       }
 
       delete configObj.includeAuthorization;

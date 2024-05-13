@@ -13,7 +13,7 @@ export default async function Page({ params, searchParams }) {
 
   const requestParams = {
     country: globalContry,
-    ms: searchParams.ms || "approved",
+    ms: searchParams.ms || "approved"
   };
 
   try {
@@ -21,12 +21,14 @@ export default async function Page({ params, searchParams }) {
       method: "GET",
       url: `/merchants/${merchantId}`,
       includeAuthorization: true,
-      params: requestParams,
+      params: requestParams
     }).then((res) => res.data);
+    console.log("response", response?.data);
 
     // set the merchant data
     merchantsDetail = response?.data;
   } catch (error) {
+    console.log(error);
     errorFeed = error?.httpMessage || "Error could not fetch merchant details";
   }
 
