@@ -13,6 +13,8 @@ import AccountHolder from "./functions/account-holder";
 import BusinessInformation from "./functions/business-infomartion";
 import BusinessLocation from "./functions/business-location";
 import BankDetails from "./functions/bank-details";
+import Compliance from "./functions/compliance";
+import Directors from "./functions/directors";
 // assests
 
 export default function MerchantsDetail({ data }) {
@@ -58,31 +60,17 @@ export default function MerchantsDetail({ data }) {
               data={data?.businessInformation}
             />
 
-            {/* <GeneralInformation
-              expanded={expanded === "general"}
-              handleExpandedChange={handleChange("general")}
-              data={data}
+            <Compliance
+              expanded={expanded === "compliance"}
+              handleExpandedChange={handleChange("compliance")}
+              data={data?.compliance}
             />
 
-            <RegistrationDetails
-              expanded={expanded === "reg"}
-              handleExpandedChange={handleChange("reg")}
+            <Directors
+              expanded={expanded === "directors"}
+              handleExpandedChange={handleChange("directors")}
+              // data={data?.directors}
             />
-
-            <KYCDocuments
-              expanded={expanded === "kyc"}
-              handleExpandedChange={handleChange("kyc")}
-            />
-
-            <BankDetails
-              expanded={expanded === "bank"}
-              handleExpandedChange={handleChange("bank")}
-            />
-
-            <Contracts
-              expanded={expanded === "contracts"}
-              handleExpandedChange={handleChange("contracts")}
-            /> */}
           </>
         </StyledContentWrapper>
       </Box>

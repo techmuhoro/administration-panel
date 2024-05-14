@@ -33,28 +33,7 @@ export default function BankDetails({ expanded, handleExpandedChange }) {
         <Box>
           <Formik
             initialValues={{
-              banks: [
-                {
-                  bankLocality: "",
-                  bankName: "",
-                  bankBranch: "",
-                  accountName: "",
-                  accountNumber: "",
-                  currency: "",
-                  swiftCode: "",
-                  referenceId: ""
-                },
-                {
-                  bankLocality: "",
-                  bankName: "",
-                  bankBranch: "",
-                  accountName: "",
-                  accountNumber: "",
-                  currency: "",
-                  swiftCode: "",
-                  referenceId: ""
-                }
-              ]
+              banks: []
             }}
           >
             {(formikProps) => (
