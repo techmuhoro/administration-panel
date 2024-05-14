@@ -1,5 +1,6 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import {
   Accordion,
   AccordionDetails,
@@ -16,11 +17,80 @@ import { Input } from "@/atoms/form";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
+import LoadingButton from "@/atoms/loading-button";
+import * as Yup from "yup";
+import http from "@/http";
 
-export default function BankDetails({ expanded, handleExpandedChange }) {
+const bankShema = Yup.object().shape({
+  bankLocality: Yup.string().required("Required"),
+  bankName: Yup.string().required("Required"),
+  bankBranch: Yup.string().required("Required"),
+  accountName: Yup.string().required("Required"),
+  accountNumber: Yup.string().required("Required"),
+  currency: Yup.string().required("Required"),
+  swiftCode: Yup.string().required("Required"),
+  referenceId: Yup.string().optional()
+});
+
+const validationShema = Yup.object().shape({
+  banks: Yup.array().of(bankShema)
+});
+
+export default function BankDetails({ expanded, handleExpandedChange, data }) {
+  const { id: merchantId } = useParams();
   const setAlertMessage = useNotifyAlertCtx();
 
+  const formatInitialData = (dataValues) =>
+    dataValues?.map((bank) => ({
+      bankLocality: bank?.attributes.bankLocality || "",
+      bankName: bank?.attributes.bankName || "",
+      bankBranch: bank?.attributes.bankBranch || "",
+      accountName: bank?.attributes.bankAccountName || "",
+      accountNumber: bank?.attributes.bankAccountNumber || "",
+      currency: bank?.attributes.bankAccountCurrency || "",
+      swiftCode: bank?.attributes.swiftCode || "",
+      referenceId: bank?.id || ""
+    })) || [];
+
   const MAXIMUM_BANKS = 2;
+
+  const handleSubmit = async (
+    values,
+    { setSubmitting, setFieldValue, setFieldError }
+  ) => {
+    try {
+      const response = await http({
+        url: `/merchants/${merchantId}/kyc/banks`,
+        method: "PATCH",
+        data: values,
+        includeAuthorization: true
+      }).then((res) => res.data);
+
+      const msg = "Bank details updated successfully";
+
+      // ! set banks to the new response from backend. This ensure reference id is attached to prevent recreation if user click the update button twice
+      if (Array.isArray(response?.data)) {
+        setFieldValue("banks", formatInitialData(response?.data));
+      }
+
+      setAlertMessage(msg, { openDuration: 3000 });
+    } catch (error) {
+      if (error?.response?.status === 406) {
+        error?.response?.data?.error?.forEach((errorObj, index) => {
+          Object.entries(errorObj).forEach(([key, value]) => {
+            setFieldError(`banks.${index}.${key}`, value);
+          });
+        });
+      }
+      const msg = error?.httpMessage || "Error! Could not update bank details";
+      setAlertMessage(msg, {
+        type: "error",
+        openDuration: 3000
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <Accordion expanded={expanded} onChange={handleExpandedChange}>
@@ -29,15 +99,18 @@ export default function BankDetails({ expanded, handleExpandedChange }) {
           <Typography>Bank Details</Typography>
         </Stack>
       </AccordionSummary>
-      <AccordionDetails>
-        <Box>
-          <Formik
-            initialValues={{
-              banks: []
-            }}
-          >
-            {(formikProps) => (
-              <Form>
+
+      <Box>
+        <Formik
+          initialValues={{
+            banks: formatInitialData(data)
+          }}
+          validationSchema={validationShema}
+          onSubmit={handleSubmit}
+        >
+          {(formikProps) => (
+            <Form>
+              <AccordionDetails>
                 <Typography sx={{ fontWeight: 500, mb: 2 }} variant="body2">
                   * Minimum of 1 bank, Maximum of 2 bank accounts required
                 </Typography>
@@ -157,16 +230,21 @@ export default function BankDetails({ expanded, handleExpandedChange }) {
                     </Box>
                   )}
                 </FieldArray>
-              </Form>
-            )}
-          </Formik>
-        </Box>
-      </AccordionDetails>
-      <AccordionActions>
-        <Button color="primary" variant="contained">
-          Save
-        </Button>
-      </AccordionActions>
+              </AccordionDetails>
+              <AccordionActions>
+                <LoadingButton
+                  color="primary"
+                  variant="contained"
+                  type="submit"
+                  loading={formikProps.isSubmitting}
+                >
+                  Save
+                </LoadingButton>
+              </AccordionActions>
+            </Form>
+          )}
+        </Formik>
+      </Box>
     </Accordion>
   );
 }

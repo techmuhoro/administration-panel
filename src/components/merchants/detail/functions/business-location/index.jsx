@@ -19,24 +19,25 @@ import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-contex
 import LoadingButton from "@/atoms/loading-button";
 
 const validationSchema = Yup.object().shape({
-  physicalAddress: Yup.string().required(),
-  postalAddress: Yup.string().required(),
-  postalCode: Yup.string().required(),
-  city: Yup.string().required(),
-  county: Yup.string().required(),
-  websiteLink: Yup.string().required(),
-  socialLink: Yup.string().required(),
+  physicalAddress: Yup.string().required("Required"),
+  postalAddress: Yup.string().required("Required"),
+  postalCode: Yup.string().required("Required"),
+  city: Yup.string().required("Required"),
+  county: Yup.string().required("Required"),
+  websiteLink: Yup.string().required("Required"),
+  socialLink: Yup.string().required("Required"),
   referenceId: Yup.string().optional()
 });
 
-export default function BusinessLocation(props) {
+export default function BusinessLocation({
+  expanded,
+  handleExpandedChange,
+  data
+}) {
   const { id: mercantId } = useParams();
   const setAlertMessage = useNotifyAlertCtx();
 
-  const { expanded, handleExpandedChange, data } = props;
-  console.log("data", data);
-
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
       await http({
         url: `/merchants/${mercantId}/kyc/location`,
@@ -49,11 +50,17 @@ export default function BusinessLocation(props) {
 
       setAlertMessage(msg);
     } catch (error) {
+      console.log(error);
+      if (error?.response?.status === 406) {
+        setErrors(error?.response?.data?.error);
+      }
+
       const msg =
-        error?.httpMessage || "Error! Location details could noy be update";
+        error?.httpMessage || "Error! Location details could not be update";
 
       setAlertMessage(msg, {
-        type: "error"
+        type: "error",
+        openDuration: 3000
       });
     } finally {
       setSubmitting(false);
@@ -70,64 +77,63 @@ export default function BusinessLocation(props) {
       <Box>
         <Formik
           initialValues={{
-            physicalAddress: "",
-            postalAddress: "",
-            postalCode: "",
-            city: "",
-            county: "",
-            websiteLink: "",
-            socialLink: "",
-            referenceId: ""
+            physicalAddress: data?.attributes?.physicalAddress || "",
+            postalAddress: data?.attributes?.postalAddress || "",
+            postalCode: data?.attributes?.postalCode || "",
+            city: data?.attributes?.cityTown || "",
+            county: data?.attributes?.county || "",
+            websiteLink: data?.attributes?.website || "",
+            socialLink: data?.attributes?.businessAppLink || "",
+            referenceId: data?.id
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {(formikProps) => (
-            <>
+            <Form>
               <AccordionDetails>
-                <Form>
-                  <Grid container rowSpacing={2} columnSpacing={2}>
-                    <Grid xs={12} md={6}>
-                      <Input name="physicalAddress" label="Physical Address" />
-                    </Grid>
-
-                    <Grid xs={12} md={6}>
-                      <Input name="postalAddress" label="Postal Address" />
-                    </Grid>
-
-                    <Grid xs={12} md={6}>
-                      <Input name="postalCode" label="Postal Code" />
-                    </Grid>
-
-                    <Grid xs={12} md={6}>
-                      <Input name="city" label="City" />
-                    </Grid>
-
-                    <Grid xs={12} md={6}>
-                      <Input name="county" label="County" />
-                    </Grid>
-
-                    <Grid xs={12} md={6}>
-                      <Input name="websiteLink" label="Website Link" />
-                    </Grid>
-
-                    <Grid xs={12} md={6}>
-                      <Input name="socialLink" label="Social Link" />
-                    </Grid>
+                <Grid container rowSpacing={2} columnSpacing={2}>
+                  <Grid xs={12} md={6}>
+                    <Input name="physicalAddress" label="Physical Address" />
                   </Grid>
-                </Form>
+
+                  <Grid xs={12} md={6}>
+                    <Input name="postalAddress" label="Postal Address" />
+                  </Grid>
+
+                  <Grid xs={12} md={6}>
+                    <Input name="postalCode" label="Postal Code" />
+                  </Grid>
+
+                  <Grid xs={12} md={6}>
+                    <Input name="city" label="City" />
+                  </Grid>
+
+                  <Grid xs={12} md={6}>
+                    <Input name="county" label="County" />
+                  </Grid>
+
+                  <Grid xs={12} md={6}>
+                    <Input name="websiteLink" label="Website Link" />
+                  </Grid>
+
+                  <Grid xs={12} md={6}>
+                    <Input name="socialLink" label="Social Link" />
+                  </Grid>
+                </Grid>
               </AccordionDetails>
 
               <AccordionActions>
                 <LoadingButton
                   color="primary"
                   variant="contained"
+                  type="submit"
                   loading={formikProps.isSubmitting}
                 >
                   Save
                 </LoadingButton>
               </AccordionActions>
-            </>
+            </Form>
           )}
         </Formik>
       </Box>

@@ -1,8 +1,6 @@
 "use client";
 
-import { useField } from "formik";
 import TextField from "@mui/material/TextField";
-import { MenuItem } from "@mui/material";
 import MuiCheckbox from "@mui/material/Checkbox";
 import MuiRadio from "@mui/material/Radio";
 import MuiRadioGroup from "@mui/material/RadioGroup";
@@ -13,12 +11,12 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import InputLabel from "@mui/material/InputLabel";
-import { TextFieldProps } from "@mui/material";
-import { Field, ErrorMessage } from "formik";
+import { MenuItem } from "@mui/material";
+import { Field, ErrorMessage, useField } from "formik";
 
 /**
  *
- * @param {TextFieldProps} props
+ * @param {import('@mui/material').TextFieldProps} props
  * @returns
  */
 function Input({ label, ...props }) {
@@ -35,6 +33,12 @@ function Input({ label, ...props }) {
   );
 }
 
+/**
+ *
+ * @param {string} label
+ * @param {import('@mui/material').CheckboxProps} props
+ * @returns
+ */
 function Checkbox({ label, ...props }) {
   const [field, meta] = useField(props);
 
@@ -54,6 +58,11 @@ function Checkbox({ label, ...props }) {
   );
 }
 
+/**
+ *
+ * @param {import('@mui/material').RadioGroupProps} props
+ * @returns
+ */
 function RadioGroup({ label, ...props }) {
   const [field, meta] = useField(props);
 
@@ -74,6 +83,7 @@ function RadioGroup({ label, ...props }) {
 /**
  *
  * Used in the context of Radio group //NB must be wrapped inside radio group to work properly
+ * @param {import('@mui/material').RadioProps} props
  */
 function Radio({ label, ...props }) {
   return (
@@ -84,10 +94,14 @@ function Radio({ label, ...props }) {
 }
 
 /**
- * For use outside radio group
+ * For use outside radio groups
  */
-function SingleRadio() {}
+// function SingleRadio() {}
 
+/**
+ * @param {string} label
+ * @param {import('@mui/material').SelectProps} props
+ */
 function Select({ label, ...props }) {
   const [field, meta] = useField(props);
 

@@ -13,7 +13,6 @@ import AccountHolder from "./functions/account-holder";
 import BusinessInformation from "./functions/business-infomartion";
 import BusinessLocation from "./functions/business-location";
 import BankDetails from "./functions/bank-details";
-import Compliance from "./functions/compliance";
 import Directors from "./functions/directors";
 // assests
 
@@ -51,19 +50,13 @@ export default function MerchantsDetail({ data }) {
             <BusinessLocation
               expanded={expanded === "business-location"}
               handleExpandedChange={handleChange("business-location")}
-              data={data?.businessInformation}
+              data={data?.attributes?.locationInformation}
             />
 
             <BankDetails
               expanded={expanded === "bank-details"}
               handleExpandedChange={handleChange("bank-details")}
-              data={data?.businessInformation}
-            />
-
-            <Compliance
-              expanded={expanded === "compliance"}
-              handleExpandedChange={handleChange("compliance")}
-              data={data?.compliance}
+              data={data?.attributes?.bankInformation}
             />
 
             <Directors
