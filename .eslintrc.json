@@ -2,7 +2,7 @@
   "extends": ["airbnb", "next/core-web-vitals", "prettier"],
   "plugins": ["check-file"],
   "rules": {
-    "no-console": [0, { "allow": ["error"] }],
+    "no-console": [2, { "allow": ["error"] }],
     "react/jsx-filename-extension": [
       "warn",
       {

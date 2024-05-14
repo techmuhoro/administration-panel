@@ -4,18 +4,17 @@ import { useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Box from "@mui/material/Box";
 
-import Filters from "./filter";
-import Export from "./export";
 import ReusableTable from "@/atoms/reusable-table";
-import { sampleMerchants } from "../temporarySampleData";
-import { columns } from "./columns";
 import PopoverMenuBtn from "@/atoms/PopoverMenuBtn";
 import {
   pluckProperties,
   convertStringSearchParamsToObj,
-  createQS,
+  createQS
 } from "@/lib/utils";
 import StyledContentWrapper from "@/atoms/wrappers/styled-content-wrapper";
+import columns from "./columns";
+import Export from "./export";
+import Filters from "./filter";
 
 export default function AllMerchants({ tblPayload, paginationData, tabId }) {
   const pathname = usePathname();
@@ -31,7 +30,7 @@ export default function AllMerchants({ tblPayload, paginationData, tabId }) {
     const urlQueryObj = convertStringSearchParamsToObj(urlQueryStr);
     const tblPgConfig = pluckProperties(["rows", "page"], urlQueryObj);
 
-    const storeName = tabId + "-pagination"; // Name convention
+    const storeName = `${tabId}-pagination`; // Name convention
     if (tblPgConfig.rows >= 0 || tblPgConfig.page >= 0) {
       try {
         let stgPagination = JSON.parse(sessionStorage.getItem(storeName));
@@ -44,18 +43,17 @@ export default function AllMerchants({ tblPayload, paginationData, tabId }) {
         stgPagination = {
           ...(stgPagination || null),
           ...(tblPgConfig.rows >= 0 && { rows: tblPgConfig.rows }),
-          ...(tblPgConfig.page >= 0 && { page: tblPgConfig.page }),
+          ...(tblPgConfig.page >= 0 && { page: tblPgConfig.page })
         };
-        console.log(storeName, stgPagination);
 
         sessionStorage.setItem(storeName, JSON.stringify(stgPagination));
       } catch (error) {
-        console.warn("skipping persisting pagination config: ", error?.message);
+        // console.warn("skipping persisting pagination config: ", error?.message);
       }
     } else {
       sessionStorage.removeItem(storeName);
     }
-  }, [url, urlQueryStr, tabId]);
+  }, [url, urlQueryStr, tabId, tblPayload.designation]);
 
   return (
     <StyledContentWrapper sx={{ px: 4, py: 2 }}>
@@ -65,7 +63,7 @@ export default function AllMerchants({ tblPayload, paginationData, tabId }) {
           gridAutoFlow: "column",
           justifyContent: "end",
           mt: 1,
-          mb: 1,
+          mb: 1
         }}
       >
         <Box>

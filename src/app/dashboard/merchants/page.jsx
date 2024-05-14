@@ -5,14 +5,9 @@ import http from "@/http";
 import {
   DEFAULT_PAGINATION_DATA,
   DEFAULT_ROWS_PER_PAGE,
-  MERCHANT_STATUS_API_NAME,
+  MERCHANT_STATUS_API_NAME
 } from "@/lib/constants";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
-
-const reqConfig = {
-  method: "GET",
-  url: "/merchants",
-};
 
 async function Merchants({ searchParams }) {
   const cookieStore = cookies();
@@ -29,19 +24,18 @@ async function Merchants({ searchParams }) {
     ms:
       MERCHANT_STATUS_API_NAME[searchParams?.tab] ||
       MERCHANT_STATUS_API_NAME["staging-merchants"],
-    country: countryOfMerchants,
+    country: countryOfMerchants
   };
   const calcTotalPages = (perPageDataCount, dataCount) =>
     Math.ceil(dataCount / perPageDataCount);
 
   try {
     const merchantsResponse = await http({
-      ...reqConfig,
+      method: "GET",
+      url: "/merchants",
       includeAuthorization: true,
-      params: { ...searchQueryParams },
-    }).then((res) => {
-      return res.data;
-    });
+      params: { ...searchQueryParams }
+    }).then((res) => res.data);
 
     const tabDataDesignation = Object.keys(MERCHANT_STATUS_API_NAME).find(
       (tabname) => MERCHANT_STATUS_API_NAME[tabname] === searchQueryParams.ms
@@ -49,18 +43,18 @@ async function Merchants({ searchParams }) {
 
     tblPayload = {
       data: merchantsResponse?.data?.data,
-      designation: tabDataDesignation,
+      designation: tabDataDesignation
     };
 
-    const dataCount = parseInt(merchantsResponse?.data?.total) || 0;
+    const dataCount = parseInt(merchantsResponse?.data?.total, 10) || 0;
     const perPageDataCount =
-      parseInt(merchantsResponse?.data?.limit) || DEFAULT_ROWS_PER_PAGE;
+      parseInt(merchantsResponse?.data?.limit, 10) || DEFAULT_ROWS_PER_PAGE;
 
     paginationData = {
       count: dataCount,
       currentPage: merchantsResponse?.data?.current_page || 0,
       totalPages: calcTotalPages(perPageDataCount, dataCount),
-      rowsPerPage: perPageDataCount,
+      rowsPerPage: perPageDataCount
     };
   } catch (error) {
     errorFeed =
