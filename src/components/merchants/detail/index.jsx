@@ -16,7 +16,7 @@ import BankDetails from "./functions/bank-details";
 import Directors from "./functions/directors";
 // assests
 
-export default function MerchantsDetail({ data }) {
+export default function MerchantsDetail({ data, utils }) {
   const [expanded, setExpanded] = useState("");
 
   const handleChange = (panel) => (event, newExpanded) => {
@@ -44,7 +44,8 @@ export default function MerchantsDetail({ data }) {
             <BusinessInformation
               expanded={expanded === "business-information"}
               handleExpandedChange={handleChange("business-information")}
-              data={data?.businessInformation}
+              data={data?.attributes?.businessInformation}
+              utils={utils}
             />
 
             <BusinessLocation

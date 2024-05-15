@@ -1,6 +1,7 @@
 import MerchantsDetail from "@/components/merchants/detail";
 import http from "@/http";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
+import { getCacheBusinessTypes } from "@/lib/cached-util-apis";
 import { cookies } from "next/headers";
 
 export default async function Page({ params, searchParams }) {
@@ -16,6 +17,10 @@ export default async function Page({ params, searchParams }) {
     ms: searchParams.ms || "approved"
   };
 
+  const utils = {
+    businessTypes: await getCacheBusinessTypes()
+  };
+
   try {
     const response = await http({
       method: "GET",
@@ -23,7 +28,6 @@ export default async function Page({ params, searchParams }) {
       includeAuthorization: true,
       params: requestParams
     }).then((res) => res.data);
-    console.log("response", response?.data);
 
     // set the merchant data
     merchantsDetail = response?.data;
@@ -34,7 +38,11 @@ export default async function Page({ params, searchParams }) {
 
   return (
     <DashboardContentWrapper breadcrumbOmit={["detail"]}>
-      <MerchantsDetail data={merchantsDetail} errorFeed={errorFeed} />
+      <MerchantsDetail
+        data={merchantsDetail}
+        errorFeed={errorFeed}
+        utils={utils}
+      />
     </DashboardContentWrapper>
   );
 }
