@@ -62,7 +62,7 @@ export default function MerchantsDetail({ data }) {
             <Directors
               expanded={expanded === "directors"}
               handleExpandedChange={handleChange("directors")}
-              // data={data?.directors}
+              data={data?.attributes?.directorInformation}
             />
           </>
         </StyledContentWrapper>

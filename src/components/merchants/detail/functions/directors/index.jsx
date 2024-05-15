@@ -38,11 +38,26 @@ const validationSchema = Yup.object().shape({
   directors: Yup.array().of(directorSchema)
 });
 
-export default function Directors({ expanded, handleExpandedChange }) {
+export default function Directors({ expanded, handleExpandedChange, data }) {
   const { id: merchantId } = useParams();
   const setAlertMessage = useNotifyAlertCtx();
 
   const MAXIMUM_DIRECTORS = 2;
+
+  console.log("data", data);
+
+  const formatInitialData = (dataValues) =>
+    dataValues?.map((director) => ({
+      firstName: director?.attributes?.firstName || "",
+      lastName: director?.attributes?.lastName || "",
+      shareHolderType: "",
+      contactNumber: director?.attributes?.phoneNumber || "",
+      email: director?.attributes?.email || "",
+      documentType: director?.attributes?.identificationDocumentType || "",
+      documentNumber: director?.attributes?.identificationDocumentNumber || "",
+      nationality: director?.attributes?.nationality || "",
+      referenceId: director?.id
+    }));
 
   const handleSubmit = async (values, { setSubmitting, setFieldError }) => {
     // Hello
@@ -57,7 +72,7 @@ export default function Directors({ expanded, handleExpandedChange }) {
       const msg = "Directors details updated successfully";
       // ! set directors to the new response from backend. This ensure reference id is attached to prevent recreation if user click the update button twice
       if (Array.isArray(response?.data)) {
-        // setFieldValue("banks", formatInitialData(response?.data));
+        // setFieldValue("directors", formatInitialData(response?.data));
       }
 
       setAlertMessage(msg, { type: "success", openDuration: 3000 });
@@ -88,7 +103,7 @@ export default function Directors({ expanded, handleExpandedChange }) {
 
       <Formik
         initialValues={{
-          directors: []
+          directors: formatInitialData(data)
         }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -203,10 +218,8 @@ export default function Directors({ expanded, handleExpandedChange }) {
                                 name={`directors.${index}.documentType`}
                                 label="Document Type"
                               >
-                                <MenuItem value="national-id">
-                                  National ID
-                                </MenuItem>
-                                <MenuItem value="passport">Passport</MenuItem>
+                                <MenuItem value="1">National ID</MenuItem>
+                                <MenuItem value="2">Passport</MenuItem>
                               </Select>
                             </Grid>
                             <Grid xs={12} md={6}>

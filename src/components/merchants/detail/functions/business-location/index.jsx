@@ -37,14 +37,23 @@ export default function BusinessLocation({
   const { id: mercantId } = useParams();
   const setAlertMessage = useNotifyAlertCtx();
 
-  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+  const handleSubmit = async (
+    values,
+    { setSubmitting, setErrors, setFieldValue }
+  ) => {
+    console.log(values);
     try {
-      await http({
+      const response = await http({
         url: `/merchants/${mercantId}/kyc/location`,
         method: "PATCH",
         data: values,
         includeAuthorization: true
       }).then((res) => res.data);
+
+      // make an update to the referenceId from data returned by backend
+      if (response?.data?.id) {
+        setFieldValue("referenceId", response?.data?.id);
+      }
 
       const msg = "Location details updated successfully";
 
@@ -84,7 +93,7 @@ export default function BusinessLocation({
             county: data?.attributes?.county || "",
             websiteLink: data?.attributes?.website || "",
             socialLink: data?.attributes?.businessAppLink || "",
-            referenceId: data?.id
+            referenceId: data?.id || ""
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
