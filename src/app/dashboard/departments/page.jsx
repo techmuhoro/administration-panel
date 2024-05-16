@@ -67,3 +67,7 @@ async function Departments({ searchParams }) {
 }
 
 export default Departments;
+
+export const metadata = {
+  title: "Departments"
+};
