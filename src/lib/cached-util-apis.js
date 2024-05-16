@@ -16,7 +16,7 @@ export const getCacheBusinessTypes = cache(
   },
   "util-business-types",
   {
-    revalidate: 3 * 60 // 3 MINUTES
+    revalidate: 30
   }
 );
 

@@ -13,20 +13,20 @@ import Box from "@mui/material/Box";
 import LoadingButton from "@/atoms/loading-button";
 import MenuItem from "@mui/material/MenuItem";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
-// import TextField from "@mui/material/TextField";
+import TextField from "@mui/material/TextField";
 import { Formik, Form } from "formik";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import { Input, Radio, Select, RadioGroup } from "@/atoms/form";
-// import Autocomplete from "@mui/material/Autocomplete";
+import { Input, Select } from "@/atoms/form";
+import Autocomplete from "@mui/material/Autocomplete";
 import { normalizeBusinessTypes } from "./utils";
 
-// const currencies = [
-//   { country: "Kenya", currency: "KES" },
-//   { country: "Uganda", currency: "UGX" },
-//   { country: "Tanzania", currency: "TZX" },
-//   { country: "US", currency: "USD" },
-//   { country: "Malawi", currency: "MLD" }
-// ];
+const currencies = [
+  { country: "Kenya", currency: "KES" },
+  { country: "Uganda", currency: "UGX" },
+  { country: "Tanzania", currency: "TZX" },
+  { country: "US", currency: "USD" },
+  { country: "Malawi", currency: "MLD" }
+];
 
 export default function BusinessInformation({
   expanded,
@@ -95,8 +95,6 @@ export default function BusinessInformation({
 
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
-      console.log(values);
-
       // Todo. Add request for business
     } catch (error) {
       if (error?.response?.status === 406) {
@@ -147,7 +145,6 @@ export default function BusinessInformation({
           {(formikProps) => (
             <Form>
               <AccordionDetails>
-                <Typography>{JSON.stringify(formikProps.errors)}</Typography>
                 <Grid container rowSpacing={2} columnSpacing={2}>
                   <Grid xs={12} md={6}>
                     <Input name="businessName" label="Business Name" />
@@ -192,7 +189,7 @@ export default function BusinessInformation({
                     />
                   </Grid>
 
-                  {/* <Grid xs={12} md={6}>
+                  <Grid xs={12} md={6}>
                     <Autocomplete
                       multiple
                       name="businessCurrencies"
@@ -215,7 +212,7 @@ export default function BusinessInformation({
                         />
                       )}
                     />
-                  </Grid> */}
+                  </Grid>
                   <Grid xs={12} md={6}>
                     <Select name="businessStatus" label="Business Status">
                       <MenuItem value="1">Live</MenuItem>
@@ -269,13 +266,6 @@ export default function BusinessInformation({
                       name="agreedCommissionRate"
                       label="Agreed Commission"
                     />
-                  </Grid>
-
-                  <Grid xs={12}>
-                    <RadioGroup name="acceptUSD" label="Accept USD ?" row>
-                      <Radio label="Yes" value="1" />
-                      <Radio label="No" value="0" />
-                    </RadioGroup>
                   </Grid>
                 </Grid>
               </AccordionDetails>

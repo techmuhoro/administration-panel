@@ -41,7 +41,6 @@ export default function BusinessLocation({
     values,
     { setSubmitting, setErrors, setFieldValue }
   ) => {
-    console.log(values);
     try {
       const response = await http({
         url: `/merchants/${mercantId}/kyc/location`,
@@ -59,7 +58,6 @@ export default function BusinessLocation({
 
       setAlertMessage(msg);
     } catch (error) {
-      console.log(error);
       if (error?.response?.status === 406) {
         setErrors(error?.response?.data?.error || {});
       }
