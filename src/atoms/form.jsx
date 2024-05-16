@@ -5,13 +5,14 @@ import MuiCheckbox from "@mui/material/Checkbox";
 import MuiRadio from "@mui/material/Radio";
 import MuiRadioGroup from "@mui/material/RadioGroup";
 import MuiSelect from "@mui/material/Select";
+// import MuiAutocomplete from "@mui/material/Autocomplete";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import InputLabel from "@mui/material/InputLabel";
-import { MenuItem } from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
 import { Field, ErrorMessage, useField } from "formik";
 
 /**
@@ -126,6 +127,24 @@ function Select({ label, ...props }) {
     </FormControl>
   );
 }
+
+/**
+ * A Reusable component for selecting multiple elements in a field
+ */
+// function MultiSelect({ ...props }) {
+//   const [field, meta] = useField(props);
+
+//   return (
+//     <>
+//       <Autocomplete multiple value={field.value} onChange={()} {...props} />
+//       {meta.error && (
+//         <Typography variant="body2" style={{ color: "red" }}>
+//           {meta.error}
+//         </Typography>
+//       )}
+//     </>
+//   );
+// }
 
 function ReusableDropdown({
   label,

@@ -1,27 +1,82 @@
-// export function getRegisteredStatuses(businessTypes) {
-//   return businessTypes?.map((businessType) => ({
-//     key: businessType?.id,
-//     value: businessType?.name
-//   }));
-// }
+function getRegisteredStatuses(businessTypes) {
+  return businessTypes?.map((businessType) => ({
+    key: businessType?.id,
+    value: businessType?.name
+  }));
+}
 
-// // Applicable for Non Registered business
-// export function getBusinessDurations(businessTypes) {
-//   const nonRegisteredCategory =
-//     businessTypes?.find(
-//       (businessType) => businessType.name === "Non Registered Business"
-//     ) || [];
+function getRegisteredBusinessTypes(businessTypes) {
+  const registeredCategory = businessTypes.find(
+    (businessType) => businessType.name === "Registered Business"
+  );
 
-//     return nonRegisteredCategory?.category.map(category => ({
-//         key: busi
-//     }))
-// }
+  return (
+    registeredCategory?.category?.map((type) => ({
+      key: type?.id,
+      value: type?.name
+    })) || []
+  );
+}
 
-// export function nomarlizeBusinessTypes(businessTypes) {
-//     return {
-//         registeredStatuses: [],
-//         businessDurations: [],
-//         registeredBusinessTypes: []
+function getNonRegisteredLongTermBusinessTypes(businessTypes) {
+  const nonRegisteredCategory =
+    businessTypes?.find(
+      (businessType) => businessType.name === "Non Registered Business"
+    ) || [];
 
-//     }
-// }
+  const longTermBusinessTypes = nonRegisteredCategory?.category?.find(
+    (category) => category.name === "Long Term Business"
+  );
+
+  return (
+    longTermBusinessTypes?.category?.map((type) => ({
+      key: type?.id,
+      value: type?.name
+    })) || []
+  );
+}
+
+function getNonRegisteredShortTermBusinessTypes(businessTypes) {
+  const nonRegisteredCategory =
+    businessTypes?.find(
+      (businessType) => businessType.name === "Non Registered Business"
+    ) || [];
+
+  const shortTermBusinessTypes = nonRegisteredCategory?.category?.find(
+    (category) => category.name === "Short Term Business"
+  );
+
+  return (
+    shortTermBusinessTypes?.category?.map((type) => ({
+      key: type?.id,
+      value: type?.name
+    })) || []
+  );
+}
+
+// Applicable for Non Registered business
+export function getBusinessDurations(businessTypes) {
+  const nonRegisteredCategory =
+    businessTypes?.find(
+      (businessType) => businessType.name === "Non Registered Business"
+    ) || [];
+
+  return (
+    nonRegisteredCategory?.category?.map((category) => ({
+      key: category?.id,
+      value: category?.name
+    })) || []
+  );
+}
+
+export function normalizeBusinessTypes(businessTypes) {
+  return {
+    registeredStatuses: getRegisteredStatuses(businessTypes),
+    registeredBusinessTypes: getRegisteredBusinessTypes(businessTypes),
+    businessDurations: getBusinessDurations(businessTypes),
+    nonRegisteredLongTermBusinessTypes:
+      getNonRegisteredLongTermBusinessTypes(businessTypes),
+    nonRegisteredShortTermBusinessTypes:
+      getNonRegisteredShortTermBusinessTypes(businessTypes)
+  };
+}

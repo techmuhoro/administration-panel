@@ -151,86 +151,92 @@ export default function Directors({ expanded, handleExpandedChange, data }) {
                     </Button>
 
                     <Stack rowGap={4}>
-                      {formikProps.values.directors.map((director, index) => (
-                        <Box key={director.id}>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between"
-                            }}
-                          >
-                            <Typography variant="body1" fontWeight={500} mb={1}>
-                              Director {index + 1} of {MAXIMUM_DIRECTORS}
-                            </Typography>
-
-                            <Button
-                              startIcon={<WarningAmberIcon />}
-                              color="error"
-                              onClick={() => fieldArrayProps.remove(index)}
+                      {formikProps?.values?.directors?.map(
+                        (director, index) => (
+                          <Box key={director.id}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between"
+                              }}
                             >
-                              Remove
-                            </Button>
-                          </Box>
-
-                          <Grid container rowSpacing={2} columnSpacing={2}>
-                            <Grid xs={12} md={6}>
-                              <Input
-                                name={`directors.${index}.firstName`}
-                                label="First Name"
-                              />
-                            </Grid>
-                            <Grid xs={12} md={6}>
-                              <Input
-                                name={`directors.${index}.lastName`}
-                                label="Last Name"
-                              />
-                            </Grid>
-                            <Grid xs={12} md={6}>
-                              <Input
-                                name={`directors.${index}.shareHolderType`}
-                                label="Shareholder Type"
-                              />
-                            </Grid>
-
-                            <Grid xs={12} md={6}>
-                              <Input
-                                name={`directors.${index}.contactNumber`}
-                                label="Contact Number"
-                              />
-                            </Grid>
-                            <Grid xs={12} md={6}>
-                              <Input
-                                name={`directors.${index}.email`}
-                                label="Email"
-                              />
-                            </Grid>
-
-                            <Grid xs={12} md={6}>
-                              <Input
-                                name={`directors.${index}.nationality`}
-                                label="Nationality"
-                              />
-                            </Grid>
-
-                            <Grid xs={12} md={6}>
-                              <Select
-                                name={`directors.${index}.documentType`}
-                                label="Document Type"
+                              <Typography
+                                variant="body1"
+                                fontWeight={500}
+                                mb={1}
                               >
-                                <MenuItem value="1">National ID</MenuItem>
-                                <MenuItem value="2">Passport</MenuItem>
-                              </Select>
+                                Director {index + 1} of {MAXIMUM_DIRECTORS}
+                              </Typography>
+
+                              <Button
+                                startIcon={<WarningAmberIcon />}
+                                color="error"
+                                onClick={() => fieldArrayProps.remove(index)}
+                              >
+                                Remove
+                              </Button>
+                            </Box>
+
+                            <Grid container rowSpacing={2} columnSpacing={2}>
+                              <Grid xs={12} md={6}>
+                                <Input
+                                  name={`directors.${index}.firstName`}
+                                  label="First Name"
+                                />
+                              </Grid>
+                              <Grid xs={12} md={6}>
+                                <Input
+                                  name={`directors.${index}.lastName`}
+                                  label="Last Name"
+                                />
+                              </Grid>
+                              <Grid xs={12} md={6}>
+                                <Input
+                                  name={`directors.${index}.shareHolderType`}
+                                  label="Shareholder Type"
+                                />
+                              </Grid>
+
+                              <Grid xs={12} md={6}>
+                                <Input
+                                  name={`directors.${index}.contactNumber`}
+                                  label="Contact Number"
+                                />
+                              </Grid>
+                              <Grid xs={12} md={6}>
+                                <Input
+                                  name={`directors.${index}.email`}
+                                  label="Email"
+                                />
+                              </Grid>
+
+                              <Grid xs={12} md={6}>
+                                <Input
+                                  name={`directors.${index}.nationality`}
+                                  label="Nationality"
+                                />
+                              </Grid>
+
+                              <Grid xs={12} md={6}>
+                                <Select
+                                  name={`directors.${index}.documentType`}
+                                  label="Document Type"
+                                >
+                                  <MenuItem value="1">National ID</MenuItem>
+                                  <MenuItem value="2">Passport</MenuItem>
+                                </Select>
+                              </Grid>
+                              <Grid xs={12} md={6}>
+                                <Input
+                                  name={`directors.${index}.documentNumber`}
+                                  label="Document Number"
+                                />
+                              </Grid>
                             </Grid>
-                            <Grid xs={12} md={6}>
-                              <Input
-                                name={`directors.${index}.documentNumber`}
-                                label="Document Number"
-                              />
-                            </Grid>
-                          </Grid>
-                        </Box>
-                      ))}
+                          </Box>
+                        )
+                      )}
                     </Stack>
                   </Box>
                 )}

@@ -61,7 +61,7 @@ export default function BusinessLocation({
     } catch (error) {
       console.log(error);
       if (error?.response?.status === 406) {
-        setErrors(error?.response?.data?.error);
+        setErrors(error?.response?.data?.error || {});
       }
 
       const msg =
