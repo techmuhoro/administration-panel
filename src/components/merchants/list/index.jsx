@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
 
 import ReusableTable from "@/atoms/reusable-table";
 import PopoverMenuBtn from "@/atoms/PopoverMenuBtn";
@@ -12,6 +13,7 @@ import {
   createQS
 } from "@/lib/utils";
 import StyledContentWrapper from "@/atoms/wrappers/styled-content-wrapper";
+import AddNew from "@/atoms/button/add-new";
 import columns from "./columns";
 import Export from "./export";
 import Filters from "./filter";
@@ -61,11 +63,21 @@ export default function AllMerchants({ tblPayload, paginationData, tabId }) {
         sx={{
           display: "grid",
           gridAutoFlow: "column",
-          justifyContent: "end",
+          justifyItems: "end",
           mt: 1,
           mb: 1
         }}
       >
+        <Box sx={{ justifySelf: "start" }}>
+          <AddNew
+            text="create"
+            sx={{ textTransform: "capitalize", color: "#ffffff !important" }}
+            component={Link}
+            href="./merchants/add"
+            // onClick={() => setModalOpen(true)}
+          />
+        </Box>
+
         <Box>
           <Box component="span" sx={{ mr: 1, display: "inline-block" }}>
             <PopoverMenuBtn

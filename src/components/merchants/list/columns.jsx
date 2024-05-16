@@ -1,6 +1,6 @@
 "use client";
 
-import DetailsCell from "./details-cell";
+import DetailsCell from "./sub-components/details-cell";
 import CreatedAtCell from "./sub-components/created-at-cell";
 
 const columns = [

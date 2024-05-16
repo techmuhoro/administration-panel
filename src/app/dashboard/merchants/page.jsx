@@ -1,13 +1,16 @@
 import { cookies } from "next/headers";
 
 import MerchantsList from "@/components/merchants";
-import http from "@/http";
+import http, { Err } from "@/http";
 import {
   DEFAULT_PAGINATION_DATA,
   DEFAULT_ROWS_PER_PAGE,
   MERCHANT_STATUS_API_NAME
 } from "@/lib/constants";
 import DashboardContentWrapper from "@/layout/dasboard/dashboard-content-wrapper";
+
+const calcTotalPages = (perPageDataCount, dataCount) =>
+  Math.ceil(dataCount / perPageDataCount);
 
 async function Merchants({ searchParams }) {
   const cookieStore = cookies();
@@ -17,6 +20,7 @@ async function Merchants({ searchParams }) {
   let tblPayload = { data: [], designation: "" }; // Format changed so data is designated for a specific tab
   let paginationData = DEFAULT_PAGINATION_DATA;
   let errorFeed = "";
+  let DYNAMIC_ENDPOINT = "/merchants";
 
   const searchQueryParams = {
     limit: parseInt(searchParams?.rows, 10) || DEFAULT_ROWS_PER_PAGE,
@@ -26,13 +30,17 @@ async function Merchants({ searchParams }) {
       MERCHANT_STATUS_API_NAME["staging-merchants"],
     country: countryOfMerchants
   };
-  const calcTotalPages = (perPageDataCount, dataCount) =>
-    Math.ceil(dataCount / perPageDataCount);
+
+  if (searchQueryParams.ms === MERCHANT_STATUS_API_NAME["staging-merchants"]) {
+    DYNAMIC_ENDPOINT = "/merchants/staging";
+
+    delete searchQueryParams.ms;
+  }
 
   try {
     const merchantsResponse = await http({
       method: "GET",
-      url: "/merchants",
+      url: DYNAMIC_ENDPOINT,
       includeAuthorization: true,
       params: { ...searchQueryParams }
     }).then((res) => res.data);
@@ -58,7 +66,9 @@ async function Merchants({ searchParams }) {
     };
   } catch (error) {
     errorFeed =
-      error?.httpMessage || "An error Occured while getting Merchants";
+      error instanceof Err
+        ? error.httpMessage
+        : "An error Occured while getting Merchants";
   }
 
   return (
@@ -73,3 +83,7 @@ async function Merchants({ searchParams }) {
 }
 
 export default Merchants;
+
+export const metadata = {
+  title: "Merchants"
+};
