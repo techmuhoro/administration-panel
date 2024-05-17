@@ -1,6 +1,5 @@
 import axios, { AxiosError } from "axios";
 import type {
-  AxiosRequestConfig as ReqCfg,
   InternalAxiosRequestConfig as InternalReqCfg,
   AxiosResponse
 } from "axios";
@@ -94,10 +93,9 @@ export class Err extends AxiosError {
 http.interceptors.request.use(
   async (config) => {
     const configObj = { ...config };
-    const configAmmends: ReqCfg = {};
 
     if (configObj?.includeAuthorization) {
-      configAmmends.withCredentials = true;
+      configObj.withCredentials = true;
 
       if (isServer) {
         const { cookies } = await import("next/headers");
@@ -105,40 +103,31 @@ http.interceptors.request.use(
         const gc = cookies().get("global-country")?.value || "KE";
 
         if (token) {
-          configAmmends.headers = {
-            ...configAmmends.headers,
-            Authorization: `Bearer ${token}`
-          };
+          configObj.headers.Authorization = `Bearer ${token}`;
         }
 
         // Add global country to params
-        if (gc) configAmmends.params = { ...configAmmends.params, country: gc };
+        if (gc) configObj.params = { ...configObj.params, country: gc };
       } else {
         const Cookies = (await import("js-cookie")).default;
         const token = Cookies.get(JWTAuthTokenName);
         const gc = Cookies.get("global-country") || "KE";
 
         if (token) {
-          configAmmends.headers = {
-            ...configAmmends.headers,
-            Authorization: `Bearer ${token}`
-          };
+          configObj.headers.Authorization = `Bearer ${token}`;
         }
 
         // Add global country to params
-        if (gc) configAmmends.params = { ...configAmmends.params, country: gc };
+        if (gc) configObj.params = { ...configObj.params, country: gc };
       }
 
       delete configObj.includeAuthorization;
     }
     if (configObj.data instanceof FormData) {
-      configAmmends.headers = {
-        ...configAmmends.headers,
-        "Content-Type": "multipart/form-data"
-      };
+      configObj.headers["Content-Type"] = "multipart/form-data";
     }
 
-    return { ...configObj, ...configAmmends } as InternalReqCfg;
+    return configObj;
   },
   (error) => Promise.reject(new Err(error))
 );
