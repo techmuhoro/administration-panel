@@ -9,7 +9,6 @@ const validationShema = Yup.object().shape({
   businessEmail: Yup.string().required("Required"),
   businessDescription: Yup.string().required("Required"),
   businessCurrencies: Yup.string().optional(),
-  acceptUSD: Yup.string().required("Required"),
 
   businessStatus: Yup.string().required("Required"),
 

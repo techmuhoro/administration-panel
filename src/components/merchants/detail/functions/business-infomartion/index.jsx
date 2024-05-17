@@ -1,5 +1,6 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { useMemo } from "react";
 import {
   Accordion,
@@ -7,6 +8,7 @@ import {
   AccordionSummary,
   AccordionActions
 } from "@/components/merchants/detail/ui";
+import http from "@/http";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -20,13 +22,7 @@ import { Input, Select } from "@/atoms/form";
 import Autocomplete from "@mui/material/Autocomplete";
 import { normalizeBusinessTypes } from "./utils";
 
-const currencies = [
-  { country: "Kenya", currency: "KES" },
-  { country: "Uganda", currency: "UGX" },
-  { country: "Tanzania", currency: "TZX" },
-  { country: "US", currency: "USD" },
-  { country: "Malawi", currency: "MLD" }
-];
+const countryCurrencies = ["KES", "USD", "EUR"];
 
 export default function BusinessInformation({
   expanded,
@@ -34,6 +30,7 @@ export default function BusinessInformation({
   data,
   utils
 }) {
+  const { id: merchantId } = useParams();
   const setAlertMessage = useNotifyAlertCtx();
   /**
    * Normalized the business types data return by backend into key value pairs for ease of use in
@@ -43,6 +40,54 @@ export default function BusinessInformation({
     () => normalizeBusinessTypes(utils.businessTypes),
     [utils.businessTypes]
   );
+
+  /**
+   * Simplified list of objects {country, currency} that is cached
+   * // @typedef {country: string; currency: string}[] CurrencyList
+   *
+   * // @param {CurrencyList} currencies
+   */
+
+  // const currencies = useMemo(
+  //   () => normalizeCountryCurrencies(utils.countries),
+  //   [utils.countries]
+  // );
+
+  const industryCategories = useMemo(
+    () =>
+      utils?.industries?.map((industry) => ({
+        key: industry?.value,
+        value: industry?.attributes?.name
+      })),
+
+    [utils?.industries]
+  );
+
+  // const industrySubCategories = useMemo(() => {
+  //   const subCategories = [];
+
+  //   utils?.industries?.forEach((industry) => {
+  //     subCategories.push(...(industry?.attributes?.subCategories || []));
+  //   });
+
+  //   return subCategories.map((subCategory) => ({
+  //     key: subCategory?.id || "",
+  //     value: subCategory?.attributes?.name || ""
+  //   }));
+  // }, [utils?.industries]);
+
+  const getSubCategories = (categoryId) => {
+    const categoryItem = utils?.industries?.find(
+      (category) => category?.value === categoryId
+    );
+
+    if (!categoryItem) return [];
+
+    return categoryItem?.attributes?.subCategories?.map((subCategory) => ({
+      key: subCategory?.id || "",
+      value: subCategory?.attributes?.name || ""
+    }));
+  };
 
   /**
    * Determines which dropdown options to show on the `businessType` field depending
@@ -89,6 +134,8 @@ export default function BusinessInformation({
     !formikProps.values.registeredStatus ||
     (formikProps.values.registeredStatus === 2 && !formikProps.values.duration);
 
+  const merchantStatusList = ["LIVE", "TEST", "DORMANT", "SUSPENDED"];
+
   /**
    * Handles posting of the form
    */
@@ -96,6 +143,12 @@ export default function BusinessInformation({
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
       // Todo. Add request for business
+      await http({
+        url: `/merchants/${merchantId}/kyc/business`,
+        method: "PATCH",
+        data: values,
+        includeAuthorization: true
+      });
     } catch (error) {
       if (error?.response?.status === 406) {
         setErrors(error?.response?.data?.error || {});
@@ -131,7 +184,7 @@ export default function BusinessInformation({
             businessEmail: data?.attributes?.businessEmail || "",
             businessDescription: data?.attributes?.businessDescription || "",
             // businessCurrencies: [], // ? multpile values allow
-            acceptUSD: "",
+
             businessStatus: data?.attributes?.businessType || "",
             registeredStatus: "",
             businessOldVid: "",
@@ -154,14 +207,27 @@ export default function BusinessInformation({
                   </Grid>
                   <Grid xs={12} md={6}>
                     <Select name="businessCategory" label="Category">
-                      <MenuItem value="1">Category 1</MenuItem>
-                      <MenuItem value="2">Category 2</MenuItem>
+                      <MenuItem value="">Select Category</MenuItem>
+                      {industryCategories?.map((category) => (
+                        <MenuItem key={category?.key} value={category?.key}>
+                          {category?.value}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Grid>
                   <Grid xs={12} md={6}>
                     <Select name="businessSubCategory" label="Sub Category">
-                      <MenuItem value="1">Sub Category 1</MenuItem>
-                      <MenuItem value="2">Sub Category 2</MenuItem>
+                      <MenuItem value="">Select Subcategory</MenuItem>
+                      {getSubCategories(
+                        formikProps.values.businessCategory
+                      )?.map((subCategory) => (
+                        <MenuItem
+                          key={subCategory?.key}
+                          value={subCategory?.key}
+                        >
+                          {subCategory?.value}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Grid>
                   <Grid xs={12} md={6}>
@@ -201,8 +267,8 @@ export default function BusinessInformation({
                         );
                       }}
                       id="businessCurrencies"
-                      options={currencies}
-                      getOptionLabel={(option) => option.currency}
+                      options={countryCurrencies}
+                      getOptionLabel={(option) => option}
                       defaultValue={[]}
                       renderInput={(params) => (
                         <TextField
@@ -215,9 +281,12 @@ export default function BusinessInformation({
                   </Grid>
                   <Grid xs={12} md={6}>
                     <Select name="businessStatus" label="Business Status">
-                      <MenuItem value="1">Live</MenuItem>
-                      <MenuItem value="2">Dormant</MenuItem>
-                      <MenuItem value="3">Suspended</MenuItem>
+                      <MenuItem value="">Select Status</MenuItem>
+                      {merchantStatusList.map((status) => (
+                        <MenuItem key={status} value={status}>
+                          {status}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Grid>
                   <Grid xs={12} md={6}>

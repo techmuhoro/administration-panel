@@ -7,7 +7,7 @@ export default function InfoStack({ title, content }) {
       <Typography variant="body2" sx={{ fontWeight: 600 }}>
         {title}
       </Typography>
-      <Typography variant="body1">{content}</Typography>
+      <Typography variant="body1">{content || "(not set)"}</Typography>
     </Box>
   );
 }

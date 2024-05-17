@@ -80,3 +80,10 @@ export function normalizeBusinessTypes(businessTypes) {
       getNonRegisteredShortTermBusinessTypes(businessTypes)
   };
 }
+
+export function normalizeCountryCurrencies(countriesData) {
+  return countriesData?.map((country) => ({
+    country: country?.attributes?.name,
+    currency: country?.attributes?.currencyCode
+  }));
+}

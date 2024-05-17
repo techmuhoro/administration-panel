@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import {
   Accordion,
@@ -38,28 +39,48 @@ const validationSchema = Yup.object().shape({
   directors: Yup.array().of(directorSchema)
 });
 
-export default function Directors({ expanded, handleExpandedChange, data }) {
+export default function Directors({
+  expanded,
+  handleExpandedChange,
+  data,
+  utils
+}) {
   const { id: merchantId } = useParams();
   const setAlertMessage = useNotifyAlertCtx();
 
   const MAXIMUM_DIRECTORS = 2;
 
-  console.log("data", data);
+  const shareholderTypes = utils.shareHolderTypes?.map((item) => ({
+    key: item?.id || "",
+    value: item?.name || ""
+  }));
+
+  const nationalitiesList = useMemo(
+    () =>
+      utils?.countries?.map((country) => ({
+        country: country?.attributes?.name || "",
+        id: country?.id || ""
+      })) || [],
+    [utils?.countries]
+  );
 
   const formatInitialData = (dataValues) =>
     dataValues?.map((director) => ({
       firstName: director?.attributes?.firstName || "",
       lastName: director?.attributes?.lastName || "",
-      shareHolderType: "",
-      contactNumber: director?.attributes?.phoneNumber || "",
+      shareHolderType: director?.attributes?.ownershipType || "",
+      contactNumber: director?.attributes?.contactNumber || "",
       email: director?.attributes?.email || "",
-      documentType: director?.attributes?.identificationDocumentType || "",
-      documentNumber: director?.attributes?.identificationDocumentNumber || "",
+      documentType: director?.attributes?.documentType || "",
+      documentNumber: director?.attributes?.documentNumber || "",
       nationality: director?.attributes?.nationality || "",
       referenceId: director?.id
     }));
 
-  const handleSubmit = async (values, { setSubmitting, setFieldError }) => {
+  const handleSubmit = async (
+    values,
+    { setSubmitting, setFieldError, setFieldValue }
+  ) => {
     // Hello
     try {
       const response = await http({
@@ -72,7 +93,7 @@ export default function Directors({ expanded, handleExpandedChange, data }) {
       const msg = "Directors details updated successfully";
       // ! set directors to the new response from backend. This ensure reference id is attached to prevent recreation if user click the update button twice
       if (Array.isArray(response?.data)) {
-        // setFieldValue("directors", formatInitialData(response?.data));
+        setFieldValue("directors", formatInitialData(response?.data));
       }
 
       setAlertMessage(msg, { type: "success", openDuration: 3000 });
@@ -192,10 +213,20 @@ export default function Directors({ expanded, handleExpandedChange, data }) {
                                 />
                               </Grid>
                               <Grid xs={12} md={6}>
-                                <Input
+                                <Select
                                   name={`directors.${index}.shareHolderType`}
                                   label="Shareholder Type"
-                                />
+                                >
+                                  <MenuItem value="">
+                                    Select Shareholder Type
+                                  </MenuItem>
+
+                                  {shareholderTypes?.map((item) => (
+                                    <MenuItem key={item?.key} value={item?.key}>
+                                      {item?.value}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
                               </Grid>
 
                               <Grid xs={12} md={6}>
@@ -212,10 +243,28 @@ export default function Directors({ expanded, handleExpandedChange, data }) {
                               </Grid>
 
                               <Grid xs={12} md={6}>
-                                <Input
+                                {/* <Input
                                   name={`directors.${index}.nationality`}
                                   label="Nationality"
-                                />
+                                /> */}
+
+                                <Select
+                                  name={`directors.${index}.nationality`}
+                                  label="Nationality"
+                                >
+                                  <MenuItem value="">
+                                    Select Nationality
+                                  </MenuItem>
+
+                                  {nationalitiesList?.map((country) => (
+                                    <MenuItem
+                                      key={country?.id}
+                                      value={country?.id}
+                                    >
+                                      {country.country}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
                               </Grid>
 
                               <Grid xs={12} md={6}>
@@ -223,8 +272,8 @@ export default function Directors({ expanded, handleExpandedChange, data }) {
                                   name={`directors.${index}.documentType`}
                                   label="Document Type"
                                 >
-                                  <MenuItem value="1">National ID</MenuItem>
-                                  <MenuItem value="2">Passport</MenuItem>
+                                  <MenuItem value="1">NATIONAL ID</MenuItem>
+                                  <MenuItem value="2">PASSPORT</MenuItem>
                                 </Select>
                               </Grid>
                               <Grid xs={12} md={6}>

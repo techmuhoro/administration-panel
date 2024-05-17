@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import {
   Accordion,
@@ -9,11 +10,12 @@ import {
 } from "@/components/merchants/detail/ui";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import { Formik, Form, FieldArray } from "formik";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import { Input } from "@/atoms/form";
+import { Input, Select } from "@/atoms/form";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-context";
@@ -28,15 +30,31 @@ const bankShema = Yup.object().shape({
   accountName: Yup.string().required("Required"),
   accountNumber: Yup.string().required("Required"),
   currency: Yup.string().required("Required"),
+  releaseLevel: Yup.string().required("Required"),
+  releaseFrequency: Yup.string().required("Required"),
   swiftCode: Yup.string().required("Required"),
   referenceId: Yup.string().optional()
 });
+
+const RELEASE_FREQUENCIES = [
+  { key: "1", value: "Daily" },
+  { key: "2", value: "Weekly" },
+  { key: "3", value: "Monthly" },
+  { key: "4", value: "Fortnight" }
+];
+
+// const currencies = ["KES", "USD"];
 
 const validationShema = Yup.object().shape({
   banks: Yup.array().of(bankShema)
 });
 
-export default function BankDetails({ expanded, handleExpandedChange, data }) {
+export default function BankDetails({
+  expanded,
+  handleExpandedChange,
+  data,
+  utils
+}) {
   const { id: merchantId } = useParams();
   const setAlertMessage = useNotifyAlertCtx();
 
@@ -53,6 +71,15 @@ export default function BankDetails({ expanded, handleExpandedChange, data }) {
     })) || [];
 
   const MAXIMUM_BANKS = 2;
+
+  const countries = useMemo(
+    () =>
+      utils?.countries?.map((country) => ({
+        key: country?.id,
+        value: country?.attributes?.name
+      })),
+    [utils?.countries]
+  );
 
   const handleSubmit = async (
     values,
@@ -73,7 +100,7 @@ export default function BankDetails({ expanded, handleExpandedChange, data }) {
         setFieldValue("banks", formatInitialData(response?.data));
       }
 
-      setAlertMessage(msg, { openDuration: 3000 });
+      setAlertMessage(msg, { openDuration: 3000, type: "success" });
     } catch (error) {
       if (error?.response?.status === 406) {
         error?.response?.data?.error?.forEach((errorObj, index) => {
@@ -127,6 +154,8 @@ export default function BankDetails({ expanded, handleExpandedChange, data }) {
                               accountName: "",
                               accountNumber: "",
                               currency: "",
+                              releaseLevel: "",
+                              releaseFrequency: "",
                               swiftCode: "",
                               referenceId: ""
                             });
@@ -175,10 +204,27 @@ export default function BankDetails({ expanded, handleExpandedChange, data }) {
                               </Box>
                               <Grid container rowSpacing={2} columnSpacing={2}>
                                 <Grid xs={12} md={6}>
-                                  <Input
+                                  {/* <Input
                                     name={`banks.${index}.bankLocality`}
                                     label="Bank Locality"
-                                  />
+                                  /> */}
+
+                                  <Select
+                                    name={`banks.${index}.bankLocality`}
+                                    label="Bank Locality"
+                                  >
+                                    <MenuItem value="">
+                                      Select Locality
+                                    </MenuItem>
+                                    {countries.map((country) => (
+                                      <MenuItem
+                                        key={country?.key}
+                                        value={country?.key}
+                                      >
+                                        {country?.value}
+                                      </MenuItem>
+                                    ))}
+                                  </Select>
                                 </Grid>
 
                                 <Grid xs={12} md={6}>
@@ -214,6 +260,33 @@ export default function BankDetails({ expanded, handleExpandedChange, data }) {
                                     name={`banks.${index}.currency`}
                                     label="Currency"
                                   />
+                                </Grid>
+
+                                <Grid xs={12} md={6}>
+                                  <Input
+                                    name={`banks.${index}.releaseLevel`}
+                                    label="Release Level / Amount"
+                                    type="number"
+                                  />
+                                </Grid>
+
+                                <Grid xs={12} md={6}>
+                                  <Select
+                                    name={`banks.${index}.releaseFrequency`}
+                                    label="Release Frequency"
+                                  >
+                                    <MenuItem>
+                                      Select Release Frequency
+                                    </MenuItem>
+                                    {RELEASE_FREQUENCIES.map((item) => (
+                                      <MenuItem
+                                        key={item?.key}
+                                        value={item?.key}
+                                      >
+                                        {item?.value}
+                                      </MenuItem>
+                                    ))}
+                                  </Select>
                                 </Grid>
 
                                 <Grid xs={12} md={6}>

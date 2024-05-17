@@ -85,15 +85,10 @@ export default function MerchantsDetail({ data, utils }) {
             <Box>
               <Box mb={4}>
                 <StagingAccountHolder
-                  // expanded={expanded === "staging-account-holder"}
-                  expanded
-                  // handleExpandedChange={handleChange("staging-account-holder")}
                   data={data?.attributes?.accountHolderInformation}
                 />
 
                 <StagingBusinessInformation
-                  // expanded={expanded === "staging-business-information"}
-                  expanded
                   data={data?.attributes?.businessInformation}
                 />
               </Box>
@@ -135,12 +130,14 @@ export default function MerchantsDetail({ data, utils }) {
                 expanded={expanded === "bank-details"}
                 handleExpandedChange={handleChange("bank-details")}
                 data={data?.attributes?.bankInformation}
+                utils={utils}
               />
 
               <Directors
                 expanded={expanded === "directors"}
                 handleExpandedChange={handleChange("directors")}
                 data={data?.attributes?.directorInformation}
+                utils={utils}
               />
             </>
           )}
