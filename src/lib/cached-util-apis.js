@@ -64,7 +64,7 @@ export const getCachedCountryCurrencies = cache(
   async () => {
     try {
       const response = await http({
-        url: `//utils/currencies`,
+        url: `/utils/currencies`,
         includeAuthorization: true,
         params: {
           op: "country"

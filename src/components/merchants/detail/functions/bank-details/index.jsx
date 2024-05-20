@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import {
   Accordion,
@@ -22,6 +22,7 @@ import { useNotifyAlertCtx } from "@/components/notify-alert/notify-alert-contex
 import LoadingButton from "@/atoms/loading-button";
 import * as Yup from "yup";
 import http from "@/http";
+import RemoveBank from "./remove-bank";
 
 const bankShema = Yup.object().shape({
   bankLocality: Yup.string().required("Required"),
@@ -55,6 +56,8 @@ export default function BankDetails({
   data,
   utils
 }) {
+  const [deleteBankModalOpen, setDeleteBankModalOpen] = useState(false);
+  const [selectedBank, setSelectedBank] = useState(null);
   const { id: merchantId } = useParams();
   const setAlertMessage = useNotifyAlertCtx();
 
@@ -80,6 +83,8 @@ export default function BankDetails({
       })),
     [utils?.countries]
   );
+
+  const currencies = utils?.countryCurrencies || [];
 
   const handleSubmit = async (
     values,
@@ -119,205 +124,255 @@ export default function BankDetails({
     }
   };
 
+  /**
+   *
+   * @param {Object} bank
+   * @param {Function} removeFromFormik Removes the bank from the list
+   */
+  const handleRemoveBank = (bank) => {
+    if (!bank?.referenceId) {
+      // the bank has not been persisted on backend, so jus remove from list
+      return;
+    }
+
+    setSelectedBank(bank);
+    setDeleteBankModalOpen(true);
+
+    // console.log("Remove from backend");
+
+    // delete bank from backend
+  };
+
   return (
-    <Accordion expanded={expanded} onChange={handleExpandedChange}>
-      <AccordionSummary aria-controls="panel5-content" id="panel5-header">
-        <Stack direction="row" columnGap={2}>
-          <Typography>Bank Details</Typography>
-        </Stack>
-      </AccordionSummary>
+    <>
+      <Accordion expanded={expanded} onChange={handleExpandedChange}>
+        <AccordionSummary aria-controls="panel5-content" id="panel5-header">
+          <Stack direction="row" columnGap={2}>
+            <Typography>Bank Details</Typography>
+          </Stack>
+        </AccordionSummary>
 
-      <Box>
-        <Formik
-          initialValues={{
-            banks: formatInitialData(data)
-          }}
-          validationSchema={validationShema}
-          onSubmit={handleSubmit}
-        >
-          {(formikProps) => (
-            <Form>
-              <AccordionDetails>
-                <Typography sx={{ fontWeight: 500, mb: 2 }} variant="body2">
-                  * Minimum of 1 bank, Maximum of 2 bank accounts required
-                </Typography>
-                <FieldArray name="banks">
-                  {(fieldArrayProps) => (
-                    <Box>
-                      <Button
-                        onClick={() => {
-                          if (formikProps.values.banks.length < MAXIMUM_BANKS) {
-                            fieldArrayProps.push({
-                              bankLocality: "",
-                              bankName: "",
-                              bankBranch: "",
-                              accountName: "",
-                              accountNumber: "",
-                              currency: "",
-                              releaseLevel: "",
-                              releaseFrequency: "",
-                              swiftCode: "",
-                              referenceId: ""
-                            });
-                          } else {
-                            // alert the user
-                            setAlertMessage(
-                              `Only a maxium of ${MAXIMUM_BANKS} banks is allowed`,
-                              {
-                                openDuration: 3000,
-                                type: "error"
-                              }
-                            );
-                          }
-                        }}
-                        startIcon={<ControlPointIcon />}
-                      >
-                        Add
-                      </Button>
-                      <Stack rowGap={4}>
-                        {formikProps.values.banks.map((bank, index) => (
-                          <>
-                            {/* // eslint-disable-next-line  */}
-                            <Box key={bank.id}>
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between"
-                                }}
-                              >
-                                <Typography
-                                  variant="body1"
-                                  fontWeight={500}
-                                  mb={1}
+        <Box>
+          <Formik
+            initialValues={{
+              banks: formatInitialData(data)
+            }}
+            validationSchema={validationShema}
+            onSubmit={handleSubmit}
+          >
+            {(formikProps) => (
+              <Form>
+                <AccordionDetails>
+                  <Typography sx={{ fontWeight: 500, mb: 2 }} variant="body2">
+                    * Minimum of 1 bank, Maximum of 2 bank accounts required
+                  </Typography>
+                  <FieldArray name="banks">
+                    {(fieldArrayProps) => (
+                      <Box>
+                        <Button
+                          onClick={() => {
+                            if (
+                              formikProps.values.banks.length < MAXIMUM_BANKS
+                            ) {
+                              fieldArrayProps.push({
+                                bankLocality: "",
+                                bankName: "",
+                                bankBranch: "",
+                                accountName: "",
+                                accountNumber: "",
+                                currency: "",
+                                releaseLevel: "",
+                                releaseFrequency: "",
+                                swiftCode: "",
+                                referenceId: ""
+                              });
+                            } else {
+                              // alert the user
+                              setAlertMessage(
+                                `Only a maxium of ${MAXIMUM_BANKS} banks is allowed`,
+                                {
+                                  openDuration: 3000,
+                                  type: "error"
+                                }
+                              );
+                            }
+                          }}
+                          startIcon={<ControlPointIcon />}
+                        >
+                          Add
+                        </Button>
+                        <Stack rowGap={4}>
+                          {formikProps.values.banks.map((bank, index) => (
+                            <>
+                              {/* // eslint-disable-next-line  */}
+                              <Box key={bank.id}>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between"
+                                  }}
                                 >
-                                  Bank {index + 1} of {MAXIMUM_BANKS}
-                                </Typography>
+                                  <Typography
+                                    variant="body1"
+                                    fontWeight={500}
+                                    mb={1}
+                                  >
+                                    Bank {index + 1} of {MAXIMUM_BANKS}
+                                  </Typography>
 
-                                <Button
-                                  startIcon={<WarningAmberIcon />}
-                                  color="error"
-                                  onClick={() => fieldArrayProps.remove(index)}
+                                  <Button
+                                    startIcon={<WarningAmberIcon />}
+                                    color="error"
+                                    onClick={() =>
+                                      handleRemoveBank(
+                                        formikProps.values.banks[index],
+                                        () => fieldArrayProps.remove(index)
+                                      )
+                                    }
+                                  >
+                                    Remove
+                                  </Button>
+                                </Box>
+                                <Grid
+                                  container
+                                  rowSpacing={2}
+                                  columnSpacing={2}
                                 >
-                                  Remove
-                                </Button>
+                                  <Grid xs={12} md={6}>
+                                    <Select
+                                      name={`banks.${index}.bankLocality`}
+                                      label="Bank Locality"
+                                    >
+                                      <MenuItem value="">
+                                        Select Locality
+                                      </MenuItem>
+                                      {countries.map((country) => (
+                                        <MenuItem
+                                          key={country?.key}
+                                          value={country?.key}
+                                        >
+                                          {country?.value}
+                                        </MenuItem>
+                                      ))}
+                                    </Select>
+                                  </Grid>
+
+                                  <Grid xs={12} md={6}>
+                                    <Input
+                                      name={`banks.${index}.bankName`}
+                                      label="Bank Name"
+                                    />
+                                  </Grid>
+
+                                  <Grid xs={12} md={6}>
+                                    <Input
+                                      name={`banks.${index}.bankBranch`}
+                                      label="Branch"
+                                    />
+                                  </Grid>
+
+                                  <Grid xs={12} md={6}>
+                                    <Input
+                                      name={`banks.${index}.accountName`}
+                                      label="Account Name"
+                                    />
+                                  </Grid>
+
+                                  <Grid xs={12} md={6}>
+                                    <Input
+                                      name={`banks.${index}.accountNumber`}
+                                      label="Account Number"
+                                    />
+                                  </Grid>
+
+                                  <Grid xs={12} md={6}>
+                                    <Select
+                                      name={`banks.${index}.currency`}
+                                      label="Currency"
+                                    >
+                                      <MenuItem value="">
+                                        Select Currency
+                                      </MenuItem>
+
+                                      {currencies?.map((currency) => (
+                                        <MenuItem
+                                          key={currency}
+                                          value={currency}
+                                        >
+                                          {currency}
+                                        </MenuItem>
+                                      ))}
+                                    </Select>
+                                  </Grid>
+
+                                  <Grid xs={12} md={6}>
+                                    <Input
+                                      name={`banks.${index}.releaseLevel`}
+                                      label="Release Level / Amount"
+                                      type="number"
+                                    />
+                                  </Grid>
+
+                                  <Grid xs={12} md={6}>
+                                    <Select
+                                      name={`banks.${index}.releaseFrequency`}
+                                      label="Release Frequency"
+                                    >
+                                      <MenuItem>
+                                        Select Release Frequency
+                                      </MenuItem>
+                                      {RELEASE_FREQUENCIES.map((item) => (
+                                        <MenuItem
+                                          key={item?.key}
+                                          value={item?.key}
+                                        >
+                                          {item?.value}
+                                        </MenuItem>
+                                      ))}
+                                    </Select>
+                                  </Grid>
+
+                                  <Grid xs={12} md={6}>
+                                    <Input
+                                      name={`banks.${index}.swiftCode`}
+                                      label="Swift Code"
+                                    />
+                                  </Grid>
+                                </Grid>
                               </Box>
-                              <Grid container rowSpacing={2} columnSpacing={2}>
-                                <Grid xs={12} md={6}>
-                                  {/* <Input
-                                    name={`banks.${index}.bankLocality`}
-                                    label="Bank Locality"
-                                  /> */}
+                            </>
+                          ))}
+                        </Stack>
+                      </Box>
+                    )}
+                  </FieldArray>
+                </AccordionDetails>
+                <AccordionActions>
+                  <LoadingButton
+                    color="primary"
+                    variant="contained"
+                    type="submit"
+                    loading={formikProps.isSubmitting}
+                  >
+                    Save
+                  </LoadingButton>
+                </AccordionActions>
+              </Form>
+            )}
+          </Formik>
+        </Box>
+      </Accordion>
 
-                                  <Select
-                                    name={`banks.${index}.bankLocality`}
-                                    label="Bank Locality"
-                                  >
-                                    <MenuItem value="">
-                                      Select Locality
-                                    </MenuItem>
-                                    {countries.map((country) => (
-                                      <MenuItem
-                                        key={country?.key}
-                                        value={country?.key}
-                                      >
-                                        {country?.value}
-                                      </MenuItem>
-                                    ))}
-                                  </Select>
-                                </Grid>
+      {/** Modal */}
 
-                                <Grid xs={12} md={6}>
-                                  <Input
-                                    name={`banks.${index}.bankName`}
-                                    label="Bank Name"
-                                  />
-                                </Grid>
-
-                                <Grid xs={12} md={6}>
-                                  <Input
-                                    name={`banks.${index}.bankBranch`}
-                                    label="Branch"
-                                  />
-                                </Grid>
-
-                                <Grid xs={12} md={6}>
-                                  <Input
-                                    name={`banks.${index}.accountName`}
-                                    label="Account Name"
-                                  />
-                                </Grid>
-
-                                <Grid xs={12} md={6}>
-                                  <Input
-                                    name={`banks.${index}.accountNumber`}
-                                    label="Account Number"
-                                  />
-                                </Grid>
-
-                                <Grid xs={12} md={6}>
-                                  <Input
-                                    name={`banks.${index}.currency`}
-                                    label="Currency"
-                                  />
-                                </Grid>
-
-                                <Grid xs={12} md={6}>
-                                  <Input
-                                    name={`banks.${index}.releaseLevel`}
-                                    label="Release Level / Amount"
-                                    type="number"
-                                  />
-                                </Grid>
-
-                                <Grid xs={12} md={6}>
-                                  <Select
-                                    name={`banks.${index}.releaseFrequency`}
-                                    label="Release Frequency"
-                                  >
-                                    <MenuItem>
-                                      Select Release Frequency
-                                    </MenuItem>
-                                    {RELEASE_FREQUENCIES.map((item) => (
-                                      <MenuItem
-                                        key={item?.key}
-                                        value={item?.key}
-                                      >
-                                        {item?.value}
-                                      </MenuItem>
-                                    ))}
-                                  </Select>
-                                </Grid>
-
-                                <Grid xs={12} md={6}>
-                                  <Input
-                                    name={`banks.${index}.swiftCode`}
-                                    label="Swift Code"
-                                  />
-                                </Grid>
-                              </Grid>
-                            </Box>
-                          </>
-                        ))}
-                      </Stack>
-                    </Box>
-                  )}
-                </FieldArray>
-              </AccordionDetails>
-              <AccordionActions>
-                <LoadingButton
-                  color="primary"
-                  variant="contained"
-                  type="submit"
-                  loading={formikProps.isSubmitting}
-                >
-                  Save
-                </LoadingButton>
-              </AccordionActions>
-            </Form>
-          )}
-        </Formik>
-      </Box>
-    </Accordion>
+      {deleteBankModalOpen && (
+        <RemoveBank
+          open={deleteBankModalOpen}
+          handleClose={() => setDeleteBankModalOpen(false)}
+          bank={selectedBank}
+        />
+      )}
+    </>
   );
 }
